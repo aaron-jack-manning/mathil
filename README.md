@@ -202,7 +202,7 @@ let backgroundColor = CSSColour.almond
 
 The `resolution` will the resolution of our final image. When creating something from scratch, don't worry if you get this wrong, it's easy to change later with minimal cost.
 
-The `bounding box` specifies the coordinates system that will be used when drawing curves and shapes. This is independent of the resolution so that you can easily set it to match what you're drawing, and so that the either can be changed after the fact without effecting the other. For example, if we wanted to draw a sine curve, I may set the bounding box to have ***x*** values just either side of -2$\Pi$, and ***y*** values just either side of -1 and 1. Mathil will then scale your bounding box to fit your resolution. To make sure your image doesn't get stretched too much, it is recommended you call the `aspectRatios` function, will which give you the aspect ratio of the resolution and bounds in turn, so that you can see how different they are and see how much your image is stretched.
+The `bounding box` specifies the coordinates system that will be used when drawing curves and shapes. This is independent of the resolution so that you can easily set it to match what you're drawing, and so that the either can be changed after the fact without effecting the other. For example, if we wanted to draw a sine curve, I may set the bounding box to have ***x*** values just either side of -2 pi, and ***y*** values just either side of -1 and 1. Mathil will then scale your bounding box to fit your resolution. To make sure your image doesn't get stretched too much, it is recommended you call the `aspectRatios` function, will which give you the aspect ratio of the resolution and bounds in turn, so that you can see how different they are and see how much your image is stretched.
 
 The background colour just represents the default colour we will use for our screen before we draw anything on it. In this case the `CSSColours` class has been used, which contains the colours from the CSS standard. Feel free to also use `Colour.fromRGB` or `Colour.fromHex` to customize the colours yourself.
 
@@ -231,7 +231,7 @@ To create our function we call `createFunction`.
 createFunction (ellipse 25.0 25.0 90.0 50.0) (0.0, 2.0 * pi)
 ```
 
-The second input here is our domain, in this case we need to go from 0 to 2$\Pi$ in terms of our parameter in order to complete a full circle.
+The second input here is our domain, in this case we need to go from 0 to 2 pi in terms of our parameter in order to complete a full circle.
 
 Now we want to sample that function many times in order to get a series of points which we can render. We can do that by pipelining our `Function` with the `sample` function and telling it how many times we wish to sample it. The number of samples is something worth playing around with and seeing what works after rendering the result. Let's store that as a variable called `leftCircle`.
 
