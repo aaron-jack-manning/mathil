@@ -38,7 +38,7 @@ let finalScreen =
 writeScreenToFile "<path to folder here>" "VennDiagram" blankScreen
 ```
 
-![VennDiagram](VennDiagram.bmp)
+![VennDiagram](Examples/VennDiagram.bmp)
 
 ### Rose
 
@@ -64,7 +64,7 @@ let finalScreen =
 writeScreenToFile "<path to folder here>" "Rose" blankScreen
 ```
 
-![Rose](Rose.bmp)
+![Rose](Examples/Rose.bmp)
 
 ### Fundamental Theorem of Calculus Illustration
 
@@ -139,7 +139,7 @@ let finalScreen =
 writeScreenToFile "<path to folder here>" "FTOC" finalScreen
 ```
 
-![FTOC](FTOC.bmp)
+![FTOC](Examples/FTOC.bmp)
 
 ## Getting Started
 
