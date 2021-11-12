@@ -1,6 +1,6 @@
 # Mathil
 
-Mathil is a library I have created for drawing neat and consistent images that represent mathematical concepts, with relatively low level control and not too much code.
+Mathil is a library I have created in F# for drawing neat and consistent images that represent mathematical concepts, with relatively low level control and not too much code.
 
 ## Samples:
 
