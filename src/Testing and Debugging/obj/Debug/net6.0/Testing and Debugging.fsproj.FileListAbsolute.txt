@@ -1,0 +1,29 @@
+C:\Users\aaron\My Drive\Side Projects\Project Files\Programming Projects\Mathil (F#)\Mathil\Testing and Debugging\bin\Debug\net6.0\Testing and Debugging.exe
+C:\Users\aaron\My Drive\Side Projects\Project Files\Programming Projects\Mathil (F#)\Mathil\Testing and Debugging\bin\Debug\net6.0\Testing and Debugging.deps.json
+C:\Users\aaron\My Drive\Side Projects\Project Files\Programming Projects\Mathil (F#)\Mathil\Testing and Debugging\bin\Debug\net6.0\Testing and Debugging.runtimeconfig.json
+C:\Users\aaron\My Drive\Side Projects\Project Files\Programming Projects\Mathil (F#)\Mathil\Testing and Debugging\bin\Debug\net6.0\Testing and Debugging.dll
+C:\Users\aaron\My Drive\Side Projects\Project Files\Programming Projects\Mathil (F#)\Mathil\Testing and Debugging\bin\Debug\net6.0\Testing and Debugging.pdb
+C:\Users\aaron\My Drive\Side Projects\Project Files\Programming Projects\Mathil (F#)\Mathil\Testing and Debugging\bin\Debug\net6.0\FSharp.Core.dll
+C:\Users\aaron\My Drive\Side Projects\Project Files\Programming Projects\Mathil (F#)\Mathil\Testing and Debugging\bin\Debug\net6.0\cs\FSharp.Core.resources.dll
+C:\Users\aaron\My Drive\Side Projects\Project Files\Programming Projects\Mathil (F#)\Mathil\Testing and Debugging\bin\Debug\net6.0\de\FSharp.Core.resources.dll
+C:\Users\aaron\My Drive\Side Projects\Project Files\Programming Projects\Mathil (F#)\Mathil\Testing and Debugging\bin\Debug\net6.0\es\FSharp.Core.resources.dll
+C:\Users\aaron\My Drive\Side Projects\Project Files\Programming Projects\Mathil (F#)\Mathil\Testing and Debugging\bin\Debug\net6.0\fr\FSharp.Core.resources.dll
+C:\Users\aaron\My Drive\Side Projects\Project Files\Programming Projects\Mathil (F#)\Mathil\Testing and Debugging\bin\Debug\net6.0\it\FSharp.Core.resources.dll
+C:\Users\aaron\My Drive\Side Projects\Project Files\Programming Projects\Mathil (F#)\Mathil\Testing and Debugging\bin\Debug\net6.0\ja\FSharp.Core.resources.dll
+C:\Users\aaron\My Drive\Side Projects\Project Files\Programming Projects\Mathil (F#)\Mathil\Testing and Debugging\bin\Debug\net6.0\ko\FSharp.Core.resources.dll
+C:\Users\aaron\My Drive\Side Projects\Project Files\Programming Projects\Mathil (F#)\Mathil\Testing and Debugging\bin\Debug\net6.0\pl\FSharp.Core.resources.dll
+C:\Users\aaron\My Drive\Side Projects\Project Files\Programming Projects\Mathil (F#)\Mathil\Testing and Debugging\bin\Debug\net6.0\pt-BR\FSharp.Core.resources.dll
+C:\Users\aaron\My Drive\Side Projects\Project Files\Programming Projects\Mathil (F#)\Mathil\Testing and Debugging\bin\Debug\net6.0\ru\FSharp.Core.resources.dll
+C:\Users\aaron\My Drive\Side Projects\Project Files\Programming Projects\Mathil (F#)\Mathil\Testing and Debugging\bin\Debug\net6.0\tr\FSharp.Core.resources.dll
+C:\Users\aaron\My Drive\Side Projects\Project Files\Programming Projects\Mathil (F#)\Mathil\Testing and Debugging\bin\Debug\net6.0\zh-Hans\FSharp.Core.resources.dll
+C:\Users\aaron\My Drive\Side Projects\Project Files\Programming Projects\Mathil (F#)\Mathil\Testing and Debugging\bin\Debug\net6.0\zh-Hant\FSharp.Core.resources.dll
+C:\Users\aaron\My Drive\Side Projects\Project Files\Programming Projects\Mathil (F#)\Mathil\Testing and Debugging\bin\Debug\net6.0\Mathil.dll
+C:\Users\aaron\My Drive\Side Projects\Project Files\Programming Projects\Mathil (F#)\Mathil\Testing and Debugging\bin\Debug\net6.0\Mathil.pdb
+C:\Users\aaron\My Drive\Side Projects\Project Files\Programming Projects\Mathil (F#)\Mathil\Testing and Debugging\bin\Debug\net6.0\Mathil.xml
+C:\Users\aaron\My Drive\Side Projects\Project Files\Programming Projects\Mathil (F#)\Mathil\Testing and Debugging\obj\Debug\net6.0\Testing and Debugging.fsproj.AssemblyReference.cache
+C:\Users\aaron\My Drive\Side Projects\Project Files\Programming Projects\Mathil (F#)\Mathil\Testing and Debugging\obj\Debug\net6.0\Testing and Debugging.AssemblyInfoInputs.cache
+C:\Users\aaron\My Drive\Side Projects\Project Files\Programming Projects\Mathil (F#)\Mathil\Testing and Debugging\obj\Debug\net6.0\Testing and Debugging.AssemblyInfo.fs
+C:\Users\aaron\My Drive\Side Projects\Project Files\Programming Projects\Mathil (F#)\Mathil\Testing and Debugging\obj\Debug\net6.0\Testing and Debugging.fsproj.CopyComplete
+C:\Users\aaron\My Drive\Side Projects\Project Files\Programming Projects\Mathil (F#)\Mathil\Testing and Debugging\obj\Debug\net6.0\Testing and Debugging.dll
+C:\Users\aaron\My Drive\Side Projects\Project Files\Programming Projects\Mathil (F#)\Mathil\Testing and Debugging\obj\Debug\net6.0\Testing and Debugging.pdb
+C:\Users\aaron\My Drive\Side Projects\Project Files\Programming Projects\Mathil (F#)\Mathil\Testing and Debugging\obj\Debug\net6.0\Testing and Debugging.genruntimeconfig.cache

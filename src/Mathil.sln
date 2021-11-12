@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Mathil", "Mathil\Mathil.fsproj", "{32B8DC6E-044E-4A98-8220-7B6F8B4E0476}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Testing and Debugging", "Testing and Debugging\Testing and Debugging.fsproj", "{8144FE5D-D35F-48F4-8314-5103B476485D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{32B8DC6E-044E-4A98-8220-7B6F8B4E0476}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32B8DC6E-044E-4A98-8220-7B6F8B4E0476}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32B8DC6E-044E-4A98-8220-7B6F8B4E0476}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32B8DC6E-044E-4A98-8220-7B6F8B4E0476}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8144FE5D-D35F-48F4-8314-5103B476485D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8144FE5D-D35F-48F4-8314-5103B476485D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8144FE5D-D35F-48F4-8314-5103B476485D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8144FE5D-D35F-48F4-8314-5103B476485D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {93244872-1DC0-4051-8DED-9D7FDB4A627D}
+	EndGlobalSection
+EndGlobal

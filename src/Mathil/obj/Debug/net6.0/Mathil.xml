@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+<assembly><name>Mathil</name></assembly>
+<members>
+<member name="T:Mathil.Colours.CSSColour">
+<summary>
+ Consists of all colours in the CSS standard.
+</summary>
+</member>
+<member name="M:Mathil.Colours.Colour.mix(Mathil.Colours.Colour,Mathil.Colours.Colour)">
+<summary>
+ Mixes two colours together (not very successfully - it is recommended that colour mixing is done manually).
+</summary>
+</member>
+<member name="M:Mathil.Colours.Colour.lerp(Mathil.Colours.Colour,Mathil.Colours.Colour,System.Double)">
+<summary>
+ Linearly interpolates the red, green and blue values of the colour separately.
+</summary>
+</member>
+<member name="M:Mathil.Colours.Colour.fromRGB(System.Byte,System.Byte,System.Byte)">
+<summary>
+ Create colour from RGB values.
+</summary>
+</member>
+<member name="M:Mathil.Colours.Colour.fromHex(System.String)">
+<summary>
+ Create colour from #RRGGBB hex format.
+</summary>
+</member>
+<member name="T:Mathil.Colours.Colour">
+<summary>
+ Represents a colour as RGB values.
+</summary>
+</member>
+<member name="T:Mathil.MathematicalPrimitives.Polygon">
+<summary>
+ Represents a polygon as a series of points.
+</summary>
+</member>
+<member name="T:Mathil.MathematicalPrimitives.Function">
+<summary>
+ Represents a mathematical function as a parametric rule and domain.
+</summary>
+</member>
+<member name="T:Mathil.MathematicalPrimitives.Domain">
+<summary>
+ Represents the allowing values a parameter can take in a function.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalPrimitives.Point.op_Subtraction(Mathil.MathematicalPrimitives.Point,Mathil.MathematicalPrimitives.Point)">
+<summary>
+ Subtracts the coordinates of a point pairwise.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalPrimitives.Point.op_Multiply(System.Double,Mathil.MathematicalPrimitives.Point)">
+<summary>
+ Multiplies the coordinates of a point pairwise.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalPrimitives.Point.op_Addition(Mathil.MathematicalPrimitives.Point,Mathil.MathematicalPrimitives.Point)">
+<summary>
+ Adds the coordinates of a point pairwise.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalPrimitives.Point.negy(Mathil.MathematicalPrimitives.Point)">
+<summary>
+ Negates the y coordinate of a point.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalPrimitives.Point.negx(Mathil.MathematicalPrimitives.Point)">
+<summary>
+ Negates the x coordinate of a point.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalPrimitives.Point.neg(Mathil.MathematicalPrimitives.Point)">
+<summary>
+ Negates both coordinates of a point.
+</summary>
+</member>
+<member name="T:Mathil.MathematicalPrimitives.Point">
+<summary>
+ Represents a point in the 2D coordinate system used in drawing shapes.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalPrimitives.createFunction(Microsoft.FSharp.Core.FSharpFunc{System.Double,Mathil.MathematicalPrimitives.Point},System.Double,System.Double)">
+<summary>
+ Creates a Function from a rule and domain.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalPrimitives.pointsFromTupleList(Microsoft.FSharp.Collections.FSharpList{System.Tuple{System.Double,System.Double}})">
+<summary>
+ Creates a list of points from a list of float tuples.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalPrimitives.createPoint(System.Double,System.Double)">
+<summary>
+ Creates a Point from a float tuple.
+</summary>
+</member>
+<member name="M:Mathil.FunctionSampling.sample(System.Int32,Mathil.MathematicalPrimitives.Function)">
+<summary>
+ Samples a function the specified number of times, to return a list of Points.
+</summary>
+</member>
+<member name="M:Mathil.BezierCurves.createBezierCurve(Microsoft.FSharp.Collections.FSharpList{Mathil.MathematicalPrimitives.Point})">
+<summary>
+ Constructs a Bezier curve from a list of points.
+</summary>
+</member>
+<member name="M:Mathil.Polygons.polygonToManyPoints(Microsoft.FSharp.Collections.FSharpList{Mathil.MathematicalPrimitives.Point},System.Int32)">
+<summary>
+ Converts a polygon to a series of points along its sides.
+</summary>
+</member>
+<member name="P:Mathil.MathematicalConstants.e">
+<summary>
+ Euler&apos;s constant.
+</summary>
+</member>
+<member name="P:Mathil.MathematicalConstants.pi">
+<summary>
+ Ratio of circumference to diameter of circle.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalConstants.rose(System.Double,System.Double)">
+<summary>
+ Parametric rose function.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalConstants.ellipse(System.Double,System.Double,System.Double,System.Double,System.Double)">
+<summary>
+ Parametric ellipse function.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalConstants.ln(System.Double)">
+<summary>
+ Parametric natural logarithm function.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalConstants.cosine(System.Double)">
+<summary>
+ Parametric cosine function.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalConstants.sine(System.Double)">
+<summary>
+ Parametric sine function.
+</summary>
+</member>
+<member name="T:Mathil.Rendering.RenderingType">
+<summary>
+ Represents the way a dot is rendered.
+</summary>
+</member>
+<member name="T:Mathil.Rendering.Curve">
+<summary>
+ Represents a series of dots.
+</summary>
+</member>
+<member name="T:Mathil.Rendering.Dot">
+<summary>
+ Represents a dot to be rendered: the primitive of a curve.
+</summary>
+</member>
+<member name="T:Mathil.Rendering.PixelCoordinates">
+<summary>
+ Represents the coordinates of a given pixel.
+</summary>
+</member>
+<member name="T:Mathil.Rendering.Screen">
+<summary>
+ Represents an image.
+</summary>
+</member>
+<member name="M:Mathil.Rendering.colourFill(Mathil.MathematicalPrimitives.Point,Mathil.Colours.Colour,Mathil.Rendering.Screen)">
+<summary>
+ Fills a region of a screen which has a solid colour with another solid colour.
+</summary>
+</member>
+<member name="M:Mathil.Rendering.calculateLineThickness(System.Int32,System.Int32,System.Double)">
+<summary>
+ Calculates the line thickness as a proportion of the average of the horizontal and vertical resolutions. Allows line thickness to be scaled appropriates upon changing an image&apos;s resolution.
+</summary>
+</member>
+<member name="M:Mathil.Rendering.renderCurve(Mathil.Rendering.RenderingType,Microsoft.FSharp.Collections.FSharpList{Mathil.Rendering.Dot},Mathil.Rendering.Screen)">
+<summary>
+ Renders a Curve onto a Screen.
+</summary>
+</member>
+<member name="M:Mathil.Rendering.addPointsToCurve(Mathil.Rendering.Screen,Microsoft.FSharp.Collections.FSharpList{Mathil.MathematicalPrimitives.Point},Mathil.Colours.Colour,System.Int32,Microsoft.FSharp.Collections.FSharpList{Mathil.Rendering.Dot})">
+<summary>
+ Adds a list of points to a Curve (list of Dots).
+</summary>
+</member>
+<member name="M:Mathil.Rendering.createScreen(System.Int32,System.Int32,Mathil.MathematicalPrimitives.Point,Mathil.MathematicalPrimitives.Point,Mathil.Colours.Colour)">
+<summary>
+ Creates a blank screen based on the resolution, bounds and colour.
+</summary>
+</member>
+<member name="M:Mathil.Rendering.aspectRatios(Mathil.Rendering.Screen)">
+<summary>
+ Calculates the aspect ratio in the resolution and in the bounds, to check how significantly the mathematical coordinates system is squeezed before rendering the image.
+</summary>
+</member>
+<member name="M:Mathil.FileIO.writeScreenToFile(System.String,System.String,Mathil.Rendering.Screen)">
+<summary>
+ Writes the provided screen to the specified filepath as a bitmap (.bmp) file.
+</summary>
+</member>
+<member name="M:Mathil.Templates.cartesianPlane(System.Int32,System.Int32,System.Double,Mathil.Colours.Colour,System.Int32,Mathil.Rendering.Screen)">
+<summary>
+ Adds a cartesian plane to the specified image.
+</summary>
+</member>
+</members>
+</doc>

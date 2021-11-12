@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "riy4FRwSm/5jmgKE9eX/WOwT8zFEEmUsxwY6pvU35zwFS0JeOnbwXDVeODWcgi9UAM3zUxSUMjD1gFDzS4rcsw==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\aaron\\My Drive\\Side Projects\\Project Files\\Programming Projects\\Mathil (F#)\\Mathil\\Mathil\\Mathil.fsproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\aaron\\.nuget\\packages\\fsharp.core\\6.0.1\\fsharp.core.6.0.1.nupkg.sha512"
+  ],
+  "logs": []
+}

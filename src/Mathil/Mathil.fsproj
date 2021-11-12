@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Colours.fs" />
+    <Compile Include="MathematicalPrimitives.fs" />
+    <Compile Include="FunctionSampling.fs" />
+    <Compile Include="BezierCurves.fs" />
+    <Compile Include="Polygons.fs" />
+    <Compile Include="MathematicalConstants.fs" />
+    <Compile Include="Rendering.fs" />
+    <Compile Include="FileIO.fs" />
+    <Compile Include="Templates.fs" />
+  </ItemGroup>
+
+</Project>
