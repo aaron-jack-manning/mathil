@@ -2,8 +2,8 @@
 
 ## Contents 
 
-* [Introduction](##introduction)  
-* [Samples](##samples)  
+* [Introduction](#introduction)  
+* [Examples](#examples)  
     * [Venn Diagram](#venn-diagram) 
     * [Rose](#rose)
     * [Fundamental Theorem of Calculus Illustration](#ftoc)
@@ -17,13 +17,15 @@
 
 Mathil is a library I have created in F# for drawing neat and consistent images that represent mathematical concepts in a programmatic way, with relatively low level control and not too much code.
 
-<a name="samples"></a>
-## Samples:
+<a name="examples"></a>
+## Examples:
 
-All examples can also be found in the `examples` folder above, where they exist as functions you can call to generate the images.
+The following examples show how a few different kinds of images can be created using Mathil. All examples can also be found in the `examples` folder above, where they exist as functions you can call to generate the images. I have also written up a full explanation of how the code for the first image works in the ***Getting Started*** section.
 
 <a name="venn-diagram"></a>
 #### Venn Diagram
+
+![VennDiagram](examples/VennDiagram.png)
 
 ```
 let resolution = (3000, 2000)
@@ -55,10 +57,10 @@ let finalScreen =
 writeScreenToFile "<path to folder here>" "VennDiagram" blankScreen
 ```
 
-![VennDiagram](examples/VennDiagram.png)
-
 <a name="rose"></a>
 ### Rose
+
+![Rose](examples/Rose.png)
 
 ```
 let resolution = (3000, 3000)
@@ -82,10 +84,10 @@ let finalScreen =
 writeScreenToFile "<path to folder here>" "Rose" blankScreen
 ```
 
-![Rose](examples/Rose.png)
-
 <a name="ftoc"></a>
 ### Fundamental Theorem of Calculus Illustration
+
+![FTOC](examples/FTOC.png)
 
 ```
 let resolution = (4200, 3000)
@@ -157,8 +159,6 @@ let finalScreen =
 
 writeScreenToFile "<path to folder here>" "FTOC" finalScreen
 ```
-
-![FTOC](examples/FTOC.png)
 
 <a name="setup"></a>
 ## Setup
