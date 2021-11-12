@@ -4,14 +4,14 @@ Mathil is a library I have created in F# for drawing neat and consistent images 
 
 
 ##### Contents 
-[Samples](##samples)  
-    [Venn Diagram](#venn-diagram) 
-    [Rose](#rose)
-    [Fundamental Theorem of Calculus Illustration](#ftoc)
-[Setup](#setup)
-[Getting Started](#getting-started)
-[Documentation](#documentation)
-[Q and A](#q-and-a)
+* [Samples](##samples)  
+    * [Venn Diagram](#venn-diagram) 
+    * [Rose](#rose)
+    * [Fundamental Theorem of Calculus Illustration](#ftoc)
+* [Setup](#setup)
+* [Getting Started](#getting-started)
+* [Documentation](#documentation)
+* [Q and A](#q-and-a)
 
 <a name="samples"></a>
 ## Samples:
