@@ -2,10 +2,23 @@
 
 Mathil is a library I have created in F# for drawing neat and consistent images that represent mathematical concepts, with relatively low level control and not too much code.
 
+
+##### Contents 
+[Samples](##samples)  
+    [Venn Diagram](#venn-diagram) 
+    [Rose](#rose)
+    [Fundamental Theorem of Calculus Illustration](#ftoc)
+[Setup](#setup)
+[Getting Started](#getting-started)
+[Documentation](#documentation)
+[Q and A](#q-and-a)
+
+<a name="samples"></a>
 ## Samples:
 
 All examples can also be found in the `examples` folder above, where they exist as functions you can call to generate the images.
 
+<a name="venn-diagram"></a>
 #### Venn Diagram
 
 ```
@@ -40,6 +53,7 @@ writeScreenToFile "<path to folder here>" "VennDiagram" blankScreen
 
 ![VennDiagram](examples/VennDiagram.png)
 
+<a name="rose"></a>
 ### Rose
 
 ```
@@ -66,6 +80,7 @@ writeScreenToFile "<path to folder here>" "Rose" blankScreen
 
 ![Rose](examples/Rose.png)
 
+<a name="ftoc"></a>
 ### Fundamental Theorem of Calculus Illustration
 
 ```
@@ -141,6 +156,7 @@ writeScreenToFile "<path to folder here>" "FTOC" finalScreen
 
 ![FTOC](examples/FTOC.png)
 
+<a name="setup"></a>
 ## Setup
 
 The simplest way to install and use Mathil is to download the `.nupkg` file from the `package` folder from NuGet package manager by running:
@@ -167,6 +183,7 @@ open Mathil.FileIO
 open Mathil.Templates
 ```
 
+<a name="getting-started"></a>
 ## Getting Started
 
 To get started, here is a more thorough walkthrough of how the first example above was created.
@@ -278,10 +295,12 @@ Now just run your code and find your `.bmp` file wherever you specified. If you'
 
 This is one example of something that can be done using Mathil, for full documentation on all the features of Mathil, see below.
 
+<a name="documentation"></a>
 ## Documentation
 
 I am working on thorough documentation of all the functions in this library which will be available ***here*** when complete.
 
+<a name="q-and-a"></a>
 ## Q and A
 
 #### Where does the name come from?
