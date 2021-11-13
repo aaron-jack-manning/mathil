@@ -260,7 +260,7 @@ let curve =
     |> addPointsToCurve blankScreen rightCircle CSSColour.black 10
 ```
 
-This `addPointsToCurve` function takes in the screen (so that it knows our resolution and bounding box), the series of points we wish to convert (in this case our two circles), the colour and the radius of each dot, which will become the line thickness, in pixels. If the ability to resize the image after the fact without disturbing the relative line thickness, I recommend you use the `calculateLineThickness` function and specify the thickness as a proportion of the overall image size. This means that lines will get thicker if the resolution is changed, without having to manually change them.
+This `addPointsToCurve` function takes in the screen (so that it knows our resolution and bounding box), the series of points we wish to convert (in this case our two circles), the colour and the radius of each dot, which will become the line thickness, in pixels. If the ability to resize the image after the fact without disturbing the relative line thickness is important, I recommend you use the `calculateLineThickness` function and specify the thickness as a proportion of the overall image size. This means that lines will get thicker if the resolution is changed, without having to manually change them.
 
 We're almost done now, all we need to do is render all of that to our screen and do some colour fills. Let's start by rendering the curve. To do so let's use the `renderCurve` function.
 
