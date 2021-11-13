@@ -292,10 +292,12 @@ This is another example when order of rendering is important. Without the circle
 Great, we now have our image complete, the last thing to do is save it to a file by specifying the filepath and filename. Obviously I have specified the filepath to where I want it on my computer, so change this for your use case.
 
 ```
-writeScreenToFile @"C:\Users\aaron\Downloads" "VennDiagram"
+writeScreenToFile @"C:\Users\aaron\Downloads" "VennDiagram" finalScreen
 ```
 
-Now just run your code and find your `.bmp` file wherever you specified. If you're not happy with anything, then just go back over your code, change it and run again. If you work with high resolution images, the files produced by this library are quite large as they are uncompressed bitmaps. You can see more about this decision in the Q and A section at the bottom of this page, but in short, if you wish to use another format I recommend converting to a `.png` which will allow significantly smaller file size without a huge loss in quality (or in some cases no loss in quality).
+Also note that you can add the above line to your pipline of rendering and not bother with saving the screen for the same output. Now just run your code and find your `.bmp` file wherever you specified.
+
+If you're not happy with anything, then just go back over your code, change it and run again. If you work with high resolution images, the files produced by this library are quite large as they are uncompressed bitmaps. You can see more about this decision in the Q and A section at the bottom of this page, but in short, if you wish to use another format I recommend converting to a `.png` which will allow significantly smaller file size without a huge loss in quality (or in some cases no loss in quality).
 
 This is one example of something that can be done using Mathil, for full documentation on all the features of Mathil, see below.
 
