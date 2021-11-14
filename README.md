@@ -169,6 +169,7 @@ Once you have Mathil installed or the source code available, simply add the foll
 open Mathil.Colours
 open Mathil.MathematicalPrimitives
 open Mathil.BezierCurves
+open Mathil.Lines
 open Mathil.Polygons
 open Mathil.MathematicalConstants
 open Mathil.FunctionSampling
