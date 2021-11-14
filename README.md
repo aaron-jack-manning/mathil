@@ -60,7 +60,7 @@ writeScreenToFile "<path to folder here>" "VennDiagram" blankScreen
 <a name = "trig-geometry"></a>
 ### Geometric Representations of Trigonometric Functions
 
-![TrigGeometricRepresentations](examples/TrigGeometricRepresentations.png)
+![TrigGeometricRepresentations](examples/TrigGeometricRepresentation.png)
 
 ```
 let resolution = (3000, 3000)
