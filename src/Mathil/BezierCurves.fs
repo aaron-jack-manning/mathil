@@ -3,8 +3,9 @@
 open MathematicalPrimitives
 
 module BezierCurves =
-
-    let private lerpPoint (startPoint : Point, endPoint : Point) : (float -> Point) =
+    
+    /// Gives the linear interpolation function for two points.
+    let lerpPoint (startPoint : Point, endPoint : Point) : (float -> Point) =
         (fun t -> (1.0 - t) * startPoint + t * endPoint)
 
     let private interpolatePairs (list : Point list) =

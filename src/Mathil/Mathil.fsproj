@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,6 +12,7 @@
     <Compile Include="FunctionSampling.fs" />
     <Compile Include="BezierCurves.fs" />
     <Compile Include="Polygons.fs" />
+    <Compile Include="Lines.fs" />
     <Compile Include="MathematicalConstants.fs" />
     <Compile Include="Rendering.fs" />
     <Compile Include="FileIO.fs" />

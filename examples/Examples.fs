@@ -8,6 +8,8 @@ open Mathil.Rendering
 open Mathil.FileIO
 open Mathil.Templates
 
+open System
+
 let vennDiagramExample filepath filename =
 
     let resolution = (3000, 2000)
@@ -129,5 +131,66 @@ let fundamentalTheoremOfCalculusIllustrationExample filepath filename =
         |> renderCurve RenderingType.Round negativeCosineCurve
         |> renderCurve RenderingType.Square verticalAxis
         |> renderCurve RenderingType.Round negativeCosineEndpoints
+
+    writeScreenToFile filepath filename finalScreen
+
+let trigGeometricRepresentationExample filepath filename =
+
+    let resolution = (3000, 3000)
+    let boundingBox = (createPoint (-2.0, -2.0), createPoint (2.0, 2.0))
+    let backgroundColor = Colour.fromHex "#2f3640"
+
+    let blankScreen = createScreen resolution boundingBox backgroundColor
+
+    let unitCircle =
+        createFunction (ellipse 1.0 1.0 0.0 0.0) (0.0, 2.0 * pi)
+        |> sample 800
+
+    let radius =
+        createLine (createPoint (1.0 / Math.Sqrt(2), 1.0 / Math.Sqrt(2)), createPoint (0.0, 0.0))
+        |> sample 100
+
+    let sineValue =
+        createLine (createPoint (1.0 / Math.Sqrt(2), 0.0), createPoint (1.0 / Math.Sqrt(2), 1.0 / Math.Sqrt(2)))
+        |> sample 100
+
+    let cosineValue =
+        createLine (createPoint (0.0, 1.0 / Math.Sqrt(2)), createPoint (1.0 / Math.Sqrt(2), 1.0 / Math.Sqrt(2)))
+        |> sample 100
+
+    let tangentValue =
+        createLine (createPoint (1.0 / Math.Sqrt(2), 1.0 / Math.Sqrt(2)), createPoint (2.0 / Math.Sqrt(2), 0.0))
+        |> sample 100
+
+    let tangentDashedLine =
+        createDashedLine (createPoint (1.0 / Math.Sqrt(2), 1.0 / Math.Sqrt(2)), createPoint (0.0, 2.0 / Math.Sqrt(2))) 5
+        |> List.map (fun x -> sample 100 x)
+        |> List.concat
+
+    let trigLines =
+        List.empty
+        |> addPointsToCurve blankScreen sineValue (Colour.fromHex "#4cd137") 10
+        |> addPointsToCurve blankScreen cosineValue (Colour.fromHex "#9c88ff") 10
+        |> addPointsToCurve blankScreen tangentValue CSSColour.orangePeel 10
+        |> addPointsToCurve blankScreen tangentDashedLine CSSColour.orangePeel 10
+
+    let circleAndRadius =
+        List.empty
+        |> addPointsToCurve blankScreen unitCircle (Colour.fromHex "#f5f6fa") 10
+        |> addPointsToCurve blankScreen radius (Colour.fromHex "#f5f6fa") 10
+
+
+    let endpoints =
+        List.empty
+        |> addPointsToCurve blankScreen [createPoint (1.0 / Math.Sqrt(2), 0.0)] (Colour.fromHex "#4cd137") 30
+        |> addPointsToCurve blankScreen [createPoint (0.0, 1.0 / Math.Sqrt(2))] (Colour.fromHex "#9c88ff") 30
+        |> addPointsToCurve blankScreen [createPoint (2.0 / Math.Sqrt(2), 0.0)] CSSColour.orangePeel 30
+
+    let finalScreen =
+        blankScreen
+        |> renderCurve RenderingType.Round trigLines
+        |> cartesianPlane (300, 300) 0.4 (Colour.fromHex "#8e919e") 10 4 0.1 0.1
+        |> renderCurve RenderingType.Round circleAndRadius
+        |> renderCurve RenderingType.Round endpoints
 
     writeScreenToFile filepath filename finalScreen

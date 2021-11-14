@@ -1,6 +1,7 @@
 ﻿namespace Mathil
 
 open System
+
 open MathematicalPrimitives
 
 module MathematicalConstants =

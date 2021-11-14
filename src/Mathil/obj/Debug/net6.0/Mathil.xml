@@ -107,9 +107,24 @@
  Constructs a Bezier curve from a list of points.
 </summary>
 </member>
+<member name="M:Mathil.BezierCurves.lerpPoint(Mathil.MathematicalPrimitives.Point,Mathil.MathematicalPrimitives.Point,System.Double)">
+<summary>
+ Gives the linear interpolation function for two points.
+</summary>
+</member>
 <member name="M:Mathil.Polygons.polygonToManyPoints(Microsoft.FSharp.Collections.FSharpList{Mathil.MathematicalPrimitives.Point},System.Int32)">
 <summary>
  Converts a polygon to a series of points along its sides.
+</summary>
+</member>
+<member name="M:Mathil.Lines.createDashedLine(Mathil.MathematicalPrimitives.Point,Mathil.MathematicalPrimitives.Point,System.Int32)">
+<summary>
+ Creates a series of short lines that create a longer dashed line.
+</summary>
+</member>
+<member name="M:Mathil.Lines.createLine(Mathil.MathematicalPrimitives.Point,Mathil.MathematicalPrimitives.Point)">
+<summary>
+ Wrapper around createBezierCurve for a simple line.
 </summary>
 </member>
 <member name="P:Mathil.MathematicalConstants.e">
@@ -207,7 +222,7 @@
  Writes the provided screen to the specified filepath as a bitmap (.bmp) file.
 </summary>
 </member>
-<member name="M:Mathil.Templates.cartesianPlane(System.Int32,System.Int32,System.Double,Mathil.Colours.Colour,System.Int32,Mathil.Rendering.Screen)">
+<member name="M:Mathil.Templates.cartesianPlane(System.Int32,System.Int32,System.Double,Mathil.Colours.Colour,System.Int32,System.Int32,System.Double,System.Double,Mathil.Rendering.Screen)">
 <summary>
  Adds a cartesian plane to the specified image.
 </summary>

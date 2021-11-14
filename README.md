@@ -5,8 +5,8 @@
 * [Introduction](#introduction)  
 * [Examples](#examples)  
     * [Venn Diagram](#venn-diagram) 
+    * [Geometric Representations of Trigonometric Functions](#trig-geometry)
     * [Rose](#rose)
-    * [Fundamental Theorem of Calculus Illustration](#ftoc)
 * [Setup](#setup)
 * [Getting Started](#getting-started)
 * [Documentation](#documentation)
@@ -20,7 +20,7 @@ Mathil is a library I have created in F# for drawing neat and consistent images 
 <a name="examples"></a>
 ## Examples:
 
-The following examples show how a few different kinds of images can be created using Mathil. All examples can also be found in the `examples` folder above, where they exist as functions you can call to generate the images. I have also written up a full explanation of how the code for the first image works in the ***Getting Started*** section.
+The following examples show how a few different kinds of images can be created using Mathil. Additional examples can also be found in the `examples` folder above, where they exist as functions you can call to generate the images. I have also written up a full explanation of how the code for the first image works in the ***Getting Started*** section.
 
 <a name="venn-diagram"></a>
 ### Venn Diagram
@@ -57,6 +57,72 @@ let finalScreen =
 writeScreenToFile "<path to folder here>" "VennDiagram" blankScreen
 ```
 
+<a name = "trig-geometry"></a>
+### Geometric Representations of Trigonometric Functions
+
+![TrigGeometricRepresentations](examples/TrigGeometricRepresentations.png)
+
+```
+let resolution = (3000, 3000)
+let boundingBox = (createPoint (-2.0, -2.0), createPoint (2.0, 2.0))
+let backgroundColor = Colour.fromHex "#2f3640"
+
+let blankScreen = createScreen resolution boundingBox backgroundColor
+
+let unitCircle =
+    createFunction (ellipse 1.0 1.0 0.0 0.0) (0.0, 2.0 * pi)
+    |> sample 800
+
+let radius =
+    createLine (createPoint (1.0 / Math.Sqrt(2), 1.0 / Math.Sqrt(2)), createPoint (0.0, 0.0))
+    |> sample 100
+
+let sineValue =
+    createLine (createPoint (1.0 / Math.Sqrt(2), 0.0), createPoint (1.0 / Math.Sqrt(2), 1.0 / Math.Sqrt(2)))
+    |> sample 100
+
+let cosineValue =
+    createLine (createPoint (0.0, 1.0 / Math.Sqrt(2)), createPoint (1.0 / Math.Sqrt(2), 1.0 / Math.Sqrt(2)))
+    |> sample 100
+
+let tangentValue =
+    createLine (createPoint (1.0 / Math.Sqrt(2), 1.0 / Math.Sqrt(2)), createPoint (2.0 / Math.Sqrt(2), 0.0))
+    |> sample 100
+
+let tangentDashedLine =
+    createDashedLine (createPoint (1.0 / Math.Sqrt(2), 1.0 / Math.Sqrt(2)), createPoint (0.0, 2.0 / Math.Sqrt(2))) 5
+    |> List.map (fun x -> sample 100 x)
+    |> List.concat
+
+let trigLines =
+    List.empty
+    |> addPointsToCurve blankScreen sineValue (Colour.fromHex "#4cd137") 10
+    |> addPointsToCurve blankScreen cosineValue (Colour.fromHex "#9c88ff") 10
+    |> addPointsToCurve blankScreen tangentValue CSSColour.orangePeel 10
+    |> addPointsToCurve blankScreen tangentDashedLine CSSColour.orangePeel 10
+
+let circleAndRadius =
+    List.empty
+    |> addPointsToCurve blankScreen unitCircle (Colour.fromHex "#f5f6fa") 10
+    |> addPointsToCurve blankScreen radius (Colour.fromHex "#f5f6fa") 10
+
+
+let endpoints =
+    List.empty
+    |> addPointsToCurve blankScreen [createPoint (1.0 / Math.Sqrt(2), 0.0)] (Colour.fromHex "#4cd137") 30
+    |> addPointsToCurve blankScreen [createPoint (0.0, 1.0 / Math.Sqrt(2))] (Colour.fromHex "#9c88ff") 30
+    |> addPointsToCurve blankScreen [createPoint (2.0 / Math.Sqrt(2), 0.0)] CSSColour.orangePeel 30
+
+let finalScreen =
+    blankScreen
+    |> renderCurve RenderingType.Round trigLines
+    |> cartesianPlane (300, 300) 0.4 (Colour.fromHex "#8e919e") 10 4 0.1 0.1
+    |> renderCurve RenderingType.Round circleAndRadius
+    |> renderCurve RenderingType.Round endpoints
+
+writeScreenToFile "<path to folder here>" "TrigGeometricRepresentation" finalScreen
+```
+
 <a name="rose"></a>
 ### Rose
 
@@ -82,82 +148,6 @@ let finalScreen =
     |> renderCurve RenderingType.Round curve
 
 writeScreenToFile "<path to folder here>" "Rose" blankScreen
-```
-
-<a name="ftoc"></a>
-### Fundamental Theorem of Calculus Illustration
-
-![FTOC](examples/FTOC.png)
-
-```
-let resolution = (4200, 3000)
-let boundingBox = (createPoint (-1.0, -2.0), createPoint (pi + 1.0, 2.0))
-let backgroundColour = Colour.fromHex "#ecf0f1"
-
-let blankScreen = createScreen resolution boundingBox backgroundColour
-
-let sinePoints =
-    createFunction sine (0, pi)
-    |> sample 2000
-
-let negativeCosinePoints =
-    createFunction (fun t -> Point.negy (cosine t)) (0, pi)
-    |> sample 2000
-
-let negativeCosineEndpoints =
-    List.append
-        [pointToDot blankScreen (Colour.fromHex "#9b59b6") 20 (createPoint (pi, 1.0))]
-        [pointToDot blankScreen (Colour.fromHex "#9b59b6") 20 (createPoint (0.0, -1.0))]
-
-let sineCurve =
-    List.empty
-    |> addPointsToCurve blankScreen sinePoints (Colour.fromHex "#e74c3c") 5
-
-let negativeCosineCurve =
-    List.empty
-    |> addPointsToCurve blankScreen negativeCosinePoints (Colour.fromHex "#9b59b6") 5
-
-let horizontalAxisPoints =
-    createBezierCurve (pointsFromTupleList [-0.25, 0.0; pi + 0.25, 0.0])
-    |> sample 1000
-
-let verticalAxisPoints =
-    createBezierCurve (pointsFromTupleList [0.0, -1.75; 0.0, 1.75])
-    |> sample 1000
-
-let horizontalAxis =
-    List.empty
-    |> addPointsToCurve blankScreen horizontalAxisPoints CSSColour.black 5
-
-let verticalAxis =
-    List.empty
-    |> addPointsToCurve blankScreen verticalAxisPoints CSSColour.black 5
-
-
-let negativeCosineHorizontalComponentPoints =
-    createBezierCurve (pointsFromTupleList [0.0, -1.0; pi, -1.0])
-    |> sample 300
-
-let negativeCosineVerticalComponentPoints =
-    createBezierCurve (pointsFromTupleList [pi, -1.0; pi, 1.0])
-    |> sample 300
-
-let greenAngle =
-    List.empty
-    |> addPointsToCurve blankScreen negativeCosineHorizontalComponentPoints (Colour.fromHex "#2ecc71") 5
-    |> addPointsToCurve blankScreen negativeCosineVerticalComponentPoints (Colour.fromHex "#2ecc71") 5
-
-let finalScreen =
-    blankScreen
-    |> renderCurve RenderingType.Round sineCurve
-    |> renderCurve RenderingType.Square horizontalAxis
-    |> colourFill (createPoint (pi / 2.0, 0.5)) (Colour.fromHex "#f2a59d")
-    |> renderCurve RenderingType.Square greenAngle
-    |> renderCurve RenderingType.Round negativeCosineCurve
-    |> renderCurve RenderingType.Square verticalAxis
-    |> renderCurve RenderingType.Round negativeCosineEndpoints
-
-writeScreenToFile "<path to folder here>" "FTOC" finalScreen
 ```
 
 <a name="setup"></a>
