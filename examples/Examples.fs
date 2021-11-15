@@ -134,7 +134,12 @@ let fundamentalTheoremOfCalculusIllustrationExample filepath filename =
 
     writeScreenToFile filepath filename finalScreen
 
-let trigGeometricRepresentationExample filepath filename =
+let trigGeometricRepresentationExample filepath filename angle =
+
+    let cos = Math.Cos(angle)
+    let sin = Math.Sin(angle)
+    let sec = 1.0 / cos
+    let cosec = 1.0 / sin
 
     let resolution = (3000, 3000)
     let boundingBox = (createPoint (-2.0, -2.0), createPoint (2.0, 2.0))
@@ -147,23 +152,23 @@ let trigGeometricRepresentationExample filepath filename =
         |> sample 800
 
     let radius =
-        createLine (createPoint (1.0 / Math.Sqrt(2), 1.0 / Math.Sqrt(2)), createPoint (0.0, 0.0))
+        createLine (createPoint (0.0, 0.0), createPoint (cos, sin))
         |> sample 100
 
     let sineValue =
-        createLine (createPoint (1.0 / Math.Sqrt(2), 0.0), createPoint (1.0 / Math.Sqrt(2), 1.0 / Math.Sqrt(2)))
+        createLine (createPoint (cos, 0.0), createPoint (cos, sin))
         |> sample 100
 
     let cosineValue =
-        createLine (createPoint (0.0, 1.0 / Math.Sqrt(2)), createPoint (1.0 / Math.Sqrt(2), 1.0 / Math.Sqrt(2)))
+        createLine (createPoint (0.0, sin), createPoint (cos, sin))
         |> sample 100
 
     let tangentValue =
-        createLine (createPoint (1.0 / Math.Sqrt(2), 1.0 / Math.Sqrt(2)), createPoint (2.0 / Math.Sqrt(2), 0.0))
+        createLine (createPoint (cos, sin), createPoint (sec, 0.0))
         |> sample 100
 
     let tangentDashedLine =
-        createDashedLine (createPoint (1.0 / Math.Sqrt(2), 1.0 / Math.Sqrt(2)), createPoint (0.0, 2.0 / Math.Sqrt(2))) 5
+        createDashedLine (createPoint (cos, sin), createPoint (0.0, cosec)) 5
         |> List.map (fun x -> sample 100 x)
         |> List.concat
 
@@ -182,9 +187,9 @@ let trigGeometricRepresentationExample filepath filename =
 
     let endpoints =
         List.empty
-        |> addPointsToCurve blankScreen [createPoint (1.0 / Math.Sqrt(2), 0.0)] (Colour.fromHex "#4cd137") 30
-        |> addPointsToCurve blankScreen [createPoint (0.0, 1.0 / Math.Sqrt(2))] (Colour.fromHex "#9c88ff") 30
-        |> addPointsToCurve blankScreen [createPoint (2.0 / Math.Sqrt(2), 0.0)] CSSColour.orangePeel 30
+        |> addPointsToCurve blankScreen [createPoint (cos, 0.0)] (Colour.fromHex "#4cd137") 30 // Sine
+        |> addPointsToCurve blankScreen [createPoint (0.0, sin)] (Colour.fromHex "#9c88ff") 30 // Cosine
+        |> addPointsToCurve blankScreen [createPoint (sec, 0.0)] CSSColour.orangePeel 30 // Tangent
 
     let finalScreen =
         blankScreen
