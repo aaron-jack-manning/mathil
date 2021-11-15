@@ -199,3 +199,65 @@ let trigGeometricRepresentationExample filepath filename angle =
         |> renderCurve RenderingType.Round endpoints
 
     writeScreenToFile filepath filename finalScreen
+
+let addingComplexNumbersExample filepath filename =
+    
+    let resolution = (3000, 3000)
+    let boundingBox = (createPoint (-6.0, -6.0), createPoint (6.0, 6.0))
+    let backgroundColour = CSSColour.darkLavender
+
+    let blankScreen = createScreen resolution boundingBox backgroundColour
+
+    let minorAxisLinesPoints =
+        [
+            for i in [-4..4] do
+                yield
+                    createLine (createPoint (float i, -4.0), createPoint (float i, 4.0))
+                    |> sample 300
+
+                yield
+                    createLine (createPoint (-4.0, float i), createPoint (4.0, float i))
+                    |> sample 300
+        ]
+        |> List.concat
+
+    let minorAxisLines =
+        List.empty
+        |> addPointsToCurve blankScreen minorAxisLinesPoints CSSColour.white 4
+
+    let vectorLines =
+        [
+            createLine (createPoint (-3.0, 1.0), createPoint (0.0, 0.0))
+            createLine (createPoint (1.0, 2.0), createPoint (0.0, 0.0))
+        ]
+        |> List.map (fun x -> sample 100 x)
+        |> List.concat
+
+    let minorParallelogramBounds =
+        [
+            createLine (createPoint (-3.0, 1.0), createPoint (-2.0, 3.0))
+            createLine (createPoint (1.0, 2.0), createPoint (-2.0, 3.0))
+        ]
+        |> List.map (fun x -> sample 400 x)
+        |> List.concat
+
+    let parallelogramBounds =
+        List.empty
+        |> addPointsToCurve blankScreen vectorLines CSSColour.orangeWebColor 10
+        |> addPointsToCurve blankScreen minorParallelogramBounds (Colour.fromHex "#e7b864") 4
+
+    let complexPoints =
+        List.empty
+        |> addPointsToCurve blankScreen [createPoint (-3.0, 1.0)] CSSColour.orangeWebColor 30
+        |> addPointsToCurve blankScreen [createPoint (1.0, 2.0)] CSSColour.orangeWebColor 30
+        |> addPointsToCurve blankScreen [createPoint (-2.0, 3.0)] CSSColour.orangeWebColor 30
+
+    let finalScreen =
+        blankScreen
+        |> renderCurve RenderingType.Round parallelogramBounds
+        |> colourFill (createPoint (-0.5, 0.5)) (Colour.fromHex "#e7b864")
+        |> renderCurve RenderingType.Square minorAxisLines
+        |> cartesianPlane (300, 300) 1.0 CSSColour.white 10 4 0.2 0.2
+        |> renderCurve RenderingType.Round complexPoints
+
+    writeScreenToFile filepath filename finalScreen

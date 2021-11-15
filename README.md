@@ -6,7 +6,7 @@
 * [Examples](#examples)  
     * [Venn Diagram](#venn-diagram) 
     * [Geometric Representations of Trigonometric Functions](#trig-geometry)
-    * [Rose](#rose)
+    * [Adding Complex Numbers](#adding-complex-numbers)
 * [Setup](#setup)
 * [Getting Started](#getting-started)
 * [Documentation](#documentation)
@@ -131,31 +131,71 @@ let finalScreen =
 writeScreenToFile "<path to folder here>" "TrigGeometricRepresentation" finalScreen
 ```
 
-<a name="rose"></a>
-### Rose
+<a name="adding-complex-numbers"></a>
+### Adding Complex Numbers
 
-![Rose](examples/Rose.png)
+![AddingComplexNumbers](examples/AddingComplexNumbers.png)
 
 ```
 let resolution = (3000, 3000)
-let boundingBox = (createPoint (-1.5, -1.5), createPoint (1.5, 1.5))
-let backgroundColour = CSSColour.white
+let boundingBox = (createPoint (-6.0, -6.0), createPoint (6.0, 6.0))
+let backgroundColour = CSSColour.darkLavender
 
 let blankScreen = createScreen resolution boundingBox backgroundColour
 
-let rosePoints =
-    createFunction (rose 6.0) (0.0, 2.0 * pi)
-    |> sample 8000
+let minorAxisLinesPoints =
+    [
+        for i in [-4..4] do
+            yield
+                createLine (createPoint (float i, -4.0), createPoint (float i, 4.0))
+                |> sample 300
 
-let curve =
+            yield
+                createLine (createPoint (-4.0, float i), createPoint (4.0, float i))
+                |> sample 300
+    ]
+    |> List.concat
+
+let minorAxisLines =
     List.empty
-    |> addPointsToCurve blankScreen rosePoints CSSColour.black 5
+    |> addPointsToCurve blankScreen minorAxisLinesPoints CSSColour.white 4
+
+let vectorLines =
+    [
+        createLine (createPoint (-3.0, 1.0), createPoint (0.0, 0.0))
+        createLine (createPoint (1.0, 2.0), createPoint (0.0, 0.0))
+    ]
+    |> List.map (fun x -> sample 100 x)
+    |> List.concat
+
+let minorParallelogramBounds =
+    [
+        createLine (createPoint (-3.0, 1.0), createPoint (-2.0, 3.0))
+        createLine (createPoint (1.0, 2.0), createPoint (-2.0, 3.0))
+    ]
+    |> List.map (fun x -> sample 400 x)
+    |> List.concat
+
+let parallelogramBounds =
+    List.empty
+    |> addPointsToCurve blankScreen vectorLines CSSColour.orangeWebColor 10
+    |> addPointsToCurve blankScreen minorParallelogramBounds (Colour.fromHex "#e7b864") 4
+
+let complexPoints =
+    List.empty
+    |> addPointsToCurve blankScreen [createPoint (-3.0, 1.0)] CSSColour.orangeWebColor 30
+    |> addPointsToCurve blankScreen [createPoint (1.0, 2.0)] CSSColour.orangeWebColor 30
+    |> addPointsToCurve blankScreen [createPoint (-2.0, 3.0)] CSSColour.orangeWebColor 30
 
 let finalScreen =
     blankScreen
-    |> renderCurve RenderingType.Round curve
+    |> renderCurve RenderingType.Round parallelogramBounds
+    |> colourFill (createPoint (-0.5, 0.5)) (Colour.fromHex "#e7b864")
+    |> renderCurve RenderingType.Square minorAxisLines
+    |> cartesianPlane (300, 300) 1.0 CSSColour.white 10 4 0.2 0.2
+    |> renderCurve RenderingType.Round complexPoints
 
-writeScreenToFile "<path to folder here>" "Rose" blankScreen
+writeScreenToFile "<path to folder here>" "AddingComplexNumbers" finalScreen
 ```
 
 <a name="setup"></a>
