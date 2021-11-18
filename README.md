@@ -209,6 +209,8 @@ Install-Package C:\PathToThePackageDirectory\Mathil.nupkg
 
 If you are using Visual Studio you can also right click on the project, select **Manage NuGet Packages...** and specify the package source to be the folder where the `.nupkg` file is, before clicking on the package in the **Browse** tap and selecting **Install**.
 
+The `package` folder includes all previous versions of the library. This is so that if you develop something for the library in a previous version that causes an incompatibility on the most recent release, the corresponding version that was originally used is available. If you are using Mathil for the first time, please download the highests version.
+
 If you wish to modify the source code, I have included a Visual Studio solution which includes the class library project for Mathil and a debugging console app project, which should make working with the source code easier. This is how I have been working on this project. This will also mean you can run the library without installing the `.nupkg` file.
 
 Once you have Mathil installed or the source code available, simply add the following declarations at the top of the file and get coding!
