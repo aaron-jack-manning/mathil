@@ -112,6 +112,21 @@
  Gives the linear interpolation function for two points.
 </summary>
 </member>
+<member name="T:Mathil.Polygons.Orientation">
+<summary>
+ Describes the orientation of three points on a two dimensional plane.
+</summary>
+</member>
+<member name="M:Mathil.Polygons.isInsidePolygon(Microsoft.FSharp.Collections.FSharpList{Mathil.MathematicalPrimitives.Point},Mathil.MathematicalPrimitives.Point)">
+<summary>
+ Determines if a point lies within a polygon.
+</summary>
+</member>
+<member name="M:Mathil.Polygons.polygonBounds(Microsoft.FSharp.Collections.FSharpList{Mathil.MathematicalPrimitives.Point})">
+<summary>
+ Calculates the smallest rectangle with sides parrallel to the coordinate system which contains the specified polygon.
+</summary>
+</member>
 <member name="M:Mathil.Polygons.polygonToManyPoints(Microsoft.FSharp.Collections.FSharpList{Mathil.MathematicalPrimitives.Point},System.Int32)">
 <summary>
  Converts a polygon to a series of points along its sides.
@@ -187,6 +202,21 @@
  Represents an image.
 </summary>
 </member>
+<member name="M:Mathil.Rendering.renderManySolidPolygons(Microsoft.FSharp.Collections.FSharpList{Microsoft.FSharp.Collections.FSharpList{Mathil.MathematicalPrimitives.Point}},Mathil.Colours.Colour,Mathil.Rendering.Screen)">
+<summary>
+ Syntactic sugar for many calls to renderSolidPolygon.
+</summary>
+</member>
+<member name="M:Mathil.Rendering.renderSolidPolygon(Microsoft.FSharp.Collections.FSharpList{Mathil.MathematicalPrimitives.Point},Mathil.Colours.Colour,Mathil.Rendering.Screen)">
+<summary>
+ Renders a solid polygon of the specified colour, independent of the background. Use this instead of colourFill when other elements may already rendered where the polygon should go.
+</summary>
+</member>
+<member name="M:Mathil.Rendering.colourFillMany(Microsoft.FSharp.Collections.FSharpList{Mathil.MathematicalPrimitives.Point},Mathil.Colours.Colour,Mathil.Rendering.Screen)">
+<summary>
+ Syntactic sugar for many calls to colourFill.
+</summary>
+</member>
 <member name="M:Mathil.Rendering.colourFill(Mathil.MathematicalPrimitives.Point,Mathil.Colours.Colour,Mathil.Rendering.Screen)">
 <summary>
  Fills a region of a screen which has a solid colour with another solid colour.
@@ -207,6 +237,11 @@
  Adds a list of points to a Curve (list of Dots).
 </summary>
 </member>
+<member name="M:Mathil.Rendering.pointToDot(Mathil.Rendering.Screen,Mathil.Colours.Colour,System.Int32,Mathil.MathematicalPrimitives.Point)">
+<summary>
+ Converts a point to a dot to be rendered.
+</summary>
+</member>
 <member name="M:Mathil.Rendering.createScreen(System.Int32,System.Int32,Mathil.MathematicalPrimitives.Point,Mathil.MathematicalPrimitives.Point,Mathil.Colours.Colour)">
 <summary>
  Creates a blank screen based on the resolution, bounds and colour.
@@ -222,7 +257,7 @@
  Writes the provided screen to the specified filepath as a bitmap (.bmp) file.
 </summary>
 </member>
-<member name="M:Mathil.Templates.cartesianPlane(System.Int32,System.Int32,System.Double,Mathil.Colours.Colour,System.Int32,System.Int32,System.Double,System.Double,Mathil.Rendering.Screen)">
+<member name="M:Mathil.Templates.cartesianPlane``1(System.Int32,System.Int32,System.Double,Mathil.Colours.Colour,System.Int32,``0,System.Double,System.Double,Mathil.Rendering.Screen)">
 <summary>
  Adds a cartesian plane to the specified image.
 </summary>

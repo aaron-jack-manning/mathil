@@ -3,7 +3,7 @@
 module MathematicalPrimitives =
 
     /// Represents a point in the 2D coordinate system used in drawing shapes.
-    [<StructuredFormatDisplay("({x},{y})")>]
+    [<StructuredFormatDisplay("({X}, {Y})")>]
     type Point =
         { X : float; Y : float}
 

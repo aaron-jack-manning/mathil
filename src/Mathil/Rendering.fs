@@ -4,6 +4,7 @@ open System
 
 open Colours
 open MathematicalPrimitives
+open Polygons
 
 module Rendering =
 
@@ -11,6 +12,7 @@ module Rendering =
     type Screen = { Pixels : Colour [,]; HorizontalResolution : int; VerticalResolution : int; BottomLeftBound : Point; TopRightBound : Point }
 
     /// Represents the coordinates of a given pixel.
+    [<StructuredFormatDisplay("({H}, {V})")>]
     type PixelCoordinates = { H : int; V : int }
 
     /// Represents a dot to be rendered: the primitive of a curve.
@@ -50,23 +52,38 @@ module Rendering =
             TopRightBound = topRight
         }
 
-    let private convertCoordinates (point : Point) (screen : Screen) : PixelCoordinates =
+    let private lerpScalar (startPoint : float, endPoint : float) : (float -> float) =
+        (fun t -> (1.0 - t) * startPoint + t * endPoint)
 
-        let lerpScalar (startPoint : float, endPoint : float) : (float -> float) =
-            (fun t -> (1.0 - t) * startPoint + t * endPoint)
+    let private pointToPixelCoordinates (point : Point) (screen : Screen) : PixelCoordinates =
 
         let horizontalParameter = (point.X - screen.BottomLeftBound.X) / (screen.TopRightBound.X - screen.BottomLeftBound.X)
         let verticalParameter = (point.Y - screen.BottomLeftBound.Y) / (screen.TopRightBound.Y - screen.BottomLeftBound.Y)
 
-        let point : Point = { X = lerpScalar (0.0, float screen.HorizontalResolution) horizontalParameter; Y = lerpScalar (0.0, float screen.VerticalResolution) verticalParameter }
+        let point : Point =
+            {
+                X = lerpScalar (0.0, float screen.HorizontalResolution) horizontalParameter
+                Y = lerpScalar (0.0, float screen.VerticalResolution) verticalParameter
+            }
 
         { H = int point.X; V = int point.Y }
 
+    let private pixelCoordinatesToPoint (coordinates : PixelCoordinates) (screen : Screen) : Point =
+        
+        let horizontalParameter = float coordinates.H / float screen.HorizontalResolution
+        let verticalParameter = float coordinates.V / float screen.VerticalResolution
+
+        {
+            X = lerpScalar (screen.BottomLeftBound.X, screen.TopRightBound.X) horizontalParameter
+            Y =  lerpScalar (screen.BottomLeftBound.Y, screen.TopRightBound.Y) verticalParameter    
+        }
+
+    /// Converts a point to a dot to be rendered.
     let pointToDot (screen : Screen) (colour : Colour) (radius : int) (point : Point) : Dot =
         {
             Colour = colour
             Radius = radius
-            Location = convertCoordinates point screen
+            Location = pointToPixelCoordinates point screen
         }
 
     /// Adds a list of points to a Curve (list of Dots).
@@ -113,10 +130,14 @@ module Rendering =
         int (proportion * float ((horizontal + vertical) / 2))
 
     /// Fills a region of a screen which has a solid colour with another solid colour.
-    let colourFill (startingPoint : Point) (desiredColour  : Colour) (screen : Screen) =
+    let colourFill (startingPoint : Point) (desiredColour  : Colour) (screen : Screen) : Screen =
     
-        let startingLocation = convertCoordinates startingPoint screen
+        let startingLocation = pointToPixelCoordinates startingPoint screen
         let initialColour = screen.Pixels.[startingLocation.H, startingLocation.V]
+
+        if initialColour = desiredColour then
+            failwith "the specified colour cannot match the colour at the specified location."
+
 
         let mutable currentChecks = List.singleton startingLocation
         while not (currentChecks |> List.isEmpty) do
@@ -145,3 +166,40 @@ module Rendering =
                 currentChecks <- List.removeAt 0 currentChecks
 
         screen
+
+    /// Syntactic sugar for many calls to colourFill.
+    let colourFillMany (startingPoints : Point list) (desiredColour : Colour) (screen : Screen) : Screen =
+        
+        let mutable newScreen = screen
+
+        for startingPoint in startingPoints do
+            newScreen <- colourFill startingPoint desiredColour newScreen
+
+        newScreen
+
+    /// Renders a solid polygon of the specified colour, independent of the background. Use this instead of colourFill when other elements may already rendered where the polygon should go.
+    let renderSolidPolygon (polygon : Polygon) (desiredColour : Colour) (screen : Screen) : Screen =
+        
+        let bottomLeftPoint, topRightPoint = polygonBounds polygon
+        let bottomLeftPixelLocation = pointToPixelCoordinates bottomLeftPoint screen
+        let topRightPixelLocation = pointToPixelCoordinates topRightPoint screen
+
+        for i = bottomLeftPixelLocation.H to topRightPixelLocation.H do
+            for j = bottomLeftPixelLocation.V to topRightPixelLocation.V do
+                let currentPoint = pixelCoordinatesToPoint { H = i; V = j } screen
+
+                if currentPoint |> isInsidePolygon polygon then
+                    screen.Pixels.[i, j] <- desiredColour
+
+        screen
+
+    /// Syntactic sugar for many calls to renderSolidPolygon.
+    let renderManySolidPolygons (polygons : Polygon list) (desiredColour : Colour) (screen : Screen) : Screen =
+        
+        let mutable newScreen = screen
+        
+        for polygon in polygons do
+            newScreen <- renderSolidPolygon polygon desiredColour screen
+            
+        newScreen
+

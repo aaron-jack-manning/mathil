@@ -44,40 +44,39 @@ module Templates =
         let halfArrowWidth = arrowWidth / 2.0
         let arrowEndpoint = axisEndpoint + arrowLength
 
-        let arrowsPoints =
+        let arrows : Polygon list =
             [
-                // Top arrow
-                createLine (createPoint (horizontalCentre + halfArrowWidth, verticalCentre + axisEndpoint), createPoint (horizontalCentre - halfArrowWidth, verticalCentre + axisEndpoint))
-                createLine (createPoint (horizontalCentre + halfArrowWidth, verticalCentre + axisEndpoint), createPoint (horizontalCentre, verticalCentre + arrowEndpoint))
-                createLine (createPoint (horizontalCentre - halfArrowWidth, verticalCentre + axisEndpoint), createPoint (horizontalCentre, verticalCentre + arrowEndpoint))
+                [ // Top
+                   createPoint (horizontalCentre + halfArrowWidth, verticalCentre + axisEndpoint)
+                   createPoint (horizontalCentre, verticalCentre + arrowEndpoint)
+                   createPoint (horizontalCentre - halfArrowWidth, verticalCentre + axisEndpoint)
+                ]
 
-                // Bottom arrow
-                createLine (createPoint (horizontalCentre + halfArrowWidth, verticalCentre - axisEndpoint), createPoint (horizontalCentre - halfArrowWidth, verticalCentre - axisEndpoint))
-                createLine (createPoint (horizontalCentre + halfArrowWidth, verticalCentre - axisEndpoint), createPoint (horizontalCentre, verticalCentre - arrowEndpoint))
-                createLine (createPoint (horizontalCentre - halfArrowWidth, verticalCentre - axisEndpoint), createPoint (horizontalCentre, verticalCentre - arrowEndpoint))
-                
-                // Right arrow
-                createLine (createPoint (horizontalCentre + axisEndpoint, verticalCentre + halfArrowWidth), createPoint (horizontalCentre + axisEndpoint, verticalCentre - halfArrowWidth))
-                createLine (createPoint (horizontalCentre + axisEndpoint, verticalCentre + halfArrowWidth), createPoint (horizontalCentre + arrowEndpoint, verticalCentre))
-                createLine (createPoint (horizontalCentre + axisEndpoint, verticalCentre - halfArrowWidth), createPoint (horizontalCentre + arrowEndpoint, verticalCentre))
+                [ // Bottom
+                    createPoint (horizontalCentre + halfArrowWidth, verticalCentre - axisEndpoint)
+                    createPoint (horizontalCentre - halfArrowWidth, verticalCentre - axisEndpoint)
+                    createPoint (horizontalCentre, verticalCentre - arrowEndpoint)
+                ]
 
-                // Left arrow
-                createLine (createPoint (horizontalCentre - axisEndpoint, verticalCentre - halfArrowWidth), createPoint (horizontalCentre - axisEndpoint, verticalCentre + halfArrowWidth))
-                createLine (createPoint (horizontalCentre - axisEndpoint, verticalCentre + halfArrowWidth), createPoint (horizontalCentre - arrowEndpoint, verticalCentre))
-                createLine (createPoint (horizontalCentre - axisEndpoint, verticalCentre - halfArrowWidth), createPoint (horizontalCentre - arrowEndpoint, verticalCentre))
+                [ // Right
+                    createPoint (horizontalCentre + axisEndpoint, verticalCentre + halfArrowWidth)
+                    createPoint (horizontalCentre + axisEndpoint, verticalCentre - halfArrowWidth)
+                    createPoint (horizontalCentre + arrowEndpoint, verticalCentre)
+                ]
+
+                [ // Left
+                    createPoint (horizontalCentre - axisEndpoint, verticalCentre + halfArrowWidth)
+                    createPoint (horizontalCentre - arrowEndpoint, verticalCentre)
+                    createPoint (horizontalCentre - axisEndpoint, verticalCentre - halfArrowWidth)
+                ]
+            
             ]
-            |> List.map (fun x -> sample 40 x)
-            |> List.concat
 
         let curve =
             List.empty
             |> addPointsToCurve screen horizontalPoints axisColour axisThickness
             |> addPointsToCurve screen verticalPoints axisColour axisThickness
-            |> addPointsToCurve screen arrowsPoints axisColour arrowEdgeThickness
 
         screen
         |> renderCurve RenderingType.Round curve
-        |> colourFill (createPoint (horizontalCentre, verticalCentre + axisEndpoint + (arrowLength / 2.0))) axisColour
-        |> colourFill (createPoint (horizontalCentre, verticalCentre - axisEndpoint - (arrowLength / 2.0))) axisColour
-        |> colourFill (createPoint (horizontalCentre + axisEndpoint + (arrowLength / 2.0), verticalCentre)) axisColour
-        |> colourFill (createPoint (horizontalCentre - axisEndpoint - (arrowLength / 2.0), verticalCentre)) axisColour
+        |> renderManySolidPolygons arrows axisColour 

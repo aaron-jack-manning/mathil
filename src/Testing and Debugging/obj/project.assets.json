@@ -59,7 +59,7 @@
           }
         }
       },
-      "Mathil/1.0.1": {
+      "Mathil/1.0.2": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
@@ -119,7 +119,7 @@
         "lib/netstandard2.1/zh-Hant/FSharp.Core.resources.dll"
       ]
     },
-    "Mathil/1.0.1": {
+    "Mathil/1.0.2": {
       "type": "project",
       "path": "../Mathil/Mathil.fsproj",
       "msbuildProject": "../Mathil/Mathil.fsproj"
@@ -128,7 +128,7 @@
   "projectFileDependencyGroups": {
     "net6.0": [
       "FSharp.Core >= 6.0.1",
-      "Mathil >= 1.0.1"
+      "Mathil >= 1.0.2"
     ]
   },
   "packageFolders": {
