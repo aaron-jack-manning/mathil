@@ -10,9 +10,9 @@ let vennDiagramExample filepath filename =
 
     let resolution = (3000, 2000)
     let boundingBox = (createPoint (0.0, 0.0), createPoint (150.0, 100.0))
-    let backgroundColor = CSSColour.almond
+    let backgroundColour = CSSColour.almond
     
-    let blankScreen = createScreen resolution boundingBox backgroundColor
+    let blankScreen = createScreen resolution boundingBox backgroundColour
     
     let leftCircle =
         createCircle 25.0 (createPoint (60.0, 50.0))

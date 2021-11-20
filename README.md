@@ -12,7 +12,20 @@
 * [Setup](#setup)
 * [Getting Started](#getting-started)
 * [Documentation](#documentation)
+    * [Colours](#colours)
+    * [Screens](#screens)
+    * [Mathematical Objects](#mathematical-objects)
+    * [Rendering](#rendering)
+        * [Rendering Simple Types](#rendering-simple-types)
+        * [Colour Fills](#colour-fills)
+        * [Polygons](#polygons)
 * [Q and A](#q-and-a)
+    * [Where does the name come from?](#where-does-the-name-come-from)
+    * [Why would I use this instead of a vector drawing tool or a standard graphing calculator?](#why-would-I-use-this-instead-of-a-vector-drawing-tool-or-a-standard-graphing-calculator)
+    * [How well supported will this tool be?](#how-well-supported-will-this-tool-be)
+    * [What file formats does this library produce?](#what-file-formats-does-this-library-produce)
+    * [I have found a bug in the code, or error in documentation, what should I do?](#i-have-found-a-bug-in-the-code-or-error-in-documentation-what-should-I-do)
+    * [Why has (insert feature) been implemented the way that it has?](#why-has-insert-feature-been-implemented-the-way-that-it-has)
 
 <a name="introduction"></a>
 ## Introduction
@@ -32,9 +45,9 @@ The following examples show how a few different kinds of images can be created u
 ```
 let resolution = (3000, 2000)
 let boundingBox = (createPoint (0.0, 0.0), createPoint (150.0, 100.0))
-let backgroundColor = CSSColour.almond
+let backgroundColour = CSSColour.almond
     
-let blankScreen = createScreen resolution boundingBox backgroundColor
+let blankScreen = createScreen resolution boundingBox backgroundColour
     
 let leftCircle =
     createCircle 25.0 (createPoint (60.0, 50.0))
@@ -50,7 +63,7 @@ blankScreen
 |> saveScreenToBitmap "<path to folder here>" "VennDiagram"
 ```
 
-<a name = "trig-geometry"></a>
+<a name="trig-geometry"></a>
 ### Geometric Representations of Trigonometric Functions
 
 ![TrigGeometricRepresentations](examples/TrigGeometricRepresentation_Compressed.bmp)
@@ -107,7 +120,7 @@ blankScreen
 |> saveScreenToBitmap "<path to folder here>" "TrigGeometricRepresentation"
 ```
 
-<a name ="rose"></a>
+<a name="rose"></a>
 ### Rose
 
 ![Rose](examples/Rose_Compressed.bmp)
@@ -146,7 +159,7 @@ blankScreen
 |> saveScreenToBitmap "<path to folder here>" "Rose"
 ```
 
-<a name = "fundamental-theorem-of-calculus"></a>
+<a name="fundamental-theorem-of-calculus"></a>
 ### Fundamental Theorem of Calculus Illustration
 
 ![FundamentalTheoremOfCalculus](examples/FundamentalTheoremOfCalculus_Compressed.bmp)
@@ -268,7 +281,7 @@ When creating our image, we first need to decide on the resolution, bounding box
 ```
 let resolution = (3000, 2000)
 let boundingBox = (createPoint (0.0, 0.0), createPoint (150.0, 100.0))
-let backgroundColor = CSSColour.almond
+let backgroundColour = CSSColour.almond
 ```
 
 The `resolution` will the resolution of our final image. When creating something from scratch, don't worry if you get this wrong, it's easy to change later with minimal cost.
@@ -348,36 +361,243 @@ blankScreen
 |> saveScreenToBitmap @"C:\Users\aaron\Downloads" "VennDiagram"
 ```
 
-Obviously I have specified the file path as required for my computer, so change this according to where you want the image to be.
+Obviously, I have specified the file path as required for my computer, so change this according to where you want the image to be.
 
 If you're not happy with anything, then just go back over your code, change it and run again. If you work with high resolution images, the files produced by this library are quite large as they are uncompressed bitmaps. You can see more about this decision in the Q and A section at the bottom of this page, but in short, if you wish to use another format I recommend converting to a `.png` which will allow significantly smaller file size without a huge loss in quality (or in some cases no loss in quality), especially given a lot of the images that you may produce with this tool have big solid colours.
 
-This is one example of something that can be done using Mathil, for full documentation on all the features of Mathil, see below.
+This is one example of something that can be done using Mathil, for more thorough documentation on all the features of Mathil, see below.
 
 <a name="documentation"></a>
 ## Documentation
 
-I am working on thorough documentation of all the functions in this library which will be available ***here*** when complete.
+<a name="colours"></a>
+### Colours
+
+The type in Mathil that represents a colour is called a `Colour` and has the following declaration.
+
+```
+/// Represents a colour as RGB values.
+type Colour =
+    {
+        Red : byte;
+        Green : byte;
+        Blue : byte
+    }
+```
+
+To create a colour, use one of the following functions:
+
+- `Colour.fromRGB (r : byte, g : byte, b : byte) : Colour` which creates a colour directly from the red, green and blue values.
+- `Colour.fromHex (hexCode : string) : Colour` which creates a colour using the hexadecimal #RRGGBB format.
+
+When working with colours, you can also linearly interpolate between two colours using:
+
+```
+lerpColours (colour1 : Colour) (colour2 : Colour) (parameter : float) : Colour
+```
+
+and specifying a parameter between 0 and 1.
+
+Additionally, there is a colour mixing function:
+
+```
+mixColours (colour1 : Colour) (colour2 : Colour) : Colour
+```
+
+Note that the current implementation of this function fails to give an effective mix in many cases. Mixing colours in a computer is really hard, and I am working hard on a better solution but it may be a while before I can release such an update.
+
+For the sake of having a set of familiar colours built in, I have also implemented all colours in the CSS standard. These exist as static members of the `CSSColour` type.
+
+<a name="screens"></a>
+### Screens
+
+The record type in Mathil that represents the image is called a `Screen` and has the following declaration.
+
+```
+/// Represents an image.
+type Screen =
+    {
+        Pixels : Colour [,]
+        HorizontalResolution : int
+        VerticalResolution : int
+        BottomLeftBound : Point
+        TopRightBound : Point
+    }
+```
+
+To create a screen, we call the `createScreen` function. When creating a screen, we need to specify what resolution we would like for the screen, the initial colour of all the pixels, and the bottom left and top right bounds of our screen. Here is an example usage of this function:
+
+```
+let resolution = (1000, 1000)
+let boundingBox = (createPoint (0.0, 0.0), createPoint (10.0, 10.0))
+let backgroundColour = CSSColour.black
+
+let blankScreen = createScreen resolution boundingBox backgroundColour
+```
+
+*Everywhere in Mathil that an ordered pair is used to represent a point or coordinates, the horizontal coordinate is specified first.*
+
+While `resolution` and `backgroundColour` should be fairly self explanatory, it is worth taking extra care to explain the importance of the `boundingBox`. The purpose of this parameter is to allow a coordinates system to be specified to work with in terms of the mathematical objects being rendered, rather than the resolution. For example, when drawing the graph of sine, it makes sense to set the boundaries of the screen in terms of pi. If we then set the bounding box accordingly, then we can draw our sine function and specify points in that system, and Mathil will automatically convert the coordinate system of our bounding box to the resolution of the screen when rendering.
+
+As a consequence of the way Mathil coerces the coordinates in terms of the bounding box to the screen resolution, it is possible to stretch and distort the image if there is a discrepancy in the aspect ratios. To quickly check the aspect ratios call the `aspectRatios` function and display the result as follows.
+
+```
+printfn "%A" (aspectRatios blankScreen)
+```
+
+This will display the aspect ratio of the screen resolution and bounding box in turn, to gague how significantly the image is stretched.
+
+The recommended way to use Mathil is to avoid rendering anything to the screen until the end. That said, we generally create the screen first since some functions require the data on the screen beyond the array of colours, such as the bounding box. Hence we create the screen, use it's parameters when creating other objects, and then render those objects to the screen. Information on the different mathematical objects to ultimately render follows in the next section.
+
+<a name="mathematical-objects"></a>
+### Mathematical Objects
+
+All mathematical objects are declared in the `MathematicalObjects` module. This module includes the following types:
+
+Point: To be rendered directly, or to represent characteristics of other types.
+```
+type Point =
+    {
+        X : float
+        Y : float
+    }
+```
+
+Function: A parametric function and domain, used when rendering arbitrary curves.
+```
+type Function =
+    {
+        Rule : float -> Point
+        Domain : float * float
+    }
+
+```
+
+BezierCurve: An alias for function which represents a Bezier curve.
+```
+type BezierCurve = Function
+```
+
+LineSegment: An alias for function which represents a line segment curve.
+```
+type LineSegment = Function
+```
+
+DashedLine: A list of line segments which represent a dashed line.
+```
+type DashedLine = LineSegment list
+```
+
+Polygon: A polygon represented by the vertices in cyclic order and a line segment for each edge.
+```
+type Polygon =
+    {
+        Vertices : Point list
+        Edges : LineSegment list
+    }
+```
+
+Vector: A vector represented by a line segment for the body and a triangle for the head.
+```
+type Vector =
+    {
+        Line : LineSegment
+        ArrowHead : Polygon
+    }
+```
+
+Circle: An alias for function which represents a circle.
+```
+type Circle = Function
+```
+
+Each of these types should be created by calling it's corresponding 'create' function such as `createFunction`, `createPolygon`, etc. These functions take in only the required data to represent the mathematical object, but *do not* accept any data regarding the way it will be rendered (such as colour or line thickness).
+
+<a name="rendering"></a>
+### Rendering
+
+<a name="rendering-simple-types"></a>
+#### Rendering Simple Types
+
+In general, the best way to render the desired mathematical objects is to pipeline a series of rendering functions on the screen. Many types have their own specific rendering functions, while all types that are aliases for function can be rendered using `renderFunction`. When rendering an object, the corresponding rendering function also takes in parameters regarding the way the object should be rendered. Here is one example of rendering a circle named `circle` on the initial screen `blankScreen`.
+
+```
+blankScreen
+|> renderFunction circle CSSColour.black 10 300 RenderingType.Round
+```
+
+Here the thickness has been specified as 10, and means the line thickness of our circle will be 10 pixels. Due to the fact that the thickness is specified as a number of pixels, this means that if the resolution of the screen is changed, even though the shape of elements will be stretched to match, the lines will appear to be thicker or thinner relative to the whole image. To counter this issue, please use the `calculateLineThickness` function which will calculate the line thickness as a proportion of the overall image size, and therefore maintain relative thickness across resolution changes.
+
+The number of samples, which is 300 here, represents how many times the function will be sampled when drawing the curve. In general, it is best to keep this number low, render the result, and increase until the result is a smooth curve.
+
+Rendering type simply determines if each function sample is rendered as a square (`RenderingType.Square`) or a circle (`RenderingType.Round`). In general round is the preferred option as it will guarantee line thickness is maintained regardless of the direction of the curve, but square is an option for when drawing things like coordinate axis which are parallel to the pixel array to avoid rounded ends.
+
+If many objects of the same type need to be rendered with *the same* rendering parameters, the `renderMany_` version of the function may be available to use which accepts a list of the corresponding type, and allows for more less verbose code.
+
+When rendering a sequence of objects, be careful about the order, noting that objects rendered after will appear on top if they occupy any of the same pixels. Once all objects are rendered your code will look something like this.
+
+```
+blankScreen
+|> renderFunction sineFunction (Colour.fromHex "#e74c3c") 5 2000 RenderingType.Round
+|> renderManyVectors [horizontalAxis; verticalAxis] CSSColour.black 5 1000 RenderingType.Square
+|> renderManyFunctions greenAngle (Colour.fromHex "#2ecc71") 5 300 RenderingType.Round
+|> renderManyPoints negativeCosineEndpoints (Colour.fromHex "#9b59b6") 20
+|> colourFill (createPoint (pi / 2.0, 0.5)) (Colour.fromHex "#f2a59d")
+|> renderFunction negativeCosineFunction (Colour.fromHex "#9b59b6") 5 2000 RenderingType.Round
+|> saveScreenToBitmap "<path to folder here>" "FundamentalTheoremOfCalculus"
+```
+*Taken from the Fundamental Theorem of Calculus Illustration Above*
+
+Note the final line which has now been added. This takes the screen after all elements have been rendered and saves it to a file in the specified location, with the specified name. This function of `saveScreenToBitmap` will always end our pipeline.
+
+<a name="colour-fills"></a>
+#### Colour Fills
+
+Mathil has a function called `colourFill` which can be used in the rendering pipeline to fill any solid colours of the image. All that is required to use this function is a starting point which is somewhere within the solid colour that should be filled, and the desired new colour.
+
+There are a few things to be wary of when using the colour fill tool.
+
+- Rendering order is especially important as the colour fill uses already rendered elements to bound the region which should be filled.
+- If a function has been rendered with an insufficient number of samples, a region that you may believe is bounded may not be, and hence the colour fill will bleed out. In general, *render shapes and curves first and display the result*, and then add in the colour fill lines in the correct position.
+
+<a name="polygons"></a>
+#### Polygons
+
+Polygons are a type worth giving specific mention to as there are two functions which render polygons in different ways being `renderPolygonSides` and `renderSolidPolygon`.
+
+Both of these functions take an input of a `Polygon`. However, `renderPolygonSides` renders the sides of the polygon as a series line segments, whereas `renderSolidPolygon` renders a solid shape bounded by the polygon. These functions can also be used together on the same polygon to render a polygon with edges that are a different colour to the interior.
+
+Note that `renderSolidPolygon` exists as its own function despite the existence of `colourFill` since `colourFill` requires the region already be bounded, and cannot colour a region which already has elements in the background as they will break up the desired region from being a solid colour.
 
 <a name="q-and-a"></a>
 ## Q and A
 
+<a name="where-does-the-name-come-from"></a>
 #### Where does the name come from?
 
 **Math**ematical **Il**lustrations. It was the best I could come up with...
 
+<a name="why-would-I-use-this-instead-of-a-vector-drawing-tool-or-a-standard-graphing-calculator"></a>
 #### Why would I use this instead of a vector drawing tool or a standard graphing calculator?
 
 I created this to be used in place of a vector drawing tool because it more easily provides consistent results when many similar illustrations must be created, and because it allows fundamentally mathematical concepts to be illustrated from the mathematical objects themselves (parametric curves, colour mixing, etc..). In terms of graphing calculators, they are generally designed as a tool to use while solving a problem, or as an educational tool. This tool is more catered towards people looking for static illustrations to include in texts.
 
+<a name="how-well-supported-will-this-tool-be"></a>
 #### How well supported will this tool be?
 
-As I need new features for my own purposes I will be adding them in, but I do not use this tool for my job or studying so that will be my free time only, and I make no promises about how long I will maintain it. That said, if you have ideas please create an issue and I will occasionally look to see what I can add to make it useful to others, or if you see the framework for something useful to you here but require more features, feel free to fork the repository and work on it yourself. In the meantime, I have set up a project where I will add stuff that I plan to add and stuff I am working on, which you can find [here](https://github.com/users/aaron-jack-manning/projects/13).
+As I need new features for my own purposes I will be adding them in, but I do not use this tool for my job or studying so that will be my free time only, and I make no promises about how long I will maintain it. That said, if you have ideas please create an issue and I will occasionally look to see what I can add to make it useful to others, or if you see the framework for something useful to you here but require more features, feel free to fork the repository and work on it yourself. In the meantime, I have set up a kanban board where I will add stuff that I plan to add and stuff I am working on, which you can find [here](https://github.com/users/aaron-jack-manning/projects/13).
 
+<a name="what-file-formats-does-this-library-produce"></a>
 #### What file formats does this library produce?
 
-All exports are 24bit, uncompressed bitmaps. This is because they are easy to read and write from keeping development and computation time down and well supported enough that they are no trouble to open, view and convert to another format easily. I have no plans to add the capability to export as other image formats.
+All exports are 24bit, uncompressed bitmaps. This is because they are easy to read and write from keeping development and computation time down and well supported enough that they are no trouble to open, view and convert to another format easily. I have no plans to add the capability to export as other image formats at this time.
 
+<a name="i-have-found-a-bug-in-the-code-or-error-in-documentation-what-should-I-do"></a>
+#### I have found a bug in the code, or error in documentation, what should I do?
+
+If you find a mistake in anything I have written here, or a bug in my code, I would greatly appreciate it if you could create an issue on this repository so I can fix it.
+
+<a name="why-has-insert-feature-been-implemented-the-way-that-it-has"></a>
 #### Why has (insert feature) been implemented the way that it has?
 
 I am no expert at computer graphics, and this project has been my way of learning the basics of 2D computer graphics. As such, you may find some of my implementations to be non-standard and strange, because I had serious trouble finding decent resources to understand the standard implementations of what I have done. I just did things the way that seemed most logical to me.
