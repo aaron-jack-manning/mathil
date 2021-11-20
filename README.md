@@ -26,7 +26,7 @@
     * [What file formats does this library produce?](#what-file-formats-does-this-library-produce)
     * [I have found a bug in the code, or error in documentation, what should I do?](#i-have-found-a-bug-in-the-code-or-error-in-documentation-what-should-I-do)
     * [Why has (insert feature) been implemented the way that it has?](#why-has-insert-feature-been-implemented-the-way-that-it-has)
-    * [What license is this issued under?](#name="what-license-is-this-issued-under") 
+    * [What license is this issued under?](#what-license-is-this-issued-under) 
 
 <a name="introduction"></a>
 ## Introduction
