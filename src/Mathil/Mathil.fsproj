@@ -3,20 +3,15 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Version>1.0.2</Version>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Include="Colours.fs" />
-    <Compile Include="MathematicalPrimitives.fs" />
-    <Compile Include="FunctionSampling.fs" />
-    <Compile Include="BezierCurves.fs" />
-    <Compile Include="Polygons.fs" />
-    <Compile Include="Lines.fs" />
-    <Compile Include="MathematicalConstants.fs" />
+    <Compile Include="MathematicalObjects.fs" />
     <Compile Include="Rendering.fs" />
-    <Compile Include="FileIO.fs" />
-    <Compile Include="Templates.fs" />
+    <Compile Include="CompoundShapes.fs" />
+    <Compile Include="Bitmap.fs" />
   </ItemGroup>
 
 </Project>

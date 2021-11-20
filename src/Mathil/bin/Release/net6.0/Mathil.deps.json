@@ -6,7 +6,7 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v6.0": {
-      "Mathil/1.0.2": {
+      "Mathil/1.1.0": {
         "dependencies": {
           "FSharp.Core": "6.0.1"
         },
@@ -66,7 +66,7 @@
     }
   },
   "libraries": {
-    "Mathil/1.0.2": {
+    "Mathil/1.1.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

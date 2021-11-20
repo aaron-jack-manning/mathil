@@ -31,30 +31,32 @@ module Colours =
                 Blue = hexToDec b
             }
 
-        /// Linearly interpolates the red, green and blue values of the colour separately.
-        static member lerp (colour1 : Colour) (colour2 : Colour) (parameter : float) : Colour =
 
-            let lerpBytes (startPoint : byte, endPoint : byte) : (float -> byte) =
-                (fun t -> byte ((1.0 - t) * float startPoint + t * float endPoint))
+    /// Linearly interpolates the red, green and blue values of the colour separately.
+    let lerpColours (colour1 : Colour) (colour2 : Colour) (parameter : float) : Colour =
 
-            {
-                Red = lerpBytes (colour1.Red, colour2.Red) parameter
-                Green = lerpBytes (colour1.Green, colour1.Green) parameter
-                Blue = lerpBytes (colour1.Blue, colour2.Blue) parameter
-            }
+        let lerpBytes (startPoint : byte, endPoint : byte) : (float -> byte) =
+            (fun t -> byte ((1.0 - t) * float startPoint + t * float endPoint))
 
-        /// Mixes two colours together (not very successfully - it is recommended that colour mixing is done manually).
-        static member mix (colour1 : Colour) (colour2 : Colour) : Colour =
-        
-            let pigmentMix (pigment1 : byte) (pigment2 : byte) : byte =
-                let part1 = float ((pown (255 - int pigment1) 2 + pown (255 - int pigment2) 2) / 2)
-                byte (Math.Sqrt(part1))
+        {
+            Red = lerpBytes (colour1.Red, colour2.Red) parameter
+            Green = lerpBytes (colour1.Green, colour1.Green) parameter
+            Blue = lerpBytes (colour1.Blue, colour2.Blue) parameter
+        }
 
-            {
-                Red = pigmentMix colour1.Red colour1.Red
-                Green = pigmentMix colour1.Green colour1.Green
-                Blue = pigmentMix colour1.Blue colour1.Blue
-            }
+    /// Mixes two colours together (not very successfully - it is recommended that colour mixing is done manually).
+    let mixColours (colour1 : Colour) (colour2 : Colour) : Colour =
+    
+        let pigmentMix (pigment1 : byte) (pigment2 : byte) : byte =
+            let part1 = float ((pown (255 - int pigment1) 2 + pown (255 - int pigment2) 2) / 2)
+            byte (Math.Sqrt(part1))
+
+        {
+            Red = pigmentMix colour1.Red colour1.Red
+            Green = pigmentMix colour1.Green colour1.Green
+            Blue = pigmentMix colour1.Blue colour1.Blue
+        }
+
 
     /// Consists of all colours in the CSS standard.
     type CSSColour =
@@ -442,7 +444,7 @@ module Colours =
         static member internationalKleinBlue = { Red = 0uy; Green = 47uy; Blue = 167uy } 
         static member internationalOrangeAerospace = { Red = 255uy; Green = 79uy; Blue = 0uy } 
         static member internationalOrangeEngineering = { Red = 186uy; Green = 22uy; Blue = 12uy } 
-        static member internationalOrangeGoldenGateBridge = { Red = 192uy; Green = 54uy; Blue = 44uy } 
+        static member internationalOrangeGoldenGateBridge = { Red = 192uy; Green = 54uy; Blue = 44uy }
         static member iris = { Red = 90uy; Green = 79uy; Blue = 207uy } 
         static member isabelline = { Red = 244uy; Green = 240uy; Blue = 236uy } 
         static member islamicGreen = { Red = 0uy; Green = 144uy; Blue = 0uy } 
@@ -923,4 +925,3 @@ module Colours =
         static member yellowRyb = { Red = 254uy; Green = 254uy; Blue = 51uy } 
         static member zaffre = { Red = 0uy; Green = 20uy; Blue = 168uy } 
         static member zinnwalditeBrown = { Red = 44uy; Green = 22uy; Blue = 8uy }
-    

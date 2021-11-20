@@ -6,6 +6,8 @@
 * [Examples](#examples)  
     * [Venn Diagram](#venn-diagram) 
     * [Geometric Representations of Trigonometric Functions](#trig-geometry)
+    * [Rose](#rose)
+    * [Fundamental Theorem of Calculus Illustration](#fundamental-theorem-of-calculus)
     * [Adding Complex Numbers](#adding-complex-numbers)
 * [Setup](#setup)
 * [Getting Started](#getting-started)
@@ -20,47 +22,38 @@ Mathil is a library I have created in F# for drawing neat and consistent images 
 <a name="examples"></a>
 ## Examples:
 
-The following examples show how a few different kinds of images can be created using Mathil. Additional examples can also be found in the `examples` folder above, where they exist as functions you can call to generate the images. I have also written up a full explanation of how the code for the first image works in the ***Getting Started*** section.
+The following examples show how a few different kinds of images can be created using Mathil. The original bitmap images, along with functions which you can call to generate these images can also be found in the `examples` folder above. I have also written up a full explanation of how the code for the first image works in the ***Getting Started*** section.
 
 <a name="venn-diagram"></a>
 ### Venn Diagram
 
-![VennDiagram](examples/VennDiagram.png)
+![VennDiagram](examples/VennDiagram_Compressed.bmp)
 
 ```
 let resolution = (3000, 2000)
 let boundingBox = (createPoint (0.0, 0.0), createPoint (150.0, 100.0))
 let backgroundColor = CSSColour.almond
-
+    
 let blankScreen = createScreen resolution boundingBox backgroundColor
-
+    
 let leftCircle =
-    createFunction (ellipse 25.0 25.0 60.0 50.0) (0.0, 2.0 * pi)
-    |> sample 900
+    createCircle 25.0 (createPoint (60.0, 50.0))
 
 let rightCircle =
-    createFunction (ellipse 25.0 25.0 90.0 50.0) (0.0, 2.0 * pi)
-    |> sample 900
-
-let curve =
-    List.empty
-    |> addPointsToCurve blankScreen leftCircle CSSColour.black 10
-    |> addPointsToCurve blankScreen rightCircle CSSColour.black 10
-
-let finalScreen =
-    blankScreen
-    |> renderCurve RenderingType.Round curve
-    |> colourFill (createPoint (75.0, 50.0)) (Colour.fromHex "#9b59b6")
-    |> colourFill (createPoint (60.0, 50.0)) CSSColour.babyBlue
-    |> colourFill (createPoint (90.0, 50.0)) CSSColour.alizarinCrimson
-
-writeScreenToFile "<path to folder here>" "VennDiagram" blankScreen
+    createCircle 25.0 (createPoint (90.0, 50.0))
+    
+blankScreen
+|> renderManyFunctions [leftCircle; rightCircle] CSSColour.black 10 900 RenderingType.Round
+|> colourFill (createPoint (75.0, 50.0)) (Colour.fromHex "#9b59b6")
+|> colourFill (createPoint (60.0, 50.0)) CSSColour.babyBlue
+|> colourFill (createPoint (90.0, 50.0)) CSSColour.alizarinCrimson
+|> saveScreenToBitmap "<path to folder here>" "VennDiagram"
 ```
 
 <a name = "trig-geometry"></a>
 ### Geometric Representations of Trigonometric Functions
 
-![TrigGeometricRepresentations](examples/TrigGeometricRepresentation.png)
+![TrigGeometricRepresentations](examples/TrigGeometricRepresentation_Compressed.bmp)
 
 ```
 open System
@@ -70,71 +63,137 @@ let cos = Math.Cos(angle)
 let sin = Math.Sin(angle)
 let sec = 1.0 / cos
 let cosec = 1.0 / sin
-
+    
 let resolution = (3000, 3000)
 let boundingBox = (createPoint (-2.0, -2.0), createPoint (2.0, 2.0))
 let backgroundColor = Colour.fromHex "#2f3640"
-
+    
 let blankScreen = createScreen resolution boundingBox backgroundColor
-
+    
 let unitCircle =
-    createFunction (ellipse 1.0 1.0 0.0 0.0) (0.0, 2.0 * pi)
-    |> sample 800
-
+    createCircle 1.0 (createPoint (0.0, 0.0)) // 800 samples
 let radius =
-    createLine (createPoint (0.0, 0.0), createPoint (cos, sin))
-    |> sample 100
-
-let sineValue =
-    createLine (createPoint (cos, 0.0), createPoint (cos, sin))
-    |> sample 100
-
-let cosineValue =
-    createLine (createPoint (0.0, sin), createPoint (cos, sin))
-    |> sample 100
-
-let tangentValue =
-    createLine (createPoint (cos, sin), createPoint (sec, 0.0))
-    |> sample 100
-
+    createLineSegment (createPoint (0.0, 0.0)) (createPoint (cos, sin)) // 100 samples
+    
+let sineLine =
+    createLineSegment (createPoint (cos, 0.0)) (createPoint (cos, sin)) // 100 samples
+let cosineLine =
+    createLineSegment (createPoint (0.0, sin)) (createPoint (cos, sin)) // 100 samples
+let tangentLine =
+    createLineSegment (createPoint (cos, sin)) (createPoint (sec, 0)) // 100 samples
 let tangentDashedLine =
-    createDashedLine (createPoint (cos, sin), createPoint (0.0, cosec)) 5
-    |> List.map (fun x -> sample 100 x)
+    createDashedLine (createPoint (cos, sin)) (createPoint (0.0, cosec)) 5
+    
+let cosineEndpoint = createPoint (0.0, sin)
+let sineEndpoint = createPoint (cos, 0.0)
+let tangentEndpoint = createPoint (sec, 0.0)
+    
+let sineColour = Colour.fromHex "#4cd137"
+let cosineColour = Colour.fromHex "#9c88ff"
+let tangentColour = CSSColour.orangePeel
+let offWhite = Colour.fromHex "#f5f6fa"
+    
+blankScreen
+|> renderFunction sineLine sineColour 10 100 RenderingType.Round
+|> renderFunction cosineLine cosineColour 10 100 RenderingType.Round
+|> renderFunction tangentLine tangentColour 10 100 RenderingType.Round
+|> renderDashedLine tangentDashedLine tangentColour 10 40 RenderingType.Round
+|> renderFunction unitCircle offWhite 10 800 RenderingType.Round
+|> renderFunction radius offWhite 10 100 RenderingType.Round
+|> renderCartesianPlane offWhite 10 300 0.1 0.1 0.4
+|> renderPoint sineEndpoint sineColour 30
+|> renderPoint cosineEndpoint cosineColour 30
+|> renderPoint tangentEndpoint tangentColour 30
+|> saveScreenToBitmap "<path to folder here>" "TrigGeometricRepresentation"
+```
+
+<a name ="rose"></a>
+### Rose
+
+![Rose](examples/Rose_Compressed.bmp)
+
+```
+open System
+
+let coefficient = 7
+
+let resolution = (3000, 3000)
+let boundingBox = (createPoint (-1.5, -1.5), createPoint (1.5, 1.5))
+let backgroundColour = CSSColour.white
+
+let blankScreen = createScreen resolution boundingBox backgroundColour
+
+let rose =
+    createFunction (p_rose (float coefficient)) (0.0, 2.0 * pi)
+
+let circleRadius = 1.1
+
+let radialLines =
+    [
+        for i = 0 to (coefficient * 2) do
+            if (coefficient % 2 = 1 && i % 2 = 0) || coefficient % 2 = 0 then
+                yield createLineSegment (createPoint (0.0, 0.0)) (createPoint (circleRadius * Math.Cos(float i * pi / (float (coefficient))), circleRadius * Math.Sin(float i * pi / (float (coefficient)))))
+    ]
+
+let circle =
+    createCircle circleRadius (createPoint (0.0, 0.0))
+
+blankScreen
+|> renderFunction rose CSSColour.black 5 8000 RenderingType.Round
+|> renderCartesianPlane CSSColour.black 4 2000 0.05 0.05 0.3
+|> renderManyFunctions radialLines CSSColour.black 2 1000 RenderingType.Round
+|> renderFunction circle CSSColour.black 2 5000 RenderingType.Round
+|> saveScreenToBitmap "<path to folder here>" "Rose"
+```
+
+<a name = "fundamental-theorem-of-calculus"></a>
+### Fundamental Theorem of Calculus Illustration
+
+![FundamentalTheoremOfCalculus](examples/FundamentalTheoremOfCalculus_Compressed.bmp)
+
+```
+let resolution = (4200, 3000)
+let boundingBox = (createPoint (-1.0, -2.0), createPoint (pi + 1.0, 2.0))
+let backgroundColour = Colour.fromHex "#ecf0f1"
+
+let blankScreen = createScreen resolution boundingBox backgroundColour
+
+let sineFunction =
+    createFunction p_sin (0, pi)
+
+let negativeCosineFunction =
+    createFunction (fun t -> negateYPoint (p_cos t)) (0, pi)
+
+let negativeCosineEndpoints =
+    [
+        createPoint (pi, 1.0)
+        createPoint (0.0, -1.0)
+    ]
+
+let horizontalAxis = createVector (createPoint (pi + 0.25, 0.0)) (createPoint (-0.25, 0.0)) 0.1 0.1
+let verticalAxis = createVector (createPoint (0.0, 1.75)) (createPoint (0.0, -1.75)) 0.1 0.1
+
+let greenAngle =
+    [
+        createDashedLine (createPoint (0.0, -1.0)) (createPoint (pi, -1.0)) 8
+        createDashedLine (createPoint (pi, -1.0)) (createPoint (pi, 1.0)) 5
+    ]
     |> List.concat
 
-let trigLines =
-    List.empty
-    |> addPointsToCurve blankScreen sineValue (Colour.fromHex "#4cd137") 10
-    |> addPointsToCurve blankScreen cosineValue (Colour.fromHex "#9c88ff") 10
-    |> addPointsToCurve blankScreen tangentValue CSSColour.orangePeel 10
-    |> addPointsToCurve blankScreen tangentDashedLine CSSColour.orangePeel 10
-
-let circleAndRadius =
-    List.empty
-    |> addPointsToCurve blankScreen unitCircle (Colour.fromHex "#f5f6fa") 10
-    |> addPointsToCurve blankScreen radius (Colour.fromHex "#f5f6fa") 10
-
-
-let endpoints =
-    List.empty
-    |> addPointsToCurve blankScreen [createPoint (cos, 0.0)] (Colour.fromHex "#4cd137") 30 // Sine
-    |> addPointsToCurve blankScreen [createPoint (0.0, sin)] (Colour.fromHex "#9c88ff") 30 // Cosine
-    |> addPointsToCurve blankScreen [createPoint (sec, 0.0)] CSSColour.orangePeel 30 // Tangent
-
-let finalScreen =
-    blankScreen
-    |> renderCurve RenderingType.Round trigLines
-    |> cartesianPlane (300, 300) 0.4 (Colour.fromHex "#8e919e") 10 4 0.1 0.1
-    |> renderCurve RenderingType.Round circleAndRadius
-    |> renderCurve RenderingType.Round endpoints
-
-writeScreenToFile "<path to folder here>" "TrigGeometricRepresentation" finalScreen
+blankScreen
+|> renderFunction sineFunction (Colour.fromHex "#e74c3c") 5 2000 RenderingType.Round
+|> renderManyVectors [horizontalAxis; verticalAxis] CSSColour.black 5 1000 RenderingType.Square
+|> renderManyFunctions greenAngle (Colour.fromHex "#2ecc71") 5 300 RenderingType.Round
+|> renderManyPoints negativeCosineEndpoints (Colour.fromHex "#9b59b6") 20
+|> colourFill (createPoint (pi / 2.0, 0.5)) (Colour.fromHex "#f2a59d")
+|> renderFunction negativeCosineFunction (Colour.fromHex "#9b59b6") 5 2000 RenderingType.Round
+|> saveScreenToBitmap "<path to folder here>" "FundamentalTheoremOfCalculus"
 ```
 
 <a name="adding-complex-numbers"></a>
 ### Adding Complex Numbers
 
-![AddingComplexNumbers](examples/AddingComplexNumbers.png)
+![AddingComplexNumbers](examples/AddingComplexNumbers_Compressed.bmp)
 
 ```
 let resolution = (3000, 3000)
@@ -143,59 +202,35 @@ let backgroundColour = CSSColour.darkLavender
 
 let blankScreen = createScreen resolution boundingBox backgroundColour
 
-let minorAxisLinesPoints =
+let minorAxisLines =
     [
         for i in [-4..4] do
             yield
-                createLine (createPoint (float i, -4.0), createPoint (float i, 4.0))
-                |> sample 300
+                createLineSegment (createPoint (float i, -4.0)) (createPoint (float i, 4.0))
 
             yield
-                createLine (createPoint (-4.0, float i), createPoint (4.0, float i))
-                |> sample 300
+                createLineSegment (createPoint (-4.0, float i)) (createPoint (4.0, float i))
     ]
-    |> List.concat
 
-let minorAxisLines =
-    List.empty
-    |> addPointsToCurve blankScreen minorAxisLinesPoints CSSColour.white 4
-
-let vectorLines =
+let linesToComplexPoints =
     [
-        createLine (createPoint (-3.0, 1.0), createPoint (0.0, 0.0))
-        createLine (createPoint (1.0, 2.0), createPoint (0.0, 0.0))
+        createLineSegment (createPoint (-3.0, 1.0)) (createPoint (0.0, 0.0))
+        createLineSegment (createPoint (1.0, 2.0)) (createPoint (0.0, 0.0))
     ]
-    |> List.map (fun x -> sample 100 x)
-    |> List.concat
-
-let minorParallelogramBounds =
-    [
-        createLine (createPoint (-3.0, 1.0), createPoint (-2.0, 3.0))
-        createLine (createPoint (1.0, 2.0), createPoint (-2.0, 3.0))
-    ]
-    |> List.map (fun x -> sample 400 x)
-    |> List.concat
-
-let parallelogramBounds =
-    List.empty
-    |> addPointsToCurve blankScreen vectorLines CSSColour.orangeWebColor 10
-    |> addPointsToCurve blankScreen minorParallelogramBounds (Colour.fromHex "#e7b864") 4
 
 let complexPoints =
-    List.empty
-    |> addPointsToCurve blankScreen [createPoint (-3.0, 1.0)] CSSColour.orangeWebColor 30
-    |> addPointsToCurve blankScreen [createPoint (1.0, 2.0)] CSSColour.orangeWebColor 30
-    |> addPointsToCurve blankScreen [createPoint (-2.0, 3.0)] CSSColour.orangeWebColor 30
+    createPoints [-3.0, 1.0; 1.0, 2.0; -2.0, 3.0]
 
-let finalScreen =
-    blankScreen
-    |> renderCurve RenderingType.Round parallelogramBounds
-    |> colourFill (createPoint (-0.5, 0.5)) (Colour.fromHex "#e7b864")
-    |> renderCurve RenderingType.Square minorAxisLines
-    |> cartesianPlane (300, 300) 1.0 CSSColour.white 10 4 0.2 0.2
-    |> renderCurve RenderingType.Round complexPoints
+let parallelogram =
+    createPolygon (createPoints [0.0, 0.0; 1.0, 2.0; -2.0, 3.0; -3.0, 1.0])
 
-writeScreenToFile "<path to folder here>" "AddingComplexNumbers" finalScreen
+blankScreen
+|> renderSolidPolygon parallelogram (Colour.fromHex "#e7b864")
+|> renderManyFunctions minorAxisLines CSSColour.white 2 600 RenderingType.Square
+|> renderCartesianPlane CSSColour.white 10 150 0.2 0.2 1.0
+|> renderManyFunctions linesToComplexPoints CSSColour.orangeWebColor 10 400 RenderingType.Round
+|> renderManyPoints complexPoints CSSColour.orangeWebColor 40
+|> saveScreenToBitmap "<path to folder here>" "AddingComplexNumbers"
 ```
 
 <a name="setup"></a>
@@ -217,15 +252,10 @@ Once you have Mathil installed or the source code available, simply add the foll
 
 ```
 open Mathil.Colours
-open Mathil.MathematicalPrimitives
-open Mathil.BezierCurves
-open Mathil.Lines
-open Mathil.Polygons
-open Mathil.MathematicalConstants
-open Mathil.FunctionSampling
+open Mathil.MathematicalObjects
 open Mathil.Rendering
-open Mathil.FileIO
-open Mathil.Templates
+open Mathil.CompoundShapes
+open Mathil.Bitmap
 ```
 
 <a name="getting-started"></a>
@@ -255,88 +285,70 @@ let blankScreen = createScreen resolution boundingBox backgroundColor
 
 Notice that this variable is of type `Screen`. We have our screen now because we want to use its features to figure out how each other element will be rendered, but we won't actually add anything to it until the end.
 
-Now let's create some circles for our venn diagram. When drawing a mathematical function in Mathil, we need to create something of type `Function`. Some library functions like `createBezierCurve` will do this automatically, but let's create the function ourself in this case. Looking at the definition of a function in the source code we're going to need two things, a rule and a domain.
+Now let's create some circles for our venn diagram. When drawing a mathematical function in Mathil, we need to create something of type `Function` (or something implicitly convertible to it). The type declaration for a `Function` is as follows:
 
 ```
 type Function =
     { Rule : float -> Point; Domain : Domain }
 ```
 
-A rule is just a parametric function from a float to a point. When creating a rule for yourself, you just need to create a function of that form, using `createPoint` to correctly create an instance of the `Point` type. Luckily for us though, in the library I have included some standard, common and useful functions, including one for an `ellipse`. The `ellipse` function takes 5 inputs labelled `rx ry x1 y1 t`. The first two are the radius in terms of ***x*** and ***y***, and ***(x1, y1)*** represents the centre. When we use this function we are going to curry it and leave the last input so we have a parametric function.
+The rule is just a parametric function from a float to a point. When creating a rule for yourself, you just need to create a function of that form, using `createPoint` to correctly create an instance of the `Point` type.
 
-Given our bounding box (150.0, 100.0), I am going to choose the radius of our circle to be 50 and the location to be (60.0, 50.0), which will make our circle half the height of the image, and position it slightly offset  from the centre along our horizontal axis.
+Luckily for us though, I have implemented a `createCircle` function. This will figure out all the implementation details of a circle for us.
 
-To create our function we call `createFunction`.
-
-```
-createFunction (ellipse 25.0 25.0 90.0 50.0) (0.0, 2.0 * pi)
-```
-
-The second input here is our domain, in this case we need to go from 0 to 2 pi in terms of our parameter in order to complete a full circle.
-
-Now we want to sample that function many times in order to get a series of points which we can render. We can do that by pipelining our `Function` with the `sample` function and telling it how many times we wish to sample it. The number of samples is something worth playing around with and seeing what works after rendering the result. Let's store that as a variable called `leftCircle`.
+Given our bounding box (150.0, 100.0), I am going to choose the radius of our circle to be 50 and the location to be (60.0, 50.0), which will make our circle half the height of the image, and position it slightly offset from the centre along our horizontal axis.
 
 ```
 let leftCircle =
-    createFunction (ellipse 25.0 25.0 60.0 50.0) (0.0, 2.0 * pi)
-    |> sample 900
+    createCircle 25.0 (createPoint (60.0, 50.0))
 ```
 
 Let's do the same for the right circle now, that'll be pretty similar, but just a different value for the ***x*** coordinate of the centre.
 
 ```
 let rightCircle =
-    createFunction (ellipse 25.0 25.0 90.0 50.0) (0.0, 2.0 * pi)
-    |> sample 900
+    createCircle 25.0 (createPoint (90.0, 50.0))
 ```
 
-Next we need to convert our series of points into an instance of the `Curve` type. A curve represents a `Dot` list, where a `Dot` is the type in Mathil used to represent the object that gets rendered for a point. This means it contains extra information about the colour, the radius, and the position in terms of the pixels of the screen now, instead of the bounding box.
+Now we can render our two circles on the image. Since each circle is of type `Circle`, which is an alias for `Function`, we can render each to the screen by using the `renderFunction` function. This function takes in the colour we wish to use, the thickness of our curve, the number of samples (this is because it's rendered as a series of points) and the rendering type (which determines if each sample point is rendered as a circle or square).
 
-To do this we will create an empty list, and pipeline the adding of our points using `addPointsToCurve`.
-
-```
-let curve =
-    List.empty
-    |> addPointsToCurve blankScreen leftCircle CSSColour.black 10
-    |> addPointsToCurve blankScreen rightCircle CSSColour.black 10
-```
-
-This `addPointsToCurve` function takes in the screen (so that it knows our resolution and bounding box), the series of points we wish to convert (in this case our two circles), the colour and the radius of each dot, which will become the line thickness, in pixels. If the ability to resize the image after the fact without disturbing the relative line thickness is important, I recommend you use the `calculateLineThickness` function and specify the thickness as a proportion of the overall image size. This means that lines will get thicker if the resolution is changed, without having to manually change them.
-
-We're almost done now, all we need to do is render all of that to our screen and do some colour fills. Let's start by rendering the curve. To do so let's use the `renderCurve` function.
+If the ability to resize the image after the fact without disturbing the relative line thickness is important, I recommend you use the `calculateLineThickness` function and specify the thickness as a proportion of the overall image size. This means that lines will get thicker if the resolution is changed, without having to manually change them.
 
 ```
-let finalScreen =
-    blankScreen
-    |> renderCurve RenderingType.Round curve
+blankScreen
+|> renderFunction leftCircle CSSColour.black 10 900 RenderingType.Round
+|> renderFunction rightCircle CSSColour.black 10 900 RenderingType.Round
 ```
 
-Just like in the case of converting our points to a `Curve`, the neatest way to do this is always to prepare the elements ahead of time, and then use the pipe operator to continually operate on the screen, rendering things in sequence. When rendering many elements, be careful about the order of rendering, so that you have things layered in the way you wish.
-
-The `RenderingType` enum specifies whether each `Dot` is rendered as a circle or a square. In general, the option for a square should only be used with lines that are vertical and horizontal, when sharp ends are desired. For any curve, round is the way to go.
-
-The last thing is to set some colours, for this we use the `colourFill` function, and we just need to specify a point within the solid colour we wish to fill, and the colour we want it, and this function will fill that whole region accordingly.
-
-Instead of writing our colour fill code separately, let's just add some function calls to our pipeline for rendering.
+Since we are rendering two curves with the same rendering settings, we can simplify our code with a single call to `renderManyFunctions` as follows:
 
 ```
-let finalScreen =
-    blankScreen
-    |> renderCurve RenderingType.Round curve
-    |> colourFill (createPoint (75.0, 50.0)) (Colour.fromHex "#9b59b6")
-    |> colourFill (createPoint (60.0, 50.0)) CSSColour.babyBlue
-    |> colourFill (createPoint (90.0, 50.0)) CSSColour.alizarinCrimson
+blankScreen
+|> renderManyFunctions [leftCircle; rightCircle] CSSColour.black 10 900 RenderingType.Round
 ```
 
-This is another example when order of rendering is important. Without the circles to bound the colour fill, each would override the previous and change the whole image colour.
-
-Great, we now have our image complete, the last thing to do is save it to a file by specifying the filepath and filename. Obviously I have specified the filepath to where I want it on my computer, so change this for your use case.
+Next we need to fill each section of our diagram with the colour we wish. To do this we can use the `colourFill` function. This will take a starting point somewhere in the desired region, and the colour we wish to change it to, and it will fill that region accordingly. So let's add three calls to that to our pipeline, each specifying a point somewhere within each of the 3 regions.
 
 ```
-writeScreenToFile @"C:\Users\aaron\Downloads" "VennDiagram" finalScreen
+blankScreen
+|> renderManyFunctions [leftCircle; rightCircle] CSSColour.black 10 900 RenderingType.Round
+|> colourFill (createPoint (75.0, 50.0)) (Colour.fromHex "#9b59b6")
+|> colourFill (createPoint (60.0, 50.0)) CSSColour.babyBlue
+|> colourFill (createPoint (90.0, 50.0)) CSSColour.alizarinCrimson
 ```
 
-Also note that you can add the above line to your pipline of rendering and not bother with saving the screen for the same output. Now just run your code and find your `.bmp` file wherever you specified.
+The last thing we need to do is save our image to a file. This can be done using the `saveScreenToBitmap` function which requires the folder you wish to save the image to and the file name. This is easiest to add to our pipeline.
+
+```
+blankScreen
+|> renderManyFunctions [leftCircle; rightCircle] CSSColour.black 10 900 RenderingType.Round
+|> colourFill (createPoint (75.0, 50.0)) (Colour.fromHex "#9b59b6")
+|> colourFill (createPoint (60.0, 50.0)) CSSColour.babyBlue
+|> colourFill (createPoint (90.0, 50.0)) CSSColour.alizarinCrimson
+|> saveScreenToBitmap @"C:\Users\aaron\Downloads" "VennDiagram"
+```
+
+Obviously I have specified the file path as required for my computer, so change this according to where you want the image to be.
 
 If you're not happy with anything, then just go back over your code, change it and run again. If you work with high resolution images, the files produced by this library are quite large as they are uncompressed bitmaps. You can see more about this decision in the Q and A section at the bottom of this page, but in short, if you wish to use another format I recommend converting to a `.png` which will allow significantly smaller file size without a huge loss in quality (or in some cases no loss in quality), especially given a lot of the images that you may produce with this tool have big solid colours.
 

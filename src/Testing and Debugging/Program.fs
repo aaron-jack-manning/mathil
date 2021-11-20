@@ -1,12 +1,7 @@
 ﻿open Mathil.Colours
-open Mathil.MathematicalPrimitives
-open Mathil.BezierCurves
-open Mathil.Polygons
-open Mathil.Lines
-open Mathil.MathematicalConstants
-open Mathil.FunctionSampling
+open Mathil.MathematicalObjects
 open Mathil.Rendering
-open Mathil.FileIO
-open Mathil.Templates
+open Mathil.CompoundShapes
+open Mathil.Bitmap
 
 // Write code using Mathil here.

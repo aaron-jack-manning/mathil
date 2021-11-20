@@ -1,12 +1,8 @@
 open Mathil.Colours
-open Mathil.MathematicalPrimitives
-open Mathil.BezierCurves
-open Mathil.Polygons
-open Mathil.MathematicalConstants
-open Mathil.FunctionSampling
+open Mathil.MathematicalObjects
 open Mathil.Rendering
-open Mathil.FileIO
-open Mathil.Templates
+open Mathil.CompoundShapes
+open Mathil.Bitmap
 
 open System
 
@@ -15,33 +11,23 @@ let vennDiagramExample filepath filename =
     let resolution = (3000, 2000)
     let boundingBox = (createPoint (0.0, 0.0), createPoint (150.0, 100.0))
     let backgroundColor = CSSColour.almond
-
+    
     let blankScreen = createScreen resolution boundingBox backgroundColor
-
+    
     let leftCircle =
-        createFunction (ellipse 25.0 25.0 60.0 50.0) (0.0, 2.0 * pi)
-        |> sample 900
+        createCircle 25.0 (createPoint (60.0, 50.0))
 
     let rightCircle =
-        createFunction (ellipse 25.0 25.0 90.0 50.0) (0.0, 2.0 * pi)
-        |> sample 900
+        createCircle 25.0 (createPoint (90.0, 50.0))
+    
+    blankScreen
+    |> renderManyFunctions [leftCircle; rightCircle] CSSColour.black 10 900 RenderingType.Round
+    |> colourFill (createPoint (75.0, 50.0)) (Colour.fromHex "#9b59b6")
+    |> colourFill (createPoint (60.0, 50.0)) CSSColour.babyBlue
+    |> colourFill (createPoint (90.0, 50.0)) CSSColour.alizarinCrimson
+    |> saveScreenToBitmap filepath filename
 
-    let curve =
-        List.empty
-        |> addPointsToCurve blankScreen leftCircle CSSColour.black 10
-        |> addPointsToCurve blankScreen rightCircle CSSColour.black 10
-
-    let finalScreen =
-        blankScreen
-        |> renderCurve RenderingType.Round curve
-        |> colourFill (createPoint (75.0, 50.0)) (Colour.fromHex "#9b59b6")
-        |> colourFill (createPoint (60.0, 50.0)) CSSColour.babyBlue
-        |> colourFill (createPoint (90.0, 50.0)) CSSColour.alizarinCrimson
-
-    writeScreenToFile filepath filename blankScreen
-
-
-let roseExample filepath filename =
+let roseExample filepath filename coefficient =
 
     let resolution = (3000, 3000)
     let boundingBox = (createPoint (-1.5, -1.5), createPoint (1.5, 1.5))
@@ -49,19 +35,27 @@ let roseExample filepath filename =
 
     let blankScreen = createScreen resolution boundingBox backgroundColour
 
-    let rosePoints =
-        createFunction (rose 6.0) (0.0, 2.0 * pi)
-        |> sample 8000
+    let rose =
+        createFunction (p_rose (float coefficient)) (0.0, 2.0 * pi)
 
-    let curve =
-        List.empty
-        |> addPointsToCurve blankScreen rosePoints CSSColour.black 5
+    let circleRadius = 1.1
 
-    let finalScreen =
-        blankScreen
-        |> renderCurve RenderingType.Round curve
+    let radialLines =
+        [
+            for i = 0 to (coefficient * 2) do
+                if (coefficient % 2 = 1 && i % 2 = 0) || coefficient % 2 = 0 then
+                    yield createLineSegment (createPoint (0.0, 0.0)) (createPoint (circleRadius * Math.Cos(float i * pi / (float (coefficient))), circleRadius * Math.Sin(float i * pi / (float (coefficient)))))
+        ]
 
-    writeScreenToFile filepath filename finalScreen
+    let circle =
+        createCircle circleRadius (createPoint (0.0, 0.0))
+
+    blankScreen
+    |> renderFunction rose CSSColour.black 5 8000 RenderingType.Round
+    |> renderCartesianPlane CSSColour.black 4 2000 0.05 0.05 0.3
+    |> renderManyFunctions radialLines CSSColour.black 2 1000 RenderingType.Round
+    |> renderFunction circle CSSColour.black 2 5000 RenderingType.Round
+    |> saveScreenToBitmap filepath filename
 
 let fundamentalTheoremOfCalculusIllustrationExample filepath filename =
 
@@ -71,68 +65,36 @@ let fundamentalTheoremOfCalculusIllustrationExample filepath filename =
 
     let blankScreen = createScreen resolution boundingBox backgroundColour
 
-    let sinePoints =
-        createFunction sine (0, pi)
-        |> sample 2000
+    let sineFunction =
+        createFunction p_sin (0, pi)
 
-    let negativeCosinePoints =
-        createFunction (fun t -> Point.negy (cosine t)) (0, pi)
-        |> sample 2000
+    let negativeCosineFunction =
+        createFunction (fun t -> negateYPoint (p_cos t)) (0, pi)
 
     let negativeCosineEndpoints =
-        List.append
-            [pointToDot blankScreen (Colour.fromHex "#9b59b6") 20 (createPoint (pi, 1.0))]
-            [pointToDot blankScreen (Colour.fromHex "#9b59b6") 20 (createPoint (0.0, -1.0))]
+        [
+            createPoint (pi, 1.0)
+            createPoint (0.0, -1.0)
+        ]
 
-    let sineCurve =
-        List.empty
-        |> addPointsToCurve blankScreen sinePoints (Colour.fromHex "#e74c3c") 5
-
-    let negativeCosineCurve =
-        List.empty
-        |> addPointsToCurve blankScreen negativeCosinePoints (Colour.fromHex "#9b59b6") 5
-
-    let horizontalAxisPoints =
-        createBezierCurve (pointsFromTupleList [-0.25, 0.0; pi + 0.25, 0.0])
-        |> sample 1000
-
-    let verticalAxisPoints =
-        createBezierCurve (pointsFromTupleList [0.0, -1.75; 0.0, 1.75])
-        |> sample 1000
-
-    let horizontalAxis =
-        List.empty
-        |> addPointsToCurve blankScreen horizontalAxisPoints CSSColour.black 5
-
-    let verticalAxis =
-        List.empty
-        |> addPointsToCurve blankScreen verticalAxisPoints CSSColour.black 5
-
-
-    let negativeCosineHorizontalComponentPoints =
-        createBezierCurve (pointsFromTupleList [0.0, -1.0; pi, -1.0])
-        |> sample 300
-
-    let negativeCosineVerticalComponentPoints =
-        createBezierCurve (pointsFromTupleList [pi, -1.0; pi, 1.0])
-        |> sample 300
+    let horizontalAxis = createVector (createPoint (pi + 0.25, 0.0)) (createPoint (-0.25, 0.0)) 0.1 0.1
+    let verticalAxis = createVector (createPoint (0.0, 1.75)) (createPoint (0.0, -1.75)) 0.1 0.1
 
     let greenAngle =
-        List.empty
-        |> addPointsToCurve blankScreen negativeCosineHorizontalComponentPoints (Colour.fromHex "#2ecc71") 5
-        |> addPointsToCurve blankScreen negativeCosineVerticalComponentPoints (Colour.fromHex "#2ecc71") 5
+        [
+            createDashedLine (createPoint (0.0, -1.0)) (createPoint (pi, -1.0)) 8
+            createDashedLine (createPoint (pi, -1.0)) (createPoint (pi, 1.0)) 5
+        ]
+        |> List.concat
 
-    let finalScreen =
-        blankScreen
-        |> renderCurve RenderingType.Round sineCurve
-        |> renderCurve RenderingType.Square horizontalAxis
-        |> colourFill (createPoint (pi / 2.0, 0.5)) (Colour.fromHex "#f2a59d")
-        |> renderCurve RenderingType.Square greenAngle
-        |> renderCurve RenderingType.Round negativeCosineCurve
-        |> renderCurve RenderingType.Square verticalAxis
-        |> renderCurve RenderingType.Round negativeCosineEndpoints
-
-    writeScreenToFile filepath filename finalScreen
+    blankScreen
+    |> renderFunction sineFunction (Colour.fromHex "#e74c3c") 5 2000 RenderingType.Round
+    |> renderManyVectors [horizontalAxis; verticalAxis] CSSColour.black 5 1000 RenderingType.Square
+    |> renderManyFunctions greenAngle (Colour.fromHex "#2ecc71") 5 300 RenderingType.Round
+    |> renderManyPoints negativeCosineEndpoints (Colour.fromHex "#9b59b6") 20
+    |> colourFill (createPoint (pi / 2.0, 0.5)) (Colour.fromHex "#f2a59d")
+    |> renderFunction negativeCosineFunction (Colour.fromHex "#9b59b6") 5 2000 RenderingType.Round
+    |> saveScreenToBitmap filepath filename
 
 let trigGeometricRepresentationExample filepath filename angle =
 
@@ -140,65 +102,48 @@ let trigGeometricRepresentationExample filepath filename angle =
     let sin = Math.Sin(angle)
     let sec = 1.0 / cos
     let cosec = 1.0 / sin
-
+    
     let resolution = (3000, 3000)
     let boundingBox = (createPoint (-2.0, -2.0), createPoint (2.0, 2.0))
     let backgroundColor = Colour.fromHex "#2f3640"
-
+    
     let blankScreen = createScreen resolution boundingBox backgroundColor
-
+    
     let unitCircle =
-        createFunction (ellipse 1.0 1.0 0.0 0.0) (0.0, 2.0 * pi)
-        |> sample 800
-
+        createCircle 1.0 (createPoint (0.0, 0.0)) // 800 samples
     let radius =
-        createLine (createPoint (0.0, 0.0), createPoint (cos, sin))
-        |> sample 100
-
-    let sineValue =
-        createLine (createPoint (cos, 0.0), createPoint (cos, sin))
-        |> sample 100
-
-    let cosineValue =
-        createLine (createPoint (0.0, sin), createPoint (cos, sin))
-        |> sample 100
-
-    let tangentValue =
-        createLine (createPoint (cos, sin), createPoint (sec, 0.0))
-        |> sample 100
-
+        createLineSegment (createPoint (0.0, 0.0)) (createPoint (cos, sin)) // 100 samples
+    
+    let sineLine =
+        createLineSegment (createPoint (cos, 0.0)) (createPoint (cos, sin)) // 100 samples
+    let cosineLine =
+        createLineSegment (createPoint (0.0, sin)) (createPoint (cos, sin)) // 100 samples
+    let tangentLine =
+        createLineSegment (createPoint (cos, sin)) (createPoint (sec, 0)) // 100 samples
     let tangentDashedLine =
-        createDashedLine (createPoint (cos, sin), createPoint (0.0, cosec)) 5
-        |> List.map (fun x -> sample 100 x)
-        |> List.concat
-
-    let trigLines =
-        List.empty
-        |> addPointsToCurve blankScreen sineValue (Colour.fromHex "#4cd137") 10
-        |> addPointsToCurve blankScreen cosineValue (Colour.fromHex "#9c88ff") 10
-        |> addPointsToCurve blankScreen tangentValue CSSColour.orangePeel 10
-        |> addPointsToCurve blankScreen tangentDashedLine CSSColour.orangePeel 10
-
-    let circleAndRadius =
-        List.empty
-        |> addPointsToCurve blankScreen unitCircle (Colour.fromHex "#f5f6fa") 10
-        |> addPointsToCurve blankScreen radius (Colour.fromHex "#f5f6fa") 10
-
-
-    let endpoints =
-        List.empty
-        |> addPointsToCurve blankScreen [createPoint (cos, 0.0)] (Colour.fromHex "#4cd137") 30 // Sine
-        |> addPointsToCurve blankScreen [createPoint (0.0, sin)] (Colour.fromHex "#9c88ff") 30 // Cosine
-        |> addPointsToCurve blankScreen [createPoint (sec, 0.0)] CSSColour.orangePeel 30 // Tangent
-
-    let finalScreen =
-        blankScreen
-        |> renderCurve RenderingType.Round trigLines
-        |> cartesianPlane (300, 300) 0.4 (Colour.fromHex "#8e919e") 10 4 0.1 0.1
-        |> renderCurve RenderingType.Round circleAndRadius
-        |> renderCurve RenderingType.Round endpoints
-
-    writeScreenToFile filepath filename finalScreen
+        createDashedLine (createPoint (cos, sin)) (createPoint (0.0, cosec)) 5
+    
+    let cosineEndpoint = createPoint (0.0, sin)
+    let sineEndpoint = createPoint (cos, 0.0)
+    let tangentEndpoint = createPoint (sec, 0.0)
+    
+    let sineColour = Colour.fromHex "#4cd137"
+    let cosineColour = Colour.fromHex "#9c88ff"
+    let tangentColour = CSSColour.orangePeel
+    let offWhite = Colour.fromHex "#f5f6fa"
+    
+    blankScreen
+    |> renderFunction sineLine sineColour 10 100 RenderingType.Round
+    |> renderFunction cosineLine cosineColour 10 100 RenderingType.Round
+    |> renderFunction tangentLine tangentColour 10 100 RenderingType.Round
+    |> renderDashedLine tangentDashedLine tangentColour 10 40 RenderingType.Round
+    |> renderFunction unitCircle offWhite 10 800 RenderingType.Round
+    |> renderFunction radius offWhite 10 100 RenderingType.Round
+    |> renderCartesianPlane offWhite 10 300 0.1 0.1 0.4
+    |> renderPoint sineEndpoint sineColour 30
+    |> renderPoint cosineEndpoint cosineColour 30
+    |> renderPoint tangentEndpoint tangentColour 30
+    |> saveScreenToBitmap filepath filename
 
 let addingComplexNumbersExample filepath filename =
     
@@ -208,56 +153,32 @@ let addingComplexNumbersExample filepath filename =
 
     let blankScreen = createScreen resolution boundingBox backgroundColour
 
-    let minorAxisLinesPoints =
+    let minorAxisLines =
         [
             for i in [-4..4] do
                 yield
-                    createLine (createPoint (float i, -4.0), createPoint (float i, 4.0))
-                    |> sample 300
+                    createLineSegment (createPoint (float i, -4.0)) (createPoint (float i, 4.0))
 
                 yield
-                    createLine (createPoint (-4.0, float i), createPoint (4.0, float i))
-                    |> sample 300
+                    createLineSegment (createPoint (-4.0, float i)) (createPoint (4.0, float i))
         ]
-        |> List.concat
 
-    let minorAxisLines =
-        List.empty
-        |> addPointsToCurve blankScreen minorAxisLinesPoints CSSColour.white 4
-
-    let vectorLines =
+    let linesToComplexPoints =
         [
-            createLine (createPoint (-3.0, 1.0), createPoint (0.0, 0.0))
-            createLine (createPoint (1.0, 2.0), createPoint (0.0, 0.0))
+            createLineSegment (createPoint (-3.0, 1.0)) (createPoint (0.0, 0.0))
+            createLineSegment (createPoint (1.0, 2.0)) (createPoint (0.0, 0.0))
         ]
-        |> List.map (fun x -> sample 100 x)
-        |> List.concat
-
-    let minorParallelogramBounds =
-        [
-            createLine (createPoint (-3.0, 1.0), createPoint (-2.0, 3.0))
-            createLine (createPoint (1.0, 2.0), createPoint (-2.0, 3.0))
-        ]
-        |> List.map (fun x -> sample 400 x)
-        |> List.concat
-
-    let parallelogramBounds =
-        List.empty
-        |> addPointsToCurve blankScreen vectorLines CSSColour.orangeWebColor 10
-        |> addPointsToCurve blankScreen minorParallelogramBounds (Colour.fromHex "#e7b864") 4
 
     let complexPoints =
-        List.empty
-        |> addPointsToCurve blankScreen [createPoint (-3.0, 1.0)] CSSColour.orangeWebColor 30
-        |> addPointsToCurve blankScreen [createPoint (1.0, 2.0)] CSSColour.orangeWebColor 30
-        |> addPointsToCurve blankScreen [createPoint (-2.0, 3.0)] CSSColour.orangeWebColor 30
+        createPoints [-3.0, 1.0; 1.0, 2.0; -2.0, 3.0]
 
-    let finalScreen =
-        blankScreen
-        |> renderCurve RenderingType.Round parallelogramBounds
-        |> colourFill (createPoint (-0.5, 0.5)) (Colour.fromHex "#e7b864")
-        |> renderCurve RenderingType.Square minorAxisLines
-        |> cartesianPlane (300, 300) 1.0 CSSColour.white 10 4 0.2 0.2
-        |> renderCurve RenderingType.Round complexPoints
+    let parallelogram =
+        createPolygon (createPoints [0.0, 0.0; 1.0, 2.0; -2.0, 3.0; -3.0, 1.0])
 
-    writeScreenToFile filepath filename finalScreen
+    blankScreen
+    |> renderSolidPolygon parallelogram (Colour.fromHex "#e7b864")
+    |> renderManyFunctions minorAxisLines CSSColour.white 2 600 RenderingType.Square
+    |> renderCartesianPlane CSSColour.white 10 150 0.2 0.2 1.0
+    |> renderManyFunctions linesToComplexPoints CSSColour.orangeWebColor 10 400 RenderingType.Round
+    |> renderManyPoints complexPoints CSSColour.orangeWebColor 40
+    |> saveScreenToBitmap filepath filename
