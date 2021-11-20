@@ -26,6 +26,7 @@
     * [What file formats does this library produce?](#what-file-formats-does-this-library-produce)
     * [I have found a bug in the code, or error in documentation, what should I do?](#i-have-found-a-bug-in-the-code-or-error-in-documentation-what-should-I-do)
     * [Why has (insert feature) been implemented the way that it has?](#why-has-insert-feature-been-implemented-the-way-that-it-has)
+    * [What license is this issued under?](#name="what-license-is-this-issued-under") 
 
 <a name="introduction"></a>
 ## Introduction
@@ -601,3 +602,8 @@ If you find a mistake in anything I have written here, or a bug in my code, I wo
 #### Why has (insert feature) been implemented the way that it has?
 
 I am no expert at computer graphics, and this project has been my way of learning the basics of 2D computer graphics. As such, you may find some of my implementations to be non-standard and strange, because I had serious trouble finding decent resources to understand the standard implementations of what I have done. I just did things the way that seemed most logical to me.
+
+<a name="what-license-is-this-issued-under"></a>
+#### What license is this issued under?
+
+Mathil is released with the GPLv3 license. Please see `LICENSE` at the top level of this repository.
