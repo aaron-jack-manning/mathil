@@ -22,7 +22,7 @@ Mathil is a library I have created in F# for drawing neat and consistent images 
 <a name="examples"></a>
 ## Examples:
 
-The following examples show how a few different kinds of images can be created using Mathil. The original bitmap images, along with functions which you can call to generate these images can also be found in the `examples` folder above. I have also written up a full explanation of how the code for the first image works in the ***Getting Started*** section.
+The following examples show how a few different kinds of images can be created using Mathil. The uncompressed bitmap images, along with functions which you can call to generate these images can also be found in the `examples` folder above. I have also written up a full explanation of how the code for the first image works in the ***Getting Started*** section.
 
 <a name="venn-diagram"></a>
 ### Venn Diagram
