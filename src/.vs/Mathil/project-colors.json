@@ -1,0 +1,16 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "32b8dc6e-044e-4a98-8220-7b6f8b4e0476": {
+      "ProjectGuid": "32b8dc6e-044e-4a98-8220-7b6f8b4e0476",
+      "DisplayName": "Mathil",
+      "ColorIndex": 0
+    },
+    "8144fe5d-d35f-48f4-8314-5103b476485d": {
+      "ProjectGuid": "8144fe5d-d35f-48f4-8314-5103b476485d",
+      "DisplayName": "Testing and Debugging",
+      "ColorIndex": 1
+    }
+  },
+  "NextColorIndex": 2
+}

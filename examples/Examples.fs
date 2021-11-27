@@ -36,7 +36,7 @@ let roseExample filepath filename coefficient =
     let blankScreen = createScreen resolution boundingBox backgroundColour
 
     let rose =
-        createFunction (p_rose (float coefficient)) (0.0, 2.0 * pi)
+        createFunction (Parametric.rose (float coefficient)) (0.0, 2.0 * Constants.pi)
 
     let circleRadius = 1.1
 
@@ -60,30 +60,30 @@ let roseExample filepath filename coefficient =
 let fundamentalTheoremOfCalculusIllustrationExample filepath filename =
 
     let resolution = (4200, 3000)
-    let boundingBox = (createPoint (-1.0, -2.0), createPoint (pi + 1.0, 2.0))
+    let boundingBox = (createPoint (-1.0, -2.0), createPoint (Constants.pi + 1.0, 2.0))
     let backgroundColour = Colour.fromHex "#ecf0f1"
 
     let blankScreen = createScreen resolution boundingBox backgroundColour
 
     let sineFunction =
-        createFunction p_sin (0, pi)
+        createFunction Parametric.sin (0, Constants.pi)
 
     let negativeCosineFunction =
-        createFunction (fun t -> negateYPoint (p_cos t)) (0, pi)
+        createFunction (fun t -> Point.negateY (Parametric.cos t)) (0, Constants.pi)
 
     let negativeCosineEndpoints =
         [
-            createPoint (pi, 1.0)
+            createPoint (Constants.pi, 1.0)
             createPoint (0.0, -1.0)
         ]
 
-    let horizontalAxis = createVector (createPoint (pi + 0.25, 0.0)) (createPoint (-0.25, 0.0)) 0.1 0.1
+    let horizontalAxis = createVector (createPoint (Constants.pi + 0.25, 0.0)) (createPoint (-0.25, 0.0)) 0.1 0.1
     let verticalAxis = createVector (createPoint (0.0, 1.75)) (createPoint (0.0, -1.75)) 0.1 0.1
 
     let greenAngle =
         [
-            createDashedLine (createPoint (0.0, -1.0)) (createPoint (pi, -1.0)) 8
-            createDashedLine (createPoint (pi, -1.0)) (createPoint (pi, 1.0)) 5
+            createDashedLine (createPoint (0.0, -1.0)) (createPoint (Constants.pi, -1.0)) 8
+            createDashedLine (createPoint (Constants.pi, -1.0)) (createPoint (Constants.pi, 1.0)) 5
         ]
         |> List.concat
 
@@ -92,7 +92,7 @@ let fundamentalTheoremOfCalculusIllustrationExample filepath filename =
     |> renderManyVectors [horizontalAxis; verticalAxis] CSSColour.black 5 1000 RenderingType.Square
     |> renderManyFunctions greenAngle (Colour.fromHex "#2ecc71") 5 300 RenderingType.Round
     |> renderManyPoints negativeCosineEndpoints (Colour.fromHex "#9b59b6") 20
-    |> colourFill (createPoint (pi / 2.0, 0.5)) (Colour.fromHex "#f2a59d")
+    |> colourFill (createPoint (Constants.pi / 2.0, 0.5)) (Colour.fromHex "#f2a59d")
     |> renderFunction negativeCosineFunction (Colour.fromHex "#9b59b6") 5 2000 RenderingType.Round
     |> saveScreenToBitmap filepath filename
 
@@ -110,16 +110,16 @@ let trigGeometricRepresentationExample filepath filename angle =
     let blankScreen = createScreen resolution boundingBox backgroundColor
     
     let unitCircle =
-        createCircle 1.0 (createPoint (0.0, 0.0)) // 800 samples
+        createCircle 1.0 (createPoint (0.0, 0.0))
     let radius =
-        createLineSegment (createPoint (0.0, 0.0)) (createPoint (cos, sin)) // 100 samples
+        createLineSegment (createPoint (0.0, 0.0)) (createPoint (cos, sin))
     
     let sineLine =
-        createLineSegment (createPoint (cos, 0.0)) (createPoint (cos, sin)) // 100 samples
+        createLineSegment (createPoint (cos, 0.0)) (createPoint (cos, sin))
     let cosineLine =
-        createLineSegment (createPoint (0.0, sin)) (createPoint (cos, sin)) // 100 samples
+        createLineSegment (createPoint (0.0, sin)) (createPoint (cos, sin))
     let tangentLine =
-        createLineSegment (createPoint (cos, sin)) (createPoint (sec, 0)) // 100 samples
+        createLineSegment (createPoint (cos, sin)) (createPoint (sec, 0))
     let tangentDashedLine =
         createDashedLine (createPoint (cos, sin)) (createPoint (0.0, cosec)) 5
     
@@ -181,4 +181,64 @@ let addingComplexNumbersExample filepath filename =
     |> renderCartesianPlane CSSColour.white 10 150 0.2 0.2 1.0
     |> renderManyFunctions linesToComplexPoints CSSColour.orangeWebColor 10 400 RenderingType.Round
     |> renderManyPoints complexPoints CSSColour.orangeWebColor 40
+    |> saveScreenToBitmap filepath filename
+
+let riemannSumExample filepath filename =
+
+    let resolution = (5000, 2000)
+    let boundingBox = (createPoint (0.0, 0.0), createPoint (500.0, 200.0))
+    let backgroundColour = CSSColour.almond
+    
+    let blankScreen = createScreen resolution boundingBox backgroundColour
+
+    let shift = 275.0
+
+    let axis =
+        [
+            createVector (createPoint (200, 25)) (createPoint (25, 25)) 5 5
+            createVector (createPoint (200.0 + shift, 25)) (createPoint (25.0 + shift, 25)) 5 5
+            createVector (createPoint (25, 175)) (createPoint (25, 25)) 5 5
+            createVector (createPoint (25.0 + shift, 175)) (createPoint (25.0 + shift, 25)) 5 5
+        ]
+
+    let transitionArrow =
+        createVector (createPoint (260, 100)) (createPoint (240, 100)) 5 5
+
+    let leftFunction =
+        createBezierCurve (createPoints [25, 60; 100, 150; 130, 40; 200, 100])
+    let rightFunction =
+        createBezierCurve (createPoints [25.0 + shift, 60; 100.0 + shift, 150; 130.0 + shift, 40; 200.0 + shift, 100])
+
+    let functionBounds =
+        [
+            createLineSegment (createPoint (200.0, 100)) (createPoint (200.0, 25))
+            createLineSegment (createPoint (200.0 + shift, 100)) (createPoint (200.0 + shift, 25))
+        ]
+    
+    let numberOfColumns = 10.0
+
+    let columns =
+        [
+            for i = 0 to int numberOfColumns - 1 do
+                let columnWidth = 175.0 / numberOfColumns
+                let leftSide = 25.0 + columnWidth * (float i)
+                let rightSide = leftSide + columnWidth
+
+                let functionPointLeft = leftFunction.Rule (columnWidth * (float i) / 175.0)
+                let functionPointRight = leftFunction.Rule (columnWidth * (float i + 1.0) / 175.0)
+
+                yield createPolygon (functionPointLeft :: (createPoints [functionPointLeft.X, 25.0; functionPointRight.X, 25.0; functionPointRight.X, functionPointLeft.Y]))
+        ]
+
+    let red1 = Colour.fromHex "#c0392b"
+    let red2 = Colour.fromHex "#e74c3c"
+    let red3 = Colour.fromHex "#f2a59d"
+
+    blankScreen
+    |> renderManySolidPolygons columns red3
+    |> renderManyPolygonsSides columns red2 5 400 RenderingType.Square
+    |> renderManyFunctions [leftFunction; rightFunction] red1 5 1000 RenderingType.Round
+    |> renderManyFunctions functionBounds red1 5 1000 RenderingType.Square
+    |> renderManyVectors (transitionArrow :: axis) CSSColour.black 5 500 RenderingType.Square
+    |> colourFill (createPoint (400.0, 50.0)) red3
     |> saveScreenToBitmap filepath filename

@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+<assembly><name>Mathil</name></assembly>
+<members>
+<member name="T:Mathil.Colours.CSSColour">
+<summary>
+ Consists of all colours in the CSS standard.
+</summary>
+</member>
+<member name="M:Mathil.Colours.Colour.fromRGB(System.Byte,System.Byte,System.Byte)">
+<summary>
+ Create colour from RGB values.
+</summary>
+</member>
+<member name="M:Mathil.Colours.Colour.fromHex(System.String)">
+<summary>
+ Create colour from #RRGGBB hex format.
+</summary>
+</member>
+<member name="T:Mathil.Colours.Colour">
+<summary>
+ Represents a colour as RGB values.
+</summary>
+</member>
+<member name="M:Mathil.Colours.mixColours(Mathil.Colours.Colour,Mathil.Colours.Colour)">
+<summary>
+ Mixes two colours together (not very successfully - it is recommended that colour mixing is done manually).
+</summary>
+</member>
+<member name="M:Mathil.Colours.lerpColours(Mathil.Colours.Colour,Mathil.Colours.Colour,System.Double)">
+<summary>
+ Linearly interpolates the red, green and blue values of the colour separately.
+</summary>
+</member>
+<member name="T:Mathil.MathematicalObjects.Circle">
+<summary>
+ Represents a circle as a function.
+</summary>
+</member>
+<member name="T:Mathil.MathematicalObjects.Vector">
+<summary>
+ Represents a vector as a line segment and polygon.
+</summary>
+</member>
+<member name="T:Mathil.MathematicalObjects.Polygon">
+<summary>
+ Represents a polygon as a series of points.
+</summary>
+</member>
+<member name="T:Mathil.MathematicalObjects.DashedLine">
+<summary>
+ Represents a dashed line as a list of line segments.
+</summary>
+</member>
+<member name="T:Mathil.MathematicalObjects.LineSegment">
+<summary>
+ Represents a line segment as a function.
+</summary>
+</member>
+<member name="T:Mathil.MathematicalObjects.BezierCurve">
+<summary>
+ Represents a Bezier curve as a function.
+</summary>
+</member>
+<member name="T:Mathil.MathematicalObjects.Function">
+<summary>
+ Represents a mathematical function as a parametric rule and domain.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalObjects.Point.op_Subtraction(Mathil.MathematicalObjects.Point,Mathil.MathematicalObjects.Point)">
+<summary>
+ Subtracts the coordinates of a point pairwise.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalObjects.Point.op_Multiply(System.Double,Mathil.MathematicalObjects.Point)">
+<summary>
+ Multiplies the coordinates of a point pairwise.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalObjects.Point.op_Addition(Mathil.MathematicalObjects.Point,Mathil.MathematicalObjects.Point)">
+<summary>
+ Adds the coordinates of a point pairwise.
+</summary>
+</member>
+<member name="T:Mathil.MathematicalObjects.Point">
+<summary>
+ Represents a point in the 2D coordinate system used in drawing shapes.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalObjects.createCircle(System.Double,Mathil.MathematicalObjects.Point)">
+<summary>
+ Creates a circle from its centre and radius.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalObjects.createVector(Mathil.MathematicalObjects.Point,Mathil.MathematicalObjects.Point,System.Double,System.Double)">
+<summary>
+ Creates a vector from its head, tail and the dimensions of the arrow head.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalObjects.createPolygon(Microsoft.FSharp.Collections.FSharpList{Mathil.MathematicalObjects.Point})">
+<summary>
+ Creates a polygon from a list of points.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalObjects.createDashedLine(Mathil.MathematicalObjects.Point,Mathil.MathematicalObjects.Point,System.Int32)">
+<summary>
+ Creates a series of short lines that create a longer dashed line.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalObjects.createLineSegment(Mathil.MathematicalObjects.Point,Mathil.MathematicalObjects.Point)">
+<summary>
+ Creates a line from its endpoints.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalObjects.createBezierCurve(Microsoft.FSharp.Collections.FSharpList{Mathil.MathematicalObjects.Point})">
+<summary>
+ Creates a Bezier curve from a list of points.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalObjects.createFunction(Microsoft.FSharp.Core.FSharpFunc{System.Double,Mathil.MathematicalObjects.Point},System.Double,System.Double)">
+<summary>
+ Creates a Function from a rule and domain.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalObjects.createPoints(Microsoft.FSharp.Collections.FSharpList{System.Tuple{System.Double,System.Double}})">
+<summary>
+ Creates a list of points from a list of float tuples.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalObjects.createPoint(System.Double,System.Double)">
+<summary>
+ Creates a Point from a float tuple.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalObjects.p_rose(System.Double,System.Double)">
+<summary>
+ Parametric rose function.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalObjects.p_ellipse(System.Double,System.Double,System.Double,System.Double,System.Double)">
+<summary>
+ Parametric ellipse function.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalObjects.p_exp(System.Double)">
+<summary>
+ Parametric exponential function.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalObjects.p_ln(System.Double)">
+<summary>
+ Parametric natural logarithm function.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalObjects.p_cot(System.Double)">
+<summary>
+ Parametric cotangent function.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalObjects.p_csc(System.Double)">
+<summary>
+ Parametric cosecant function.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalObjects.p_sec(System.Double)">
+<summary>
+ Parametric secant function.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalObjects.p_tan(System.Double)">
+<summary>
+ Parametric tangent function.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalObjects.p_cos(System.Double)">
+<summary>
+ Parametric cosine function.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalObjects.p_sin(System.Double)">
+<summary>
+ Parametric sine function.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalObjects.lerpPoint(Mathil.MathematicalObjects.Point,Mathil.MathematicalObjects.Point,System.Double)">
+<summary>
+ Linearly interpolates the two specified points.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalObjects.rotatePointCounterClockwise(Mathil.MathematicalObjects.Point)">
+<summary>
+ Rotates the point 90 degrees about the origin counterclockwise.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalObjects.rotatePointClockwise(Mathil.MathematicalObjects.Point)">
+<summary>
+ Rotates the point 90 degrees about the origin clockwise.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalObjects.pointDistance(Mathil.MathematicalObjects.Point)">
+<summary>
+ Calculates the distance from the point to the origin.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalObjects.pointNormalGradient(Mathil.MathematicalObjects.Point)">
+<summary>
+ Calculates the gradient of the normal to the segment from the origin to the specified point.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalObjects.pointGradient(Mathil.MathematicalObjects.Point)">
+<summary>
+ Calculates the gradient of the segment from the origin to the specified point.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalObjects.negateYPoint(Mathil.MathematicalObjects.Point)">
+<summary>
+ Negates the y coordinate of a point.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalObjects.negateXPoint(Mathil.MathematicalObjects.Point)">
+<summary>
+ Negates the x coordinate of a point.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalObjects.negatePoint(Mathil.MathematicalObjects.Point)">
+<summary>
+ Negates both coordinates of a point.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalObjects.fmod``9(Microsoft.FSharp.Core.FSharpFunc{``3,``3},Microsoft.FSharp.Core.FSharpFunc{``7,``7},Microsoft.FSharp.Core.FSharpFunc{``4,Microsoft.FSharp.Core.FSharpFunc{``0,``5}},Microsoft.FSharp.Core.FSharpFunc{``1,Microsoft.FSharp.Core.FSharpFunc{``0,``3}},Microsoft.FSharp.Core.FSharpFunc{``5,Microsoft.FSharp.Core.FSharpFunc{``0,``7}},Microsoft.FSharp.Core.FSharpFunc{``3,Microsoft.FSharp.Core.FSharpFunc{``0,``2}},Microsoft.FSharp.Core.FSharpFunc{``7,Microsoft.FSharp.Core.FSharpFunc{``0,``6}},Microsoft.FSharp.Core.FSharpFunc{``1,Microsoft.FSharp.Core.FSharpFunc{``2,``4}},Microsoft.FSharp.Core.FSharpFunc{``5,Microsoft.FSharp.Core.FSharpFunc{``6,``8}},``0,``1)">
+<summary>
+ Modulo reduction for floating point numbers.
+</summary>
+</member>
+<member name="M:Mathil.MathematicalObjects.op_PercentPercent``5(Microsoft.FSharp.Core.FSharpFunc{``2,``2},Microsoft.FSharp.Core.FSharpFunc{``0,Microsoft.FSharp.Core.FSharpFunc{``3,``2}},Microsoft.FSharp.Core.FSharpFunc{``2,Microsoft.FSharp.Core.FSharpFunc{``3,``1}},Microsoft.FSharp.Core.FSharpFunc{``0,Microsoft.FSharp.Core.FSharpFunc{``1,``4}},``0,``3)">
+<summary>
+ Implementation of % for floating point numbers.
+</summary>
+</member>
+<member name="P:Mathil.MathematicalObjects.e">
+<summary>
+ Euler&apos;s constant.
+</summary>
+</member>
+<member name="P:Mathil.MathematicalObjects.tau">
+<summary>
+ Ratio of circumference to radius of circle.
+</summary>
+</member>
+<member name="P:Mathil.MathematicalObjects.pi">
+<summary>
+ Ratio of circumference to diameter of circle.
+</summary>
+</member>
+<member name="T:Mathil.Rendering.RenderingType">
+<summary>
+ Represents the way a dot is rendered.
+</summary>
+</member>
+<member name="T:Mathil.Rendering.PixelCoordinates">
+<summary>
+ Represents the coordinates of a given pixel.
+</summary>
+</member>
+<member name="T:Mathil.Rendering.Screen">
+<summary>
+ Represents an image.
+</summary>
+</member>
+<member name="M:Mathil.Rendering.renderDashedLine(Microsoft.FSharp.Collections.FSharpList{Mathil.MathematicalObjects.Function},Mathil.Colours.Colour,System.Int32,System.Int32,Mathil.Rendering.RenderingType,Mathil.Rendering.Screen)">
+<summary>
+ Renders a dashed line.
+</summary>
+</member>
+<member name="M:Mathil.Rendering.renderManyPolygonsSides(Microsoft.FSharp.Collections.FSharpList{Mathil.MathematicalObjects.Polygon},Mathil.Colours.Colour,System.Int32,System.Int32,Mathil.Rendering.RenderingType,Mathil.Rendering.Screen)">
+<summary>
+ Renders the sides of many polygons if the same rendering settings are desired for all of them.
+</summary>
+</member>
+<member name="M:Mathil.Rendering.renderPolygonSides(Mathil.MathematicalObjects.Polygon,Mathil.Colours.Colour,System.Int32,System.Int32,Mathil.Rendering.RenderingType,Mathil.Rendering.Screen)">
+<summary>
+ Renders the sides of a polygon.
+</summary>
+</member>
+<member name="M:Mathil.Rendering.renderManyVectors(Microsoft.FSharp.Collections.FSharpList{Mathil.MathematicalObjects.Vector},Mathil.Colours.Colour,System.Int32,System.Int32,Mathil.Rendering.RenderingType,Mathil.Rendering.Screen)">
+<summary>
+ Renders many vectors if the same rendering settings are desired for all of them.
+</summary>
+</member>
+<member name="M:Mathil.Rendering.renderVector(Mathil.MathematicalObjects.Vector,Mathil.Colours.Colour,System.Int32,System.Int32,Mathil.Rendering.RenderingType,Mathil.Rendering.Screen)">
+<summary>
+ Renders a vector.
+</summary>
+</member>
+<member name="M:Mathil.Rendering.renderManySolidPolygons(Microsoft.FSharp.Collections.FSharpList{Mathil.MathematicalObjects.Polygon},Mathil.Colours.Colour,Mathil.Rendering.Screen)">
+<summary>
+ Renders many solid poligons if the same rendering settings are desired for all of them.
+</summary>
+</member>
+<member name="M:Mathil.Rendering.renderSolidPolygon(Mathil.MathematicalObjects.Polygon,Mathil.Colours.Colour,Mathil.Rendering.Screen)">
+<summary>
+ Renders a solid polygon of the specified colour, independent of the background. Use this instead of colourFill when other elements may already rendered where the polygon should go.
+</summary>
+</member>
+<member name="M:Mathil.Rendering.colourFillMany(Microsoft.FSharp.Collections.FSharpList{Mathil.MathematicalObjects.Point},Mathil.Colours.Colour,Mathil.Rendering.Screen)">
+<summary>
+ Completes a colour fill on many distinct starting points if the same colour is desired for all of them.
+</summary>
+</member>
+<member name="M:Mathil.Rendering.colourFill(Mathil.MathematicalObjects.Point,Mathil.Colours.Colour,Mathil.Rendering.Screen)">
+<summary>
+ Fills a region of a screen which has a solid colour with another solid colour.
+</summary>
+</member>
+<member name="M:Mathil.Rendering.renderManyFunctions(Microsoft.FSharp.Collections.FSharpList{Mathil.MathematicalObjects.Function},Mathil.Colours.Colour,System.Int32,System.Int32,Mathil.Rendering.RenderingType,Mathil.Rendering.Screen)">
+<summary>
+ Renders many functions if the same rendering settings are desired for all of them.
+</summary>
+</member>
+<member name="M:Mathil.Rendering.renderFunction(Mathil.MathematicalObjects.Function,Mathil.Colours.Colour,System.Int32,System.Int32,Mathil.Rendering.RenderingType,Mathil.Rendering.Screen)">
+<summary>
+ Renders any type implicitly convertable to Function, including line segments, circles and Bezier curves.
+</summary>
+</member>
+<member name="M:Mathil.Rendering.renderManyPoints(Microsoft.FSharp.Collections.FSharpList{Mathil.MathematicalObjects.Point},Mathil.Colours.Colour,System.Int32,Mathil.Rendering.Screen)">
+<summary>
+ Renders many points if the same rendering settings are desired for all of them.
+</summary>
+</member>
+<member name="M:Mathil.Rendering.renderPoint(Mathil.MathematicalObjects.Point,Mathil.Colours.Colour,System.Int32,Mathil.Rendering.Screen)">
+<summary>
+ Renders a point.
+</summary>
+</member>
+<member name="M:Mathil.Rendering.createScreen(System.Int32,System.Int32,Mathil.MathematicalObjects.Point,Mathil.MathematicalObjects.Point,Mathil.Colours.Colour)">
+<summary>
+ Creates a blank screen based on the resolution, bounds and colour.
+</summary>
+</member>
+<member name="M:Mathil.Rendering.calculateLineThickness(System.Int32,System.Int32,System.Double)">
+<summary>
+ Calculates the line thickness as a proportion of the average of the horizontal and vertical resolutions. Allows line thickness to be scaled appropriates upon changing an image&apos;s resolution.
+</summary>
+</member>
+<member name="M:Mathil.Rendering.aspectRatios(Mathil.Rendering.Screen)">
+<summary>
+ Calculates the aspect ratio in the resolution and in the bounds, to check how significantly the mathematical coordinates system is squeezed before rendering the image.
+</summary>
+</member>
+<member name="M:Mathil.CompoundShapes.renderCartesianPlane(Mathil.Colours.Colour,System.Int32,System.Int32,System.Double,System.Double,System.Double,Mathil.Rendering.Screen)">
+<summary>
+ Adds a cartesian plane to the specified image.
+</summary>
+</member>
+<member name="M:Mathil.Bitmap.saveScreenToBitmap(System.String,System.String,Mathil.Rendering.Screen)">
+<summary>
+ Writes the provided screen to the specified filepath as a bitmap (.bmp) file.
+</summary>
+</member>
+</members>
+</doc>

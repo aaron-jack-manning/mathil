@@ -4,137 +4,134 @@ open System
 
 open MathematicalObjects
 open Colours
+open MathematicalObjects.Types
 
 module Rendering =
 
-    // Functions -----------------------------------------------------------
+    module private Function =
 
-    let private sampleFunction (samples : int) (func : Function) : Point list =
+        let sample (samples : int) (func : Function) : Point list =
 
-        let lerpScalar (startPoint : float, endPoint : float) : (float -> float) =
-            (fun t -> (1.0 - t) * startPoint + t * endPoint)
+            let lerpScalar (startPoint : float, endPoint : float) : (float -> float) =
+                (fun t -> (1.0 - t) * startPoint + t * endPoint)
 
-        let start, finish = func.Domain
+            let start, finish = func.Domain
 
-        [0..(samples - 1)]
-        |> List.map (fun x -> float x / float (samples - 1))
-        |> List.map (lerpScalar (start, finish))
-        |> List.map func.Rule
+            [0..(samples - 1)]
+            |> List.map (fun x -> float x / float (samples - 1))
+            |> List.map (lerpScalar (start, finish))
+            |> List.map func.Rule
 
 
-    // Polygons -----------------------------------------------------------
+    module private Polygon =
 
-    let private polygonBounds (polygon : Polygon) : Point * Point =
+        let getBounds (polygon : Polygon) : Point * Point =
     
-        let minimumX =
-            (polygon.Vertices
-            |> List.minBy (fun p -> p.X)).X
+            let minimumX =
+                (polygon.Vertices
+                |> List.minBy (fun p -> p.X)).X
 
-        let minimumY =
-            (polygon.Vertices
-            |> List.minBy (fun p -> p.Y)).Y
+            let minimumY =
+                (polygon.Vertices
+                |> List.minBy (fun p -> p.Y)).Y
 
-        let maximumX =
-            (polygon.Vertices
-            |> List.maxBy (fun p -> p.X)).X
+            let maximumX =
+                (polygon.Vertices
+                |> List.maxBy (fun p -> p.X)).X
 
-        let maximumY =
-            (polygon.Vertices
-            |> List.maxBy (fun p -> p.Y)).Y
+            let maximumY =
+                (polygon.Vertices
+                |> List.maxBy (fun p -> p.Y)).Y
 
-        (
-            { X = minimumX; Y = minimumY },
-            { X = maximumX; Y = maximumY }
-        )
+            (
+                { X = minimumX; Y = minimumY },
+                { X = maximumX; Y = maximumY }
+            )
 
-    type private Orientation =
-        | Clockwise
-        | CounterClockwise
-        | Collinear
+        type private Orientation =
+            | Clockwise
+            | CounterClockwise
+            | Collinear
 
-    let private getOrientation (a : Point) (b : Point) (c : Point) : Orientation =
+        let private getOrientation (a : Point) (b : Point) (c : Point) : Orientation =
     
-        if (c.Y - a.Y) * (b.X - a.X) < (b.Y - a.Y) * (c.X - a.X) then
-            Clockwise
-        elif (c.Y - a.Y) * (b.X - a.X) = (b.Y - a.Y) * (c.X - a.X) then
-            Collinear
-        else
-            CounterClockwise
+            if (c.Y - a.Y) * (b.X - a.X) < (b.Y - a.Y) * (c.X - a.X) then
+                Clockwise
+            elif (c.Y - a.Y) * (b.X - a.X) = (b.Y - a.Y) * (c.X - a.X) then
+                Collinear
+            else
+                CounterClockwise
 
-    let private withinBounds (point : Point) (bounds : Point * Point) =
+        let private withinBounds (point : Point) (bounds : Point * Point) =
     
-        let bottomLeft, topRight = bounds
+            let bottomLeft, topRight = bounds
 
-        bottomLeft.X <= point.X
-        && point.X <= topRight.X
-        && bottomLeft.Y <= point.Y
-        && point.Y <= topRight.Y
+            bottomLeft.X <= point.X
+            && point.X <= topRight.X
+            && bottomLeft.Y <= point.Y
+            && point.Y <= topRight.Y
 
-    let private checkLineSegmentsIntersect (segment1 : Point * Point) (segment2 : Point * Point) : bool =
+        let private checkLineSegmentsIntersect (segment1 : Point * Point) (segment2 : Point * Point) : bool =
     
-        let p1, q1 = segment1
-        let p2, q2 = segment2
+            let p1, q1 = segment1
+            let p2, q2 = segment2
 
-        let o1 = getOrientation p1 q1 p2
-        let o2 = getOrientation p1 q1 q2
-        let o3 = getOrientation p2 q2 p1
-        let o4 = getOrientation p2 q2 q1
+            let o1 = getOrientation p1 q1 p2
+            let o2 = getOrientation p1 q1 q2
+            let o3 = getOrientation p2 q2 p1
+            let o4 = getOrientation p2 q2 q1
 
-        o1 <> o2 && o3 <> o4
-        || (o1 = Collinear && withinBounds p2 (p1, q1))
-        || (o2 = Collinear && withinBounds q2 (p1, q1))
-        || (o3 = Collinear && withinBounds p1 (p2, q2))
-        || (o4 = Collinear && withinBounds q1 (p2, q2))
+            o1 <> o2 && o3 <> o4
+            || (o1 = Collinear && withinBounds p2 (p1, q1))
+            || (o2 = Collinear && withinBounds q2 (p1, q1))
+            || (o3 = Collinear && withinBounds p1 (p2, q2))
+            || (o4 = Collinear && withinBounds q1 (p2, q2))
 
-    let private getSides (polygon : Polygon) : (Point * Point) list =
-        let ends = (List.last polygon.Vertices, polygon.Vertices.[0])
+        let getSides (polygon : Polygon) : (Point * Point) list =
+            let ends = (List.last polygon.Vertices, polygon.Vertices.[0])
     
-        let middle =
-            [
-                for i = 0 to List.length polygon.Vertices - 2 do
-                    (polygon.Vertices.[i], polygon.Vertices.[i + 1])
-            ]
+            let middle =
+                [
+                    for i = 0 to List.length polygon.Vertices - 2 do
+                        (polygon.Vertices.[i], polygon.Vertices.[i + 1])
+                ]
 
-        ends :: middle
+            ends :: middle
 
-    let private checkEndpoint (polygonSide : Point * Point) (line : Point * Point) : bool =
+        let private checkEndpoint (polygonSide : Point * Point) (line : Point * Point) : bool =
         
-        let lineStart, lineEnd = line
-        let endpoint1, endpoint2 = polygonSide
+            let lineStart, lineEnd = line
+            let endpoint1, endpoint2 = polygonSide
 
-        getOrientation endpoint1 lineStart lineEnd = Collinear
+            getOrientation endpoint1 lineStart lineEnd = Collinear
 
-    let private isInsidePolygon (polygon : Polygon) (point : Point) : bool =
+        let isInsidePolygon (bottomLeft : Point) (topRight : Point) (sides : (Point * Point) list) (point : Point) : bool =
 
-        let bottomLeft, topRight = polygonBounds polygon
+            let buffer = 0.1
 
-        let buffer = 0.1
+            let testLine =
+                (point,
+                {
+                    X = point.X + (topRight.X - bottomLeft.X + buffer)
+                    Y = point.Y
+                })
 
-        let testLine =
-            (point,
-            {
-                X = point.X + (topRight.X - bottomLeft.X + buffer)
-                Y = point.Y
-            })
+            let numberOfIntersections =
+                sides
+                |> List.map (fun x -> checkLineSegmentsIntersect x testLine && point.Y <> topRight.Y && point.Y <> bottomLeft.Y && not (checkEndpoint x testLine))
+                |> List.sumBy (fun x -> if x then 1 else 0)
 
-        let numberOfIntersections =
-            polygon
-            |> getSides
-            |> List.map (fun x -> checkLineSegmentsIntersect x testLine && point.Y <> topRight.Y && point.Y <> bottomLeft.Y && not (checkEndpoint x testLine))
-            |> List.sumBy (fun x -> if x then 1 else 0)
+            let liesOnAnySide =
+                not
+                    (sides
+                    |> List.map (fun (a, b) -> Collinear = getOrientation a b point)
+                    |> List.forall (fun x -> x = false))
 
-        let liesOnAnySide =
-            not
-                (polygon
-                |> getSides
-                |> List.map (fun (a, b) -> Collinear = getOrientation a b point)
-                |> List.forall (fun x -> x = false))
-
-        (numberOfIntersections) % 2 = 1
-        || (liesOnAnySide && withinBounds point (bottomLeft, topRight))
+            (numberOfIntersections) % 2 = 1
+            || (liesOnAnySide && withinBounds point (bottomLeft, topRight))
 
 
-    // Image Types -----------------------------------------------------------
+    // Types -----------------------------------------------------------
 
     /// Represents an image.
     type Screen =
@@ -169,7 +166,7 @@ module Rendering =
         (resolutionRatio, boundsRatio)
 
     /// Calculates the line thickness as a proportion of the average of the horizontal and vertical resolutions. Allows line thickness to be scaled appropriates upon changing an image's resolution.
-    let calculateLineThickness (resolution : int * int) (proportion : float) =
+    let calculateLineThickness (resolution : int * int) (proportion : float) : int =
         let horizontal, vertical = resolution
 
         int (proportion * float ((horizontal + vertical) / 2))
@@ -272,7 +269,7 @@ module Rendering =
     
         let centrePixels =
             func
-            |> sampleFunction samples
+            |> Function.sample samples
             |> List.map (pointToPixelCoordinates screen)
     
         let mutable newScreen = screen
@@ -299,7 +296,6 @@ module Rendering =
 
         if initialColour = desiredColour then
             failwith "the specified colour cannot match the colour at the specified location."
-
 
         let mutable currentChecks = List.singleton startingLocation
         while not (currentChecks |> List.isEmpty) do
@@ -337,7 +333,10 @@ module Rendering =
     /// Renders a solid polygon of the specified colour, independent of the background. Use this instead of colourFill when other elements may already rendered where the polygon should go.
     let renderSolidPolygon (polygon : Polygon) (desiredColour : Colour) (screen : Screen) : Screen =
     
-        let bottomLeftPoint, topRightPoint = polygonBounds polygon
+        // Calculating polygon metadata outside of isInsidePolygon for better performance.
+        let sides = Polygon.getSides polygon
+        let bottomLeftPoint, topRightPoint = Polygon.getBounds polygon
+        
         let bottomLeftPixelLocation = pointToPixelCoordinates screen bottomLeftPoint
         let topRightPixelLocation = pointToPixelCoordinates screen topRightPoint
 
@@ -348,7 +347,7 @@ module Rendering =
 
                 let onScreen = withinScreen currentCoordinates screen
 
-                if currentPoint |> isInsidePolygon polygon && onScreen then
+                if currentPoint |> Polygon.isInsidePolygon bottomLeftPoint topRightPoint sides && onScreen then
                     screen.Pixels.[i, j] <- desiredColour
 
         screen

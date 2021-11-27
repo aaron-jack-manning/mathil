@@ -4,185 +4,182 @@ open System
 
 module MathematicalObjects =
 
-    // Constants -----------------------------------------------------------
+    /// Mathematical constants.
+    module Constants =
+        /// Ratio of circumference to diameter of circle.
+        let pi = 3.14159
 
-    /// Ratio of circumference to diameter of circle.
-    let pi = 3.14159
+        /// Ratio of circumference to radius of circle.
+        let tau = 6.28319
 
-    /// Ratio of circumference to radius of circle.
-    let tau = 6.28319
-
-    /// Euler's constant.
-    let e = 2.71828
+        /// Euler's constant.
+        let e = 2.71828
 
 
-    // Elementary Functions -----------------------------------------------------------
+    /// Types to represent mathematical objects.
+    module Types =
+        /// Represents a point in the 2D coordinate system used in drawing shapes.
+        [<StructuredFormatDisplay("({X}, {Y})")>]
+        type Point =
+            { X : float; Y : float}
 
-    /// Implementation of % for floating point numbers.
-    let inline (%%) number modulus =
-        number - truncate (number / modulus) * modulus
-      
-    /// Modulo reduction for floating point numbers.
-    let inline fmod modulus number =
-        (number %% modulus + modulus) %% modulus
-    
+            /// Multiplies the coordinates of a point pairwise.
+            static member (*) (scalar : float, point : Point) =
+                {
+                    X = scalar * point.X
+                    Y = scalar * point.Y
+                }
+            /// Adds the coordinates of a point pairwise.
+            static member (+) (point1 : Point, point2 : Point) =
+                {
+                    X = point1.X + point2.X
+                    Y = point1.Y + point2.Y
+                }
+            /// Subtracts the coordinates of a point pairwise.
+            static member (-) (point1 : Point, point2 : Point) =
+                {
+                    X = point1.X - point2.X
+                    Y = point1.Y - point2.Y
+                }
 
-    // Types -----------------------------------------------------------
-
-    /// Represents a point in the 2D coordinate system used in drawing shapes.
-    [<StructuredFormatDisplay("({X}, {Y})")>]
-    type Point =
-        { X : float; Y : float}
-
-        /// Multiplies the coordinates of a point pairwise.
-        static member (*) (scalar : float, point : Point) =
+        /// Represents a mathematical function as a parametric rule and domain.
+        type Function =
             {
-                X = scalar * point.X
-                Y = scalar * point.Y
-            }
-        /// Adds the coordinates of a point pairwise.
-        static member (+) (point1 : Point, point2 : Point) =
-            {
-                X = point1.X + point2.X
-                Y = point1.Y + point2.Y
-            }
-        /// Subtracts the coordinates of a point pairwise.
-        static member (-) (point1 : Point, point2 : Point) =
-            {
-                X = point1.X - point2.X
-                Y = point1.Y - point2.Y
+                Rule : float -> Point
+                Domain : float * float
             }
 
-    /// Represents a mathematical function as a parametric rule and domain.
-    type Function =
-        {
-            Rule : float -> Point
-            Domain : float * float
-        }
+        /// Represents a Bezier curve as a function.
+        type BezierCurve = Function
 
-    /// Represents a Bezier curve as a function.
-    type BezierCurve = Function
+        /// Represents a line segment as a function.
+        type LineSegment = Function
 
-    /// Represents a line segment as a function.
-    type LineSegment = Function
+        /// Represents a dashed line as a list of line segments.
+        type DashedLine = LineSegment list
 
-    /// Represents a dashed line as a list of line segments.
-    type DashedLine = LineSegment list
+        /// Represents a polygon as a series of points.
+        type Polygon =
+            {
+                Vertices : Point list
+                Edges : LineSegment list
+            }
 
-    /// Represents a polygon as a series of points.
-    type Polygon =
-        {
-            Vertices : Point list
-            Edges : LineSegment list
-        }
+        /// Represents a vector as a line segment and polygon.
+        type Vector =
+            {
+                Line : LineSegment
+                ArrowHead : Polygon
+            }
 
-    /// Represents a vector as a line segment and polygon.
-    type Vector =
-        {
-            Line : LineSegment
-            ArrowHead : Polygon
-        }
-
-    /// Represents a circle as a function.
-    type Circle = Function
+        /// Represents a circle as a function.
+        type Circle = Function
 
 
-    // Point Manipulation -----------------------------------------------------------
+    /// Functions for operating on points.
+    module Point =
+        
+        open Types
 
-    /// Negates both coordinates of a point.
-    let negatePoint (point : Point) =
-        {
-            X = - point.X
-            Y = - point.Y
-        }
-    /// Negates the x coordinate of a point.
-    let negateXPoint (point : Point) =
-        {
-            X = - point.X
-            Y = point.Y
-        }
-    /// Negates the y coordinate of a point.
-    let negateYPoint (point : Point) =
-        {
-            X = point.X
-            Y = - point.Y
-        }
+        /// Negates both coordinates of a point.
+        let negate (point : Point) : Point =
+            {
+                X = - point.X
+                Y = - point.Y
+            }
+        /// Negates the x coordinate of a point.
+        let negateX (point : Point) : Point =
+            {
+                X = - point.X
+                Y = point.Y
+            }
+        /// Negates the y coordinate of a point.
+        let negateY (point : Point) : Point =
+            {
+                X = point.X
+                Y = - point.Y
+            }
 
-    /// Calculates the gradient of the segment from the origin to the specified point.
-    let pointGradient (point : Point) =
-        point.Y / point.X
+        /// Calculates the gradient of the segment from the origin to the specified point.
+        let gradient (point : Point) : float =
+            point.Y / point.X
 
-    /// Calculates the gradient of the normal to the segment from the origin to the specified point.
-    let pointNormalGradient (point : Point) =
-        - point.X / point.Y
+        /// Calculates the gradient of the normal to the segment from the origin to the specified point.
+        let normalGradient (point : Point) : float =
+            - point.X / point.Y
 
-    /// Calculates the distance from the point to the origin.
-    let pointDistance (point : Point) =
-        Math.Sqrt(point.X * point.X + point.Y * point.Y)
+        /// Calculates the distance from the point to the origin.
+        let distance (point : Point) : float =
+            Math.Sqrt(point.X * point.X + point.Y * point.Y)
 
-    /// Rotates the point 90 degrees about the origin clockwise.
-    let rotatePointClockwise (point : Point) =
-        {
-            X = - point.Y
-            Y = point.X
-        }
+        /// Rotates the point 90 degrees about the origin clockwise.
+        let rotateClockwise (point : Point) : Point =
+            {
+                X = - point.Y
+                Y = point.X
+            }
 
-    /// Rotates the point 90 degrees about the origin counterclockwise.
-    let rotatePointCounterClockwise (point : Point) =
-        {
-            X = point.Y
-            Y = - point.X
-        }
+        /// Rotates the point 90 degrees about the origin counterclockwise.
+        let rotateCounterClockwise (point : Point) : Point =
+            {
+                X = point.Y
+                Y = - point.X
+            }
 
-    /// Linearly interpolates the two specified points.
-    let lerpPoint (start : Point) (finish : Point) : (float -> Point) =
-        (fun t -> (1.0 - t) * start + t * finish)
+        /// Linearly interpolates the two specified points.
+        let lerp (start : Point) (finish : Point) : (float -> Point) =
+            (fun t -> (1.0 - t) * start + t * finish)
 
 
-    // Parametric Functions -----------------------------------------------------------
+    /// Standard parametric functions (float -> Point).
+    module Parametric =
 
-    /// Parametric sine function.
-    let inline p_sin x = { X = x; Y = Math.Sin(x) }
+        open Types
 
-    /// Parametric cosine function.
-    let inline p_cos x = { X = x; Y = Math.Cos(x) }
+        /// Parametric sine function.
+        let inline sin (x : float) : Point = { X = x; Y = Math.Sin(x) }
 
-    /// Parametric tangent function.
-    let inline p_tan x = { X = x; Y = Math.Tan(x) }
+        /// Parametric cosine function.
+        let inline cos (x : float) : Point = { X = x; Y = Math.Cos(x) }
 
-    /// Parametric secant function.
-    let inline p_sec x = { X = x; Y = 1.0 / Math.Cos(x) } 
+        /// Parametric tangent function.
+        let inline tan (x : float) : Point = { X = x; Y = Math.Tan(x) }
 
-    /// Parametric cosecant function.
-    let inline p_csc x = { X = x; Y = 1.0 / Math.Sin(x) }
+        /// Parametric secant function.
+        let inline sec (x : float) : Point = { X = x; Y = 1.0 / Math.Cos(x) } 
 
-    /// Parametric cotangent function.
-    let inline p_cot x = { X = x; Y = Math.Cos(x) / Math.Sin(x) }
+        /// Parametric cosecant function.
+        let inline csc (x : float) : Point = { X = x; Y = 1.0 / Math.Sin(x) }
 
-    /// Parametric natural logarithm function.
-    let inline p_ln x = { X = x; Y = Math.Log(x) }
+        /// Parametric cotangent function.
+        let inline cot (x : float) : Point = { X = x; Y = Math.Cos(x) / Math.Sin(x) }
 
-    /// Parametric exponential function.
-    let inline p_exp x = { X = x; Y = Math.Exp(x) }
+        /// Parametric natural logarithm function.
+        let inline ln (x : float) : Point = { X = x; Y = Math.Log(x) }
 
-    /// Parametric ellipse function.
-    let inline p_ellipse rx ry x1 y1 t = { X = rx * Math.Cos(t) + x1; Y = ry * Math.Sin(t) + y1 }
+        /// Parametric exponential function.
+        let inline exp (x : float) : Point = { X = x; Y = Math.Exp(x) }
 
-    /// Parametric rose function.
-    let inline p_rose a t = { X = Math.Cos(a * t) * Math.Cos(t); Y = Math.Cos(a * t) * Math.Sin(t) }
+        /// Parametric ellipse function.
+        let inline ellipse (rx : float) (ry : float) (x1 : float) (y1  : float) (t  : float) : Point = { X = rx * Math.Cos(t) + x1; Y = ry * Math.Sin(t) + y1 }
+
+        /// Parametric rose function.
+        let inline rose (a : float) (t : float) : Point = { X = Math.Cos(a * t) * Math.Cos(t); Y = Math.Cos(a * t) * Math.Sin(t) }
 
 
     // Creation Functions -----------------------------------------------------------
 
+    open Types
+
     /// Creates a Point from a float tuple.
-    let createPoint (x : float, y : float) =
+    let createPoint (x : float, y : float) : Point =
         {
             X = x
             Y = y
         }
 
     /// Creates a list of points from a list of float tuples.
-    let createPoints (coordinates : (float * float) list) = 
+    let createPoints (coordinates : (float * float) list) : Point list = 
         [
             for i = 0 to List.length coordinates - 1 do
                 createPoint coordinates.[i]
@@ -201,7 +198,7 @@ module MathematicalObjects =
         let interpolatePairs (list : Point list) =
             [
                 for i = 0 to List.length list - 2 do
-                    lerpPoint list.[i] list.[i + 1]
+                    Point.lerp list.[i] list.[i + 1]
             ]
 
         let rec constructCurve (parameter : float) (points : Point list) : Point =
@@ -231,8 +228,8 @@ module MathematicalObjects =
         [
             for i = 0 to divisions - 1 do
                 if i % 2 = 0 then
-                    let segmentStart = lerpPoint start finish (float i * divisionWidthInParameter)
-                    let segmentEnd = lerpPoint start finish ((float i + 1.0) * divisionWidthInParameter)
+                    let segmentStart = Point.lerp start finish (float i * divisionWidthInParameter)
+                    let segmentEnd = Point.lerp start finish ((float i + 1.0) * divisionWidthInParameter)
 
                     yield createLineSegment segmentStart segmentEnd
         ]
@@ -255,7 +252,7 @@ module MathematicalObjects =
     let createVector (head : Point) (tail : Point) (arrowWidth : float) (arrowHeight : float) : Vector =
     
         let desiredVector = head - tail
-        let vectorLength = pointDistance desiredVector
+        let vectorLength = Point.distance desiredVector
     
         let extensionFactorWidth = (arrowWidth / 2.0) / vectorLength
         let extensionFactorLength = arrowHeight / vectorLength
@@ -264,8 +261,8 @@ module MathematicalObjects =
             createPolygon
                 [
                     head + extensionFactorLength * desiredVector
-                    head + extensionFactorWidth * (rotatePointCounterClockwise desiredVector)
-                    head + extensionFactorWidth * (rotatePointClockwise desiredVector)
+                    head + extensionFactorWidth * (Point.rotateCounterClockwise desiredVector)
+                    head + extensionFactorWidth * (Point.rotateClockwise desiredVector)
                 ]
     
         {
@@ -282,5 +279,5 @@ module MathematicalObjects =
                         X = radius * Math.Cos(t) + centre.X
                         Y = radius * Math.Sin(t) + centre.Y
                     })
-            Domain = (0.0, 2.0 * pi)
+            Domain = (0.0, 2.0 * Constants.pi)
         }

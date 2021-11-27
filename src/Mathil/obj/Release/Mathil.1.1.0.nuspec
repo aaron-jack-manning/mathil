@@ -12,7 +12,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="C:\Users\aaron\My Drive\Side Projects\Project Files\Programming Projects\Mathil (F#)\Mathil\Mathil\bin\Release\net6.0\Mathil.dll" target="lib\net6.0\Mathil.dll" />
-    <file src="C:\Users\aaron\My Drive\Side Projects\Project Files\Programming Projects\Mathil (F#)\Mathil\Mathil\bin\Release\net6.0\Mathil.xml" target="lib\net6.0\Mathil.xml" />
+    <file src="C:\Users\aaron\My Drive\Side Projects\Project Files\Programming Projects\Mathil (F#)\src\Mathil\bin\Release\net6.0\Mathil.dll" target="lib\net6.0\Mathil.dll" />
+    <file src="C:\Users\aaron\My Drive\Side Projects\Project Files\Programming Projects\Mathil (F#)\src\Mathil\bin\Release\net6.0\Mathil.xml" target="lib\net6.0\Mathil.xml" />
   </files>
 </package>

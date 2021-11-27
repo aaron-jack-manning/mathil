@@ -17,25 +17,20 @@ module Bitmap =
     
             quotient, remainder
 
-        let baseBAlgorithm (number : int) (radix : int) =
-            let digits = List.empty
+        let rec baseBAlgorithm (current : int) (radix : int) =
 
-            let rec convert (current : int) =
+            let quotient, remainder = division current radix
 
-                let quotient, remainder = division current radix
+            match quotient with
+            | 0 -> remainder :: List.empty
+            | _ -> remainder :: (baseBAlgorithm quotient radix)
 
-                match quotient with
-                | 0 -> digits @ [remainder]
-                | _ -> (convert quotient) @ [remainder]
-
-            convert number
 
         let digitList = baseBAlgorithm number 256
 
         let padding = 4 - List.length digitList % 4
 
         (digitList
-        |> List.rev
         |> List.toArray
         |> Array.append) (Array.zeroCreate padding)
         |> Array.map byte

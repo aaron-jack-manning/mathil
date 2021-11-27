@@ -9,9 +9,11 @@
     * [Rose](#rose)
     * [Fundamental Theorem of Calculus Illustration](#fundamental-theorem-of-calculus)
     * [Adding Complex Numbers](#adding-complex-numbers)
+    * [Riemann Sum](#riemann-sum)
 * [Setup](#setup)
 * [Getting Started](#getting-started)
 * [Documentation](#documentation)
+    * [Exposed Functions](#exposed-functions)
     * [Colours](#colours)
     * [Screens](#screens)
     * [Mathematical Objects](#mathematical-objects)
@@ -72,7 +74,7 @@ blankScreen
 ```
 open System
 
-let angle = pi / 4.0
+let angle = Constants.pi / 4.0
 let cos = Math.Cos(angle)
 let sin = Math.Sin(angle)
 let sec = 1.0 / cos
@@ -85,16 +87,16 @@ let backgroundColor = Colour.fromHex "#2f3640"
 let blankScreen = createScreen resolution boundingBox backgroundColor
     
 let unitCircle =
-    createCircle 1.0 (createPoint (0.0, 0.0)) // 800 samples
+    createCircle 1.0 (createPoint (0.0, 0.0))
 let radius =
-    createLineSegment (createPoint (0.0, 0.0)) (createPoint (cos, sin)) // 100 samples
+    createLineSegment (createPoint (0.0, 0.0)) (createPoint (cos, sin))
     
 let sineLine =
-    createLineSegment (createPoint (cos, 0.0)) (createPoint (cos, sin)) // 100 samples
+    createLineSegment (createPoint (cos, 0.0)) (createPoint (cos, sin))
 let cosineLine =
-    createLineSegment (createPoint (0.0, sin)) (createPoint (cos, sin)) // 100 samples
+    createLineSegment (createPoint (0.0, sin)) (createPoint (cos, sin))
 let tangentLine =
-    createLineSegment (createPoint (cos, sin)) (createPoint (sec, 0)) // 100 samples
+    createLineSegment (createPoint (cos, sin)) (createPoint (sec, 0))
 let tangentDashedLine =
     createDashedLine (createPoint (cos, sin)) (createPoint (0.0, cosec)) 5
     
@@ -138,7 +140,7 @@ let backgroundColour = CSSColour.white
 let blankScreen = createScreen resolution boundingBox backgroundColour
 
 let rose =
-    createFunction (p_rose (float coefficient)) (0.0, 2.0 * pi)
+    createFunction (Parametric.rose (float coefficient)) (0.0, 2.0 * Constants.pi)
 
 let circleRadius = 1.1
 
@@ -167,30 +169,30 @@ blankScreen
 
 ```
 let resolution = (4200, 3000)
-let boundingBox = (createPoint (-1.0, -2.0), createPoint (pi + 1.0, 2.0))
+let boundingBox = (createPoint (-1.0, -2.0), createPoint (Constants.pi + 1.0, 2.0))
 let backgroundColour = Colour.fromHex "#ecf0f1"
 
 let blankScreen = createScreen resolution boundingBox backgroundColour
 
 let sineFunction =
-    createFunction p_sin (0, pi)
+    createFunction Parametric.sin (0, Constants.pi)
 
 let negativeCosineFunction =
-    createFunction (fun t -> negateYPoint (p_cos t)) (0, pi)
+    createFunction (fun t -> Point.negateY (Parametric.cos t)) (0, Constants.pi)
 
 let negativeCosineEndpoints =
     [
-        createPoint (pi, 1.0)
+        createPoint (Constants.pi, 1.0)
         createPoint (0.0, -1.0)
     ]
 
-let horizontalAxis = createVector (createPoint (pi + 0.25, 0.0)) (createPoint (-0.25, 0.0)) 0.1 0.1
+let horizontalAxis = createVector (createPoint (Constants.pi + 0.25, 0.0)) (createPoint (-0.25, 0.0)) 0.1 0.1
 let verticalAxis = createVector (createPoint (0.0, 1.75)) (createPoint (0.0, -1.75)) 0.1 0.1
 
 let greenAngle =
     [
-        createDashedLine (createPoint (0.0, -1.0)) (createPoint (pi, -1.0)) 8
-        createDashedLine (createPoint (pi, -1.0)) (createPoint (pi, 1.0)) 5
+        createDashedLine (createPoint (0.0, -1.0)) (createPoint (Constants.pi, -1.0)) 8
+        createDashedLine (createPoint (Constants.pi, -1.0)) (createPoint (Constants.pi, 1.0)) 5
     ]
     |> List.concat
 
@@ -199,7 +201,7 @@ blankScreen
 |> renderManyVectors [horizontalAxis; verticalAxis] CSSColour.black 5 1000 RenderingType.Square
 |> renderManyFunctions greenAngle (Colour.fromHex "#2ecc71") 5 300 RenderingType.Round
 |> renderManyPoints negativeCosineEndpoints (Colour.fromHex "#9b59b6") 20
-|> colourFill (createPoint (pi / 2.0, 0.5)) (Colour.fromHex "#f2a59d")
+|> colourFill (createPoint (Constants.pi / 2.0, 0.5)) (Colour.fromHex "#f2a59d")
 |> renderFunction negativeCosineFunction (Colour.fromHex "#9b59b6") 5 2000 RenderingType.Round
 |> saveScreenToBitmap "<path to folder here>" "FundamentalTheoremOfCalculus"
 ```
@@ -245,6 +247,71 @@ blankScreen
 |> renderManyFunctions linesToComplexPoints CSSColour.orangeWebColor 10 400 RenderingType.Round
 |> renderManyPoints complexPoints CSSColour.orangeWebColor 40
 |> saveScreenToBitmap "<path to folder here>" "AddingComplexNumbers"
+```
+
+<a name="riemann-sum"></a>
+### Riemann Sum
+
+![RiemannSum](examples/RiemannSum_Compressed.bmp)
+
+```
+let resolution = (5000, 2000)
+let boundingBox = (createPoint (0.0, 0.0), createPoint (500.0, 200.0))
+let backgroundColour = CSSColour.almond
+    
+let blankScreen = createScreen resolution boundingBox backgroundColour
+
+let shift = 275.0
+
+let axis =
+    [
+        createVector (createPoint (200, 25)) (createPoint (25, 25)) 5 5
+        createVector (createPoint (200.0 + shift, 25)) (createPoint (25.0 + shift, 25)) 5 5
+        createVector (createPoint (25, 175)) (createPoint (25, 25)) 5 5
+        createVector (createPoint (25.0 + shift, 175)) (createPoint (25.0 + shift, 25)) 5 5
+    ]
+
+let transitionArrow =
+    createVector (createPoint (260, 100)) (createPoint (240, 100)) 5 5
+
+let leftFunction =
+    createBezierCurve (createPoints [25, 60; 100, 150; 130, 40; 200, 100])
+let rightFunction =
+    createBezierCurve (createPoints [25.0 + shift, 60; 100.0 + shift, 150; 130.0 + shift, 40; 200.0 + shift, 100])
+
+let functionBounds =
+    [
+        createLineSegment (createPoint (200.0, 100)) (createPoint (200.0, 25))
+        createLineSegment (createPoint (200.0 + shift, 100)) (createPoint (200.0 + shift, 25))
+    ]
+    
+let numberOfColumns = 10.0
+
+let columns =
+    [
+        for i = 0 to int numberOfColumns - 1 do
+            let columnWidth = 175.0 / numberOfColumns
+            let leftSide = 25.0 + columnWidth * (float i)
+            let rightSide = leftSide + columnWidth
+
+            let functionPointLeft = leftFunction.Rule (columnWidth * (float i) / 175.0)
+            let functionPointRight = leftFunction.Rule (columnWidth * (float i + 1.0) / 175.0)
+
+            yield createPolygon (functionPointLeft :: (createPoints [functionPointLeft.X, 25.0; functionPointRight.X, 25.0; functionPointRight.X, functionPointLeft.Y]))
+    ]
+
+let red1 = Colour.fromHex "#c0392b"
+let red2 = Colour.fromHex "#e74c3c"
+let red3 = Colour.fromHex "#f2a59d"
+
+blankScreen
+|> renderManySolidPolygons columns red3
+|> renderManyPolygonsSides columns red2 5 400 RenderingType.Square
+|> renderManyFunctions [leftFunction; rightFunction] red1 5 1000 RenderingType.Round
+|> renderManyFunctions functionBounds red1 5 1000 RenderingType.Square
+|> renderManyVectors (transitionArrow :: axis) CSSColour.black 5 500 RenderingType.Square
+|> colourFill (createPoint (400.0, 50.0)) red3
+|> saveScreenToBitmap "<path to folder here>" "RiemannSum"
 ```
 
 <a name="setup"></a>
@@ -371,6 +438,257 @@ This is one example of something that can be done using Mathil, for more thoroug
 <a name="documentation"></a>
 ## Documentation
 
+<a name="exposed-functions"></a>
+### Exposed Functions
+
+The following shows the hierarchy of namespaces, modules, types and functions for everything exposed in Mathil.
+
+```
+namespace Mathil
+
+    module Colours
+
+        /// Represents a colour as RGB values.
+        type Colour
+
+        /// Functions for operating on colours.
+        module Colour
+
+            /// Create colour from RGB values.
+            fromRGB (r : byte, g : byte, b : byte) : Colour
+
+            /// Create colour from #RRGGBB hex format.
+            fromHex (hexCode : string) : Colour
+
+            /// Linearly interpolates the red, green and blue values of the colour separately.
+            lerp (colour1 : Colour) (colour2 : Colour) (parameter : float) : Colour
+
+            /// Mixes two colours together (not very successfully - it is recommended that colour mixing is done manually).
+            mix (colour1 : Colour) (colour2 : Colour) : Colour
+
+        /// Consists of all colours in the CSS standard.
+        module CSSColour
+
+            airForceBlueRaf
+
+            airForceBlueUsaf
+
+            airSuperiorityBlue
+
+            ...
+
+    module MathematicalObjects
+
+        /// Mathematical constants.
+        module Constants
+
+            /// Ratio of circumference to diameter of circle.
+            pi
+
+            /// Ratio of circumference to radius of circle.
+            tau
+
+            /// Euler's constant.
+            e
+
+        /// Types to represent mathematical objects.
+        module Types
+
+            /// Represents a point in the 2D coordinate system used in drawing shapes.
+            type Point
+
+                /// Multiplies the coordinates of a point pairwise.
+                static member (*) (scalar : float, point : Point)
+
+                /// Adds the coordinates of a point pairwise.
+                static member (+) (point1 : Point, point2 : Point)
+
+                /// Subtracts the coordinates of a point pairwise.
+                static member (-) (point1 : Point, point2 : Point)
+
+            /// Represents a mathematical function as a parametric rule and domain.
+            type Function
+
+            /// Represents a Bezier curve as a function.
+            type BezierCurve
+
+            /// Represents a line segment as a function.
+            type LineSegment
+
+            /// Represents a dashed line as a list of line segments.
+            type DashedLine
+
+            /// Represents a polygon as a series of points.
+            type Polygon
+
+            /// Represents a vector as a line segment and polygon.
+            type Vector
+
+            /// Represents a circle as a function.
+            type Circle
+
+        /// Functions for operating on points.
+        module Point
+
+            /// Negates both coordinates of a point.
+            negate (point : Point) : Point
+
+            /// Negates the x coordinate of a point.
+            negateX (point : Point) : Point
+
+            /// Negates the y coordinate of a point.
+            negateY (point : Point) : Point
+
+            /// Calculates the gradient of the segment from the origin to the specified point.
+            gradient (point : Point) : float
+
+            /// Calculates the gradient of the normal to the segment from the origin to the specified point.
+            normalGradient (point : Point) : float
+
+            /// Calculates the distance from the point to the origin.
+            distance (point : Point) : float
+
+            /// Rotates the point 90 degrees about the origin clockwise.
+            rotateClockwise (point : Point) : Point
+
+            /// Rotates the point 90 degrees about the origin counterclockwise.
+            rotateCounterClockwise (point : Point) : Point
+
+            /// Linearly interpolates the two specified points.
+            lerp (start : Point) (finish : Point) : (float -> Point)
+
+        /// Standard parametric functions (float -> Point).
+        module Parametric
+
+            /// Parametric sine function.
+            inline sin (x : float) : Point
+
+            /// Parametric cosine function.
+            inline cos (x : float) : Point
+
+            /// Parametric tangent function.
+            inline tan (x : float) : Point
+
+            /// Parametric secant function.
+            inline sec (x : float) : Point
+
+            /// Parametric cosecant function.
+            inline csc (x : float) : Point
+
+            /// Parametric cotangent function.
+            inline cot (x : float) : Point
+
+            /// Parametric natural logarithm function.
+            inline ln (x : float) : Point
+
+            /// Parametric exponential function.
+            inline exp (x : float) : Point
+
+            /// Parametric ellipse function.
+            inline ellipse (rx : float) (ry : float) (x1 : float) (y1  : float) (t  : float) : Point
+
+            /// Parametric rose function.
+            inline rose (a : float) (t : float) : Point
+
+        /// Creates a Point from a float tuple.
+        createPoint (x : float, y : float) : Point
+
+        /// Creates a list of points from a list of float tuples.
+        createPoints (coordinates : (float * float) list) : Point list
+
+        /// Creates a Function from a rule and domain.
+        createFunction (rule : float -> Point) (domain : float * float) : Function
+
+        /// Creates a Bezier curve from a list of points.
+        createBezierCurve (points : Point list) : BezierCurve
+
+        /// Creates a line from its endpoints.
+        createLineSegment (start : Point) (finish : Point) : LineSegment
+
+        /// Creates a series of short lines that create a longer dashed line.
+        createDashedLine (start : Point) (finish : Point) (dashes : int) : DashedLine
+
+        /// Creates a polygon from a list of points.
+        createPolygon (vertices : Point list) : Polygon
+
+        /// Creates a vector from its head, tail and the dimensions of the arrow head.
+        createVector (head : Point) (tail : Point) (arrowWidth : float) (arrowHeight : float) : Vector
+
+        /// Creates a circle from its centre and radius.
+        createCircle (radius : float) (centre : Point) : Circle
+
+
+    module Rendering
+
+        /// Represents an image.
+        type Screen
+
+        /// Represents the coordinates of a given pixel.
+        type PixelCoordinates
+
+        /// Represents the way a dot is rendered.
+        type RenderingType
+
+        /// Calculates the aspect ratio in the resolution and in the bounds, to check how significantly the mathematical coordinates system is squeezed before rendering the image.
+        aspectRatios (screen : Screen) : float * float
+
+        /// Calculates the line thickness as a proportion of the average of the horizontal and vertical resolutions. Allows line thickness to be scaled appropriates upon changing an image's resolution.
+        calculateLineThickness (resolution : int * int) (proportion : float) : int
+
+        /// Creates a blank screen based on the resolution, bounds and colour.
+        createScreen (horizontalResolution : int, verticalResolution : int) (bounds : Point * Point) (defaultColour : Colour) : Screen
+
+        /// Renders a point.
+        renderPoint (point : Point) (colour : Colour) (radius : int) (screen : Screen) : Screen
+
+        /// Renders many points if the same rendering settings are desired for all of them.
+        renderManyPoints (points : Point list) (colour : Colour) (radius : int) (screen : Screen) : Screen
+
+        /// Renders any type implicitly convertable to Function, including line segments, circles and Bezier curves.
+        renderFunction (func : Function) (colour : Colour) (thickness : int) (samples : int) (renderingType : RenderingType) (screen : Screen) : Screen
+
+        /// Renders many functions if the same rendering settings are desired for all of them.
+        renderManyFunctions (funcs : Function list) (colour : Colour) (thickness : int) (samples : int) (renderingType : RenderingType) (screen : Screen) : Screen
+
+        /// Fills a region of a screen which has a solid colour with another solid colour.
+        colourFill (startingPoint : Point) (desiredColour  : Colour) (screen : Screen) : Screen
+
+        /// Completes a colour fill on many distinct starting points if the same colour is desired for all of them.
+        colourFillMany (startingPoints : Point list) (desiredColour : Colour) (screen : Screen) : Screen
+
+        /// Renders a solid polygon of the specified colour, independent of the background. Use this instead of colourFill when other elements may already rendered where the polygon should go.
+        renderSolidPolygon (polygon : Polygon) (desiredColour : Colour) (screen : Screen) : Screen
+
+        /// Renders many solid poligons if the same rendering settings are desired for all of them.
+        renderManySolidPolygons (polygons : Polygon list) (desiredColour : Colour) (screen : Screen) : Screen
+
+        /// Renders a vector.
+        renderVector (vector : Vector) (colour : Colour) (thickness : int) (samples : int) (renderingType : RenderingType) (screen : Screen) : Screen
+
+        /// Renders many vectors if the same rendering settings are desired for all of them.
+        renderManyVectors (vectors : Vector list) (colour : Colour) (thickness : int) (samples : int) (renderingType : RenderingType) (screen : Screen) : Screen
+
+        /// Renders the sides of a polygon.
+        renderPolygonSides (polygon : Polygon) (colour : Colour) (thickness : int) (samplesPerSide : int) (renderingType : RenderingType) (screen : Screen) : Screen
+
+        /// Renders the sides of many polygons if the same rendering settings are desired for all of them.
+        renderManyPolygonsSides (polygons : Polygon list) (colour : Colour) (thickness : int) (samplesPerSide : int) (renderingType : RenderingType) (screen : Screen) : Screen
+
+        /// Renders a dashed line.
+        renderDashedLine (dashedLine : DashedLine) (colour : Colour) (thickness : int) (samplesPerDash : int) (renderingType : RenderingType) (screen : Screen) : Screen
+
+    module CompoundShapes
+
+        /// Adds a cartesian plane to the specified image.
+        renderCartesianPlane (colour : Colour) (thickness : int) (samples : int) (arrowHeight : float) (arrowWidth : float) (borderWidth : float) (screen : Screen) : Screen
+
+    module Bitmap
+
+        /// Writes the provided screen to the specified filepath as a bitmap (.bmp) file.
+        saveScreenToBitmap (filepath : string) (filename : string) (screen : Screen) : unit
+```
+
+
 <a name="colours"></a>
 ### Colours
 
@@ -394,7 +712,7 @@ To create a colour, use one of the following functions:
 When working with colours, you can also linearly interpolate between two colours using:
 
 ```
-lerpColours (colour1 : Colour) (colour2 : Colour) (parameter : float) : Colour
+Colour.lerp (colour1 : Colour) (colour2 : Colour) (parameter : float) : Colour
 ```
 
 and specifying a parameter between 0 and 1.
@@ -402,7 +720,7 @@ and specifying a parameter between 0 and 1.
 Additionally, there is a colour mixing function:
 
 ```
-mixColours (colour1 : Colour) (colour2 : Colour) : Colour
+Colour.mix (colour1 : Colour) (colour2 : Colour) : Colour
 ```
 
 Note that the current implementation of this function fails to give an effective mix in many cases. Mixing colours in a computer is really hard, and I am working hard on a better solution but it may be a while before I can release such an update.
@@ -453,7 +771,7 @@ The recommended way to use Mathil is to avoid rendering anything to the screen u
 <a name="mathematical-objects"></a>
 ### Mathematical Objects
 
-All mathematical objects are declared in the `MathematicalObjects` module. This module includes the following types:
+All mathematical objects are declared in `MathematicalObjects.Types`. This module includes the following types:
 
 Point: To be rendered directly, or to represent characteristics of other types.
 ```
