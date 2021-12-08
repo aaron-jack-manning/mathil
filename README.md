@@ -904,7 +904,7 @@ I created this to be used in place of a vector drawing tool because it more easi
 <a name="how-well-supported-will-this-tool-be"></a>
 #### How well supported will this tool be?
 
-As I need new features for my own purposes I will be adding them in, but I do not use this tool for my job or studying so that will be my free time only, and I make no promises about how long I will maintain it. That said, if you have ideas please create an issue and I will occasionally look to see what I can add to make it useful to others, or if you see the framework for something useful to you here but require more features, feel free to fork the repository and work on it yourself. In the meantime, I have set up a kanban board where I will add stuff that I plan to add and stuff I am working on, which you can find [here](https://github.com/users/aaron-jack-manning/projects/13).
+At the current state of this project, I only have plans for two additional big features being a better colour mixing tool which you can follow my progress on [here](https://github.com/aaron-jack-manning/colour-mixing-experiments), and a font rendering tool. I am however no longer regularly working on this project and hence cannot guarantee these features will come any time soon. Any other features added will simply be a consequence of me needing them in my regular use of this tool, and seeing a way to implement them generally in a way that would be useful again. That said, if you have ideas please create an issue and I will occasionally look to see what I can add to make it useful to others, or if you see the framework for something useful to you here but require more features, feel free to fork the repository and work on it yourself.
 
 <a name="what-file-formats-does-this-library-produce"></a>
 #### What file formats does this library produce?
@@ -924,4 +924,4 @@ I am no expert at computer graphics, and this project has been my way of learnin
 <a name="what-license-is-this-issued-under"></a>
 #### What license is this issued under?
 
-Mathil is released with the GPLv3 license. Please see `LICENSE` at the top level of this repository.
+Mathil is released with the GPLv2 license. Please see `LICENSE` at the top level of this repository.
