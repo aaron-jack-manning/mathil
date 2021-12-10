@@ -49,7 +49,7 @@ module Bitmap =
 
         // Add file size to temporary space
         for i = 0 to 3 do
-            header.[i + 2] <- filesizeBytes.[i]
+            header[i + 2] <- filesizeBytes[i]
 
         header
 
@@ -76,10 +76,10 @@ module Bitmap =
 
         // Add resolution and print resolution to temporary spaces
         for i = 0 to 3 do
-            dibHeader.[4 + i] <- horizontalResolutionBytes.[i]
-            dibHeader.[8 + i] <- verticalResolutionBytes.[i]
-            dibHeader.[24 + i] <- printResolutionBytes.[i]
-            dibHeader.[28 + i] <- printResolutionBytes.[i]
+            dibHeader[4 + i] <- horizontalResolutionBytes[i]
+            dibHeader[8 + i] <- verticalResolutionBytes[i]
+            dibHeader[24 + i] <- printResolutionBytes[i]
+            dibHeader[28 + i] <- printResolutionBytes[i]
 
         dibHeader
 
@@ -118,7 +118,7 @@ module Bitmap =
         // Write pixels and padding to file
         for i = 0 to screen.VerticalResolution - 1 do
             for j = 0 to screen.HorizontalResolution - 1 do
-                let colour = colourToBytes screen.Pixels.[j, i]
+                let colour = colourToBytes screen.Pixels[j, i]
 
                 // Writing the colour values of a pixel
                 for colourValue in colour do

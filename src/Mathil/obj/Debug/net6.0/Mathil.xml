@@ -74,7 +74,7 @@
 </member>
 <member name="M:Mathil.MathematicalObjects.createPoints(Microsoft.FSharp.Collections.FSharpList{System.Tuple{System.Double,System.Double}})">
 <summary>
- Creates a list of points from a list of float tuples.
+ Creates a list of points from a list of float tuples, reversing the order.
 </summary>
 </member>
 <member name="M:Mathil.MathematicalObjects.createPoint(System.Double,System.Double)">
@@ -374,9 +374,7 @@
 </member>
 </members>
 </doc>
-n)">
-<summary>
- Writes the provided screen to the specified filepath as a bitmap (.bmp) file.
+tes the provided screen to the specified filepath as a bitmap (.bmp) file.
 </summary>
 </member>
 </members>

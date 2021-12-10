@@ -88,13 +88,11 @@ module Rendering =
             || (o4 = Collinear && withinBounds q1 (p2, q2))
 
         let getSides (polygon : Polygon) : (Point * Point) list =
-            let ends = (List.last polygon.Vertices, polygon.Vertices.[0])
+            let ends = (List.last polygon.Vertices, List.head polygon.Vertices)
     
             let middle =
-                [
-                    for i = 0 to List.length polygon.Vertices - 2 do
-                        (polygon.Vertices.[i], polygon.Vertices.[i + 1])
-                ]
+                polygon.Vertices
+                |> List.pairwise
 
             ends :: middle
 
@@ -242,10 +240,10 @@ module Rendering =
 
                 if renderingType = RenderingType.Square then
                     if onScreen then
-                        screen.Pixels.[i, j] <- colour
+                        screen.Pixels[i, j] <- colour
                 elif renderingType = RenderingType.Round then
                     if onScreen && distance <= float radius then
-                        screen.Pixels.[i, j] <- colour
+                        screen.Pixels[i, j] <- colour
 
         screen
 
@@ -292,7 +290,7 @@ module Rendering =
     let colourFill (startingPoint : Point) (desiredColour  : Colour) (screen : Screen) : Screen =
 
         let startingLocation = pointToPixelCoordinates screen startingPoint
-        let initialColour = screen.Pixels.[startingLocation.H, startingLocation.V]
+        let initialColour = screen.Pixels[startingLocation.H, startingLocation.V]
 
         if initialColour = desiredColour then
             failwith "the specified colour cannot match the colour at the specified location."
@@ -300,13 +298,13 @@ module Rendering =
         let mutable currentChecks = List.singleton startingLocation
         while not (currentChecks |> List.isEmpty) do
 
-            let current = currentChecks.[0]
+            let current = List.head currentChecks
 
             let onScreen = withinScreen current screen
 
             if onScreen then
-                if screen.Pixels.[current.H, current.V] = initialColour then
-                    screen.Pixels.[current.H, current.V] <- desiredColour
+                if screen.Pixels[current.H, current.V] = initialColour then
+                    screen.Pixels[current.H, current.V] <- desiredColour
 
                     currentChecks <- List.removeAt 0 currentChecks
 
@@ -348,7 +346,7 @@ module Rendering =
                 let onScreen = withinScreen currentCoordinates screen
 
                 if currentPoint |> Polygon.isInsidePolygon bottomLeftPoint topRightPoint sides && onScreen then
-                    screen.Pixels.[i, j] <- desiredColour
+                    screen.Pixels[i, j] <- desiredColour
 
         screen
 

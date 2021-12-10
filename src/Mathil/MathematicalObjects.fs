@@ -178,12 +178,14 @@ module MathematicalObjects =
             Y = y
         }
 
-    /// Creates a list of points from a list of float tuples.
+    /// Creates a list of points from a list of float tuples, reversing the order.
     let createPoints (coordinates : (float * float) list) : Point list = 
-        [
-            for i = 0 to List.length coordinates - 1 do
-                createPoint coordinates.[i]
-        ]
+        let rec helper acc = function
+            | [] -> acc
+            | x :: xs ->
+                helper (createPoint x :: acc) xs
+
+        helper [] coordinates
 
     /// Creates a Function from a rule and domain.
     let createFunction (rule : float -> Point) (domain : float * float) : Function =
@@ -196,15 +198,14 @@ module MathematicalObjects =
     let createBezierCurve (points : Point list) : BezierCurve =
 
         let interpolatePairs (list : Point list) =
-            [
-                for i = 0 to List.length list - 2 do
-                    Point.lerp list.[i] list.[i + 1]
-            ]
+            list
+            |> List.pairwise
+            |> List.map (fun (a, b) -> Point.lerp a b)
 
         let rec constructCurve (parameter : float) (points : Point list) : Point =
 
             if List.length points = 1 then
-                points.[0]
+                List.head points
             else
                 interpolatePairs points
                 |> List.map (fun x -> x parameter)
@@ -239,13 +240,10 @@ module MathematicalObjects =
         {
             Vertices = vertices
             Edges =
-                [        
-                    for i = 0 to List.length vertices - 1 do
-                        if i = List.length vertices - 1 then
-                            createLineSegment vertices.[i] vertices.[0]
-                        else
-                            createLineSegment vertices.[i] vertices.[i + 1]
-                ]
+                (createLineSegment (List.last vertices) (List.head vertices)) ::
+                    (vertices
+                    |> List.pairwise
+                    |> List.map (fun (a, b) -> createLineSegment a b))
         }
 
     /// Creates a vector from its head, tail and the dimensions of the arrow head.

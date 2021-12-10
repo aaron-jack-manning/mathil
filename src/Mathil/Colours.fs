@@ -23,9 +23,9 @@ module Colours =
             let hexToDec (hex : string) =
                 Convert.ToByte(Convert.ToInt32(hex, 16))
 
-            let r = hexCode.[1..2]
-            let g = hexCode.[3..4]
-            let b = hexCode.[5..6]
+            let r = hexCode[1..2]
+            let g = hexCode[3..4]
+            let b = hexCode[5..6]
         
             {
                 Red = hexToDec r

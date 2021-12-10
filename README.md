@@ -148,7 +148,7 @@ let radialLines =
     [
         for i = 0 to (coefficient * 2) do
             if (coefficient % 2 = 1 && i % 2 = 0) || coefficient % 2 = 0 then
-                yield createLineSegment (createPoint (0.0, 0.0)) (createPoint (circleRadius * Math.Cos(float i * pi / (float (coefficient))), circleRadius * Math.Sin(float i * pi / (float (coefficient)))))
+                yield createLineSegment (createPoint (0.0, 0.0)) (createPoint (circleRadius * Math.Cos(float i * Constants.pi / (float (coefficient))), circleRadius * Math.Sin(float i * Constants.pi / (float (coefficient)))))
     ]
 
 let circle =

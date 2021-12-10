@@ -9,7 +9,7 @@
       "Testing and Debugging/1.0.0": {
         "dependencies": {
           "FSharp.Core": "6.0.1",
-          "Mathil": "1.1.0"
+          "Mathil": "1.2.0"
         },
         "runtime": {
           "Testing and Debugging.dll": {}
@@ -64,7 +64,7 @@
           }
         }
       },
-      "Mathil/1.1.0": {
+      "Mathil/1.2.0": {
         "dependencies": {
           "FSharp.Core": "6.0.1"
         },
@@ -87,7 +87,7 @@
       "path": "fsharp.core/6.0.1",
       "hashPath": "fsharp.core.6.0.1.nupkg.sha512"
     },
-    "Mathil/1.1.0": {
+    "Mathil/1.2.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
