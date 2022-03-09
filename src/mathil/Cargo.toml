@@ -1,0 +1,20 @@
+[package]
+name = "mathil"
+version = "0.1.0"
+edition = "2021"
+
+[profile.dev]
+opt-level = 0
+incremental = true
+
+[profile.release]
+opt-level = 3
+incremental = true
+overflow-checks = true
+
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+
+png = "0.17.5"
