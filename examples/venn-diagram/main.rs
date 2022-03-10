@@ -1,3 +1,5 @@
+#![allow(unused_imports)]
+
 mod mathil;
 use mathil::{colours::Colour, utilities::*, constants::*, rendering::*, maths_objects::*, colours::css_colours, animation::*};
 
@@ -6,9 +8,6 @@ fn main() {
 
     let vertical_resolution =
             horizontal_resolution / 3 * 2;
-
-    let line_thickness =
-        calculate_line_thickness(horizontal_resolution, vertical_resolution, 0.005);
     
     let left_circle_underneath =
         Function::new_circle(
@@ -45,7 +44,7 @@ fn main() {
         vec![Box::new(left_circle_underneath), Box::new(right_circle_underneath)],
         FunctionRenderSettings::new(
             css_colours::BLACK,
-            line_thickness / 2,
+            Thickness::Relative(0.3),
             900,
             RenderingType::RoundAliased
         )
@@ -66,7 +65,7 @@ fn main() {
         vec![Box::new(left_circle_top), Box::new(right_circle_top)],
         FunctionRenderSettings::new(
             css_colours::BLACK,
-            line_thickness,
+            Thickness::Relative(0.6),
             900,
             RenderingType::RoundAntiAliased(2.0)
         )

@@ -1,3 +1,5 @@
+#![allow(unused_imports)]
+
 mod mathil;
 use mathil::{colours::Colour, utilities::*, constants::*, rendering::*, maths_objects::*, colours::css_colours, animation::*};
 
@@ -18,9 +20,9 @@ pub fn trig_animation_generator(timestamp : f32, frame : u32) -> Screen {
 
     // Calculating Dimensions
     let line_thickness =
-        calculate_line_thickness(horizontal_resolution, vertical_resolution, 0.004);
+        Thickness::Relative(0.022);
     let point_radius =
-        calculate_line_thickness(horizontal_resolution, vertical_resolution, 0.01);
+        Thickness::Relative(0.055);
         
     // Colours
     let sine_colour = 

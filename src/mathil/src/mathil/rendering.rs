@@ -158,20 +158,6 @@ impl Screen {
 
         self
     }
-
-    /// Fills a region of a screen determined by the provided condition with a solid colour. Note this is not an efficient approach.
-    fn conditional_fill(mut self, condition : Box<dyn Fn(Point) -> bool>, desired_colour : Colour) {
-        for x in 0..self.horizontal_resolution {
-            for y in 0..self.vertical_resolution {
-                let current_point =
-                    pixel_coordinates_to_point(&self, PixelCoordinate::new(i32::from(x), i32::from(y)));
-
-                if (*condition)(current_point) {
-                    self.pixels[usize::try_from(x).unwrap()][usize::try_from(y).unwrap()] = desired_colour;
-                }       
-            }
-        }
-    }
 }
 
 mod utilities {
@@ -297,7 +283,30 @@ impl PixelCoordinate {
 pub enum RenderingType {
     Square,
     RoundAntiAliased(f32),
-    RoundAliased
+    RoundAliased,
+}
+
+/// Line thickness and point radius represented either as a relative length based on the coordinate system or as an absolute length as a number of pixels. When specified relatively, the actual number of pixels will be an average of the number of pixels across the horizontal and vertical directions.
+#[derive(Copy, Clone)]
+pub enum Thickness {
+    Absolute(u16),
+    Relative(f32),
+}
+
+impl Thickness {
+    pub fn to_pixels(&self, screen : &Screen) -> u16 { // only temporarily public
+        match self {
+            Thickness::Absolute(length) => {
+                length.clone()
+            },
+            Thickness::Relative(length) => {
+                let horizontal = (length / (screen.top_right_bound.x - screen.bottom_left_bound.x)) * f32::try_from(screen.horizontal_resolution).unwrap();
+                let vertical = (length / (screen.top_right_bound.y - screen.bottom_left_bound.y)) * f32::try_from(screen.vertical_resolution).unwrap();
+
+                f32_to_u16((horizontal + vertical) / 2.0)
+            }
+        }
+    }
 }
 
 pub trait Renderable {
@@ -313,13 +322,13 @@ pub trait Renderable {
 /// Represents the rendering settings for a Point.
 pub struct PointRenderSettings {
     colour : Colour,
-    radius : u16,
+    radius : Thickness,
     rendering_type : RenderingType,
 }
 
 impl PointRenderSettings {
     /// Creates a new PointRenderSettings.
-    pub fn new(colour : Colour, radius : u16, rendering_type : RenderingType) -> PointRenderSettings {
+    pub fn new(colour : Colour, radius : Thickness, rendering_type : RenderingType) -> PointRenderSettings {
         PointRenderSettings {
             colour : colour,
             radius : radius,
@@ -335,7 +344,11 @@ impl Renderable for Point {
     /// Renders a Point.
     fn render(self, settings : &Self::RenderSettings, screen : &mut Screen) {
         let coordinate = point_to_pixel_coordinates(&screen, self);
-        let radius = i32::from(settings.radius);
+
+        // this radius should be in terms of the coordinate system, and therefore needs to be converted properly using similar method to point to pixel coordinates
+        let radius = i32::from(
+                settings.radius.to_pixels(&screen)
+            );
 
         for i in (coordinate.x - radius)..(coordinate.x + radius) {
             for j in (coordinate.y - radius)..(coordinate.y + radius) {
@@ -395,14 +408,14 @@ impl Renderable for Point {
 /// Represents the rendering settings for a Function.
 pub struct FunctionRenderSettings {
     colour : Colour,
-    thickness : u16,
+    thickness : Thickness,
     samples : u16,
     rendering_type : RenderingType,
 }
 
 impl FunctionRenderSettings {
     /// Creates a new FunctionRenderSettings.
-    pub fn new(colour : Colour, thickness : u16, samples : u16, rendering_type : RenderingType) -> FunctionRenderSettings {
+    pub fn new(colour : Colour, thickness : Thickness, samples : u16, rendering_type : RenderingType) -> FunctionRenderSettings {
         FunctionRenderSettings {
             colour : colour,
             thickness : thickness,
@@ -444,14 +457,14 @@ impl Renderable for Function {
 /// Represents the rendering settings for a Polygon's sides.
 pub struct PolygonSidesRenderSettings {
     colour : Colour,
-    thickness : u16,
+    thickness : Thickness,
     samples_per_side : u16,
     rendering_type : RenderingType,
 }
 
 impl PolygonSidesRenderSettings {
     /// Creates a new PolygonSidesRenderSettings.
-    pub fn new(colour : Colour, thickness : u16, samples_per_side : u16, rendering_type : RenderingType) -> PolygonSidesRenderSettings {
+    pub fn new(colour : Colour, thickness : Thickness, samples_per_side : u16, rendering_type : RenderingType) -> PolygonSidesRenderSettings {
         PolygonSidesRenderSettings {
             colour: colour,
             thickness : thickness,
@@ -545,17 +558,17 @@ impl Renderable for Polygon {
     fn render(self, settings : &Self::RenderSettings, screen : &mut Screen) {
         let edges = self.edges;
         let vertices = self.vertices;
-        
-        match &settings.sides {
-            Some(sides_settings) => {
-               Polygon::render_sides(edges, sides_settings, screen)
-            }
-            None => {}
-        }
 
         match &settings.fill {
             Some(edges_settings) => {
                 Polygon::render_fill(vertices, edges_settings, screen);
+            }
+            None => {}
+        }
+        
+        match &settings.sides {
+            Some(sides_settings) => {
+               Polygon::render_sides(edges, sides_settings, screen)
             }
             None => {}
         }
@@ -572,14 +585,14 @@ impl Renderable for Polygon {
 /// Represents the rendering settings for a Vector.
 pub struct VectorRenderSettings {
     colour : Colour,
-    thickness : u16,
+    thickness : Thickness,
     samples : u16,
     rendering_type : RenderingType,
 }
 
 impl VectorRenderSettings {
     /// Creates a new VectorRenderSettings.
-    pub fn new(colour : Colour, thickness : u16, samples : u16, rendering_type : RenderingType) -> VectorRenderSettings {
+    pub fn new(colour : Colour, thickness : Thickness, samples : u16, rendering_type : RenderingType) -> VectorRenderSettings {
         VectorRenderSettings {
             colour : colour,
             thickness : thickness,
@@ -626,14 +639,14 @@ impl Renderable for Vector {
 /// Represents the rendering settings for a DashedLine.
 pub struct DashedLineRenderSettings {
     colour : Colour,
-    thickness : u16,
+    thickness : Thickness,
     samples_per_dash : u16,
     rendering_type : RenderingType,
 }
 
 impl DashedLineRenderSettings {
     /// Creates a new DashedLineRenderSettings.
-    pub fn new(colour : Colour, thickness : u16, samples_per_dash : u16, rendering_type : RenderingType) -> DashedLineRenderSettings {
+    pub fn new(colour : Colour, thickness : Thickness, samples_per_dash : u16, rendering_type : RenderingType) -> DashedLineRenderSettings {
         DashedLineRenderSettings {
             colour : colour,
             thickness : thickness,
@@ -678,13 +691,13 @@ impl Renderable for DashedLine {
 /// Represents the rendering settings for a CartesianPlane.
 pub struct CartesianPlaneRenderSettings {
     colour : Colour,
-    thickness : u16,
+    thickness : Thickness,
     samples_per_axis : u16,
 }
 
 impl CartesianPlaneRenderSettings {
     /// Creates a new CartesianPlaneRenderSettings.
-    pub fn new(colour : Colour, thickness : u16, samples_per_axis : u16) -> CartesianPlaneRenderSettings {
+    pub fn new(colour : Colour, thickness : Thickness, samples_per_axis : u16) -> CartesianPlaneRenderSettings {
         CartesianPlaneRenderSettings {
             colour : colour,
             thickness : thickness,

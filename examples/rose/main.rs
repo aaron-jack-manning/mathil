@@ -1,3 +1,5 @@
+#![allow(unused_imports)]
+
 mod mathil;
 use mathil::{colours::Colour, utilities::*, constants::*, rendering::*, maths_objects::*, colours::css_colours, animation::*};
 
@@ -11,12 +13,6 @@ pub fn rose_animation_generator(time_stamp : f32, frame : u32) -> Screen {
 
     let horizontal_resolution = 3840;
     let vertical_resolution = 2160;
-
-    let line_thickness_thick =
-        calculate_line_thickness(horizontal_resolution, vertical_resolution, 0.005);
-
-    let line_thickness_thin =
-        calculate_line_thickness(horizontal_resolution, vertical_resolution, 0.002);
 
     let screen =
         Screen::new(
@@ -50,7 +46,7 @@ pub fn rose_animation_generator(time_stamp : f32, frame : u32) -> Screen {
         rose,
         FunctionRenderSettings::new(
             css_colours::BLACK,
-            line_thickness_thick,
+            Thickness::Relative(0.022),
             8000,
             RenderingType::RoundAntiAliased(1.0)
         )
@@ -59,7 +55,7 @@ pub fn rose_animation_generator(time_stamp : f32, frame : u32) -> Screen {
         circle,
         FunctionRenderSettings::new(
             css_colours::BLACK,
-            line_thickness_thin,
+            Thickness::Relative(0.007),
             5000,
             RenderingType::RoundAntiAliased(1.0)
         )

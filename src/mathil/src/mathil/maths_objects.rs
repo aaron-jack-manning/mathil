@@ -272,7 +272,7 @@ impl DashedLine {
         for i in 0..divisions {
             if i % 2 == 0 {
                 let segment_start = Point::lerp(start, finish, u32_to_f32(i) * divisions_width_in_parameter);
-                let segment_end = Point::lerp(start, finish, 1.0 + u32_to_f32(i) * divisions_width_in_parameter);
+                let segment_end = Point::lerp(start, finish, (1.0 + u32_to_f32(i)) * divisions_width_in_parameter);
 
                 segments.push(Function::new_line_segment(segment_start, segment_end, (0.0, 1.0)));
             }
@@ -329,19 +329,43 @@ impl Vector {
 
         let extension_factor_width =
             (arrow_width / 2.0) / vector_length;
-        let extension_factor_length = arrow_height / vector_length;
+        let extension_factor_length =
+            arrow_height / vector_length;
+
+        let head_adjustment_factor =
+            arrow_height / vector_length;
+
+        if head_adjustment_factor > 1.0 {
+            panic!("Arrow height must be less than the length of the overall vector.");
+        }
+
+        let adjusted_head =
+            Point::lerp(
+                head,
+                tail,
+                head_adjustment_factor
+            );
 
         let arrow_head =
             Polygon::new(
                 vec![
-                    Point::add(head, Point::multiply_scalar(desired_vector, extension_factor_length)),
-                    Point::add(head, Point::multiply_scalar(Point::rotate_counter_clockwise(&desired_vector), extension_factor_width)),
-                    Point::add(head, Point::multiply_scalar(Point::rotate_clockwise(&desired_vector), extension_factor_width)),
+                    Point::add(
+                        adjusted_head,
+                        Point::multiply_scalar(desired_vector, extension_factor_length)
+                    ),
+                    Point::add(
+                        adjusted_head,
+                        Point::multiply_scalar(Point::rotate_counter_clockwise(&desired_vector), extension_factor_width)
+                    ),
+                    Point::add(
+                        adjusted_head,
+                        Point::multiply_scalar(Point::rotate_clockwise(&desired_vector), extension_factor_width)
+                    ),
                 ]
             );
 
         Vector {
-            line : Function::new_line_segment(head, tail, (0.0, 1.0)),
+            line : Function::new_line_segment(adjusted_head, tail, (0.0, 1.0)),
             arrow_head : arrow_head,
         }
     }

@@ -1,3 +1,5 @@
+#![allow(unused_imports)]
+
 mod mathil;
 use mathil::{colours::Colour, utilities::*, constants::*, rendering::*, maths_objects::*, colours::css_colours, animation::*};
 
@@ -8,7 +10,9 @@ fn main() {
 pub fn curve_intersection_generator(time_stamp : f32, frame : u32) -> Screen {
 
     let line_thickness =
-        calculate_line_thickness(3840, 2160, 0.004);
+        Thickness::Relative(0.044);
+    let cartesian_plane_thickness =
+        Thickness::Relative(0.022);
 
     let mut screen =
         Screen::new(
@@ -26,7 +30,7 @@ pub fn curve_intersection_generator(time_stamp : f32, frame : u32) -> Screen {
             ),
             CartesianPlaneRenderSettings::new(
                 Colour::from_hex("#ecf0f1"),
-                line_thickness / 2,
+                cartesian_plane_thickness,
                 500
             )
         )

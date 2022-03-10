@@ -1,0 +1,85 @@
+\documentclass[titlepage, 12pt, a4paper]{article}
+
+% ----------------------- PACKAGES -----------------------
+
+% Setting margins
+\usepackage[margin=20mm]{geometry}
+% Sets paragraphs to skip a line rather than indent
+\usepackage{parskip}
+% H float modifier
+\usepackage{float}
+% For graphs and plots
+\usepackage{pgfplots}
+% For code listings
+\usepackage{listings}
+% Fort for code listings
+\usepackage{inconsolata}
+% Additional mathematical typesetting features
+\usepackage{amsmath, amsfonts}
+% Prevents page numbers from appearing on empty pages (still counts the page)
+\usepackage{emptypage}
+% Linked table of contents.
+\usepackage{bookmark}
+% Colours
+\usepackage{xcolor}
+
+% ----------------------- SETTINGS -----------------------
+
+% Code listings configuration
+\definecolor{codebackgroundcolour}{rgb}{0.9, 0.9, 0.9}
+
+\lstset{
+    basicstyle=\ttfamily,
+    columns=fullflexible,
+    breaklines=true,
+    backgroundcolor=\color{codebackgroundcolour},
+    framesep=5pt,
+    frame=tlbr,
+    framerule=0pt
+}
+
+% Sans serif computer modern font as default for text
+\renewcommand{\familydefault}{\sfdefault}
+
+% Force version of pdfplots
+\pgfplotsset{compat=1.18}
+
+% Allows filling colours between curves
+\usepgfplotslibrary{fillbetween}
+
+
+% ----------------------- MACROS -----------------------
+
+% For large comments
+\newcommand{\comment}[1]{}
+
+% Takes as arguments: label, width, path
+\newcommand{\centeredimage}[3]{\begin{figure}[H]\centering\label{#1}\includegraphics[width=#2]{#3}\end{figure}}
+
+% ----------------------- DOCUMENT -----------------------
+
+\title{Mathil Documentation}
+\author{Aaron Manning}
+\date{}
+
+\begin{document}
+
+    \maketitle
+    \tableofcontents
+
+    % Allows display maths to be broken up across pages
+    \allowdisplaybreaks
+
+    % Ragged right text, resolves many hbox overfull issues
+    \raggedright
+
+    % ----------------------- CONTENT -----------------------
+
+    \include{content.tex}
+
+
+
+
+\end{document}
+
+
