@@ -29,6 +29,7 @@ The following images and videos were all created using Mathil, with source code 
 
 ![Curve Intersection](examples/curve-intersection/thumbnail.png)
 [Source Code](examples/curve-intersection/main.rs)
+
 [High Quality Video](https://www.youtube.com/watch?v=x_0A-ukn5gE)
 
 ## Setup
