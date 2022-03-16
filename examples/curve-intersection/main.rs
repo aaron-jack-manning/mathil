@@ -1,13 +1,13 @@
 #![allow(unused_imports)]
 
 mod mathil;
-use mathil::{colours::Colour, utilities::*, constants::*, rendering::*, maths_objects::*, colours::css_colours, animation::*};
+use mathil::{colours::*, utilities::*, constants::*, rendering::*, maths_objects::*, colours::css_colours, animation::*};
 
 fn main() {
     animate(curve_intersection_generator, 4.0, 60, "")
 }
 
-pub fn curve_intersection_generator(time_stamp : f32, frame : u32) -> Screen {
+pub fn curve_intersection_generator(time_stamp : f32, _frame : u32, _length : f32) -> Screen {
 
     let line_thickness =
         Thickness::Relative(0.044);

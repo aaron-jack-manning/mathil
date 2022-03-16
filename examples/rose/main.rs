@@ -1,13 +1,13 @@
 #![allow(unused_imports)]
 
 mod mathil;
-use mathil::{colours::Colour, utilities::*, constants::*, rendering::*, maths_objects::*, colours::css_colours, animation::*};
+use mathil::{colours::*, utilities::*, constants::*, rendering::*, maths_objects::*, colours::css_colours, animation::*};
 
 fn main() {
     animate(rose_animation_generator, 8.0, 60, "")
 }
 
-pub fn rose_animation_generator(time_stamp : f32, frame : u32) -> Screen {
+pub fn rose_animation_generator(time_stamp : f32, _frame : u32, _length : f32) -> Screen {
 
     let coefficient = time_stamp;
 

@@ -6,7 +6,8 @@ use crate::mathil::rendering::Screen;
 use crate::mathil::primitive_conversions::*;
 
 /// Generates an animation using a function pointer which returns the frame for the given timestamp.
-pub fn animate(frame_generator : fn(f32, u32) -> Screen, length : f32, frame_rate : u8, output_folder : &'static str) {
+/// The function pointer takes as input, the current timestamp, the frame number, and the total length of the animation.
+pub fn animate(frame_generator : fn(f32, u32, f32) -> Screen, length : f32, frame_rate : u8, output_folder : &'static str) {
 
     // Total number of frames of video.
     let frame_qty = f32_to_u32(f32::from(frame_rate) * length);
@@ -27,7 +28,7 @@ pub fn animate(frame_generator : fn(f32, u32) -> Screen, length : f32, frame_rat
             let filename =
                 format!("frame_{:0>#5}", frame);
 
-            frame_generator(timestamp, frame)
+            frame_generator(timestamp, frame, length)
             .write_to_png(output_folder, &filename);
         });
 

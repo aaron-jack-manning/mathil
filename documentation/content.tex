@@ -40,6 +40,8 @@ Colours in Mathil are internally represented by RGB values, and can be created f
 
 All colours in the CSS standard are also provided as static variables in the \verb|css_colours| module, for convenience.
 
+The colours module also has a \verb|rainbow| function which takes as input a floating point number, and returns a colour. Colours are given as a rainbow from red through to purple with inputs from 0 to 1, repeating beyond that domain.
+
 Natural colour mixing is an in development feature.
 
 \section{Renderables}
@@ -225,6 +227,8 @@ Screen::new(
 \end{lstlisting}
 
 \centeredimage{circle}{8cm}{images/circle.png}
+
+It is also worth mentioning that although a function will internally be sampled when rendering, the \verb|sample| method is publically available for manipulating the resulting points separately if need be.
 
 \subsection{Polygon}
 
@@ -413,10 +417,10 @@ Mathil also has tools to create a series of images as frames of animation more e
 The primary function used to create an animation is called \verb|animate|. The signature of this function is as follows:
 
 \begin{lstlisting}
-fn animate(fn(f32, u32) -> Screen, f32, u8, &'static str)
+fn animate(fn(f32, u32, f32) -> Screen, f32, u8, &'static str)
 \end{lstlisting}
 
-The idea of this function is that you can provide as input a function pointer to a function which generates each frame of video based on the timestamp, and therefore the timestamp and length of the animation can be supplied as other inputs to make the video framerate independent. Notice that the function which generates each frame also takes in a `u32`, when trying create a framerate independent animation, this should simply be ignored. However, this variable will be passed in as the current zero indexed frame number in the animation, which is sometimes useful for handling special cases in animations where frame rate independence is not cruical, or for cases where rendering at a higher frame rate giving faster motion is desired. The \verb|animate| function also takes as input the length of the animation in seconds, the framerate and the output folder to write the frames of animation to.
+The idea of this function is that you can provide as input a function pointer to a function which generates each frame of video based on the timestamp, and therefore the timestamp and length of the animation can be supplied as other inputs to make the video framerate independent. Notice that the function which generates each frame also takes in a `u32`, when trying create a framerate independent animation, this should simply be ignored. However, this variable will be passed in as the current zero indexed frame number in the animation, which is sometimes useful for handling special cases in animations where frame rate independence is not cruical, or for cases where rendering at a higher frame rate giving faster motion is desired. The \verb|animate| function also takes as input the length of the animation in seconds, the framerate and the output folder to write the frames of animation to. This length is then also passed as the third input to the provided function pointer.
 
 The \verb|animation| module also includes a function called \verb|smooth| which is used to smooth out animations by mapping the interval from 0 to 1 onto itself with an increasing function such that the rate of increase is lowest at the endpoints and greatest in the middle. There are two functions to use in this smoothing from the \verb|Smoother| enum, parameterised on how harsh the smoothing effect is, where values closer to zero have a less significant effect. An example of this function being used can be seen in the \emph{curve intersection} example, which applies it to the domain of the curves being drawn.
 
@@ -429,7 +433,7 @@ fn main() {
     animate(curve_intersection_generator, 4.0, 60, "")
 }
 
-pub fn curve_intersection_generator(time_stamp : f32, frame : u32) -> Screen {
+pub fn curve_intersection_generator(time_stamp : f32, frame : u32, length : f32) -> Screen {
 
     let line_thickness =
         Thickness::Relative(0.044);

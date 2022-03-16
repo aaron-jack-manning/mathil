@@ -1,13 +1,13 @@
 #![allow(unused_imports)]
 
 mod mathil;
-use mathil::{colours::Colour, utilities::*, constants::*, rendering::*, maths_objects::*, colours::css_colours, animation::*};
+use mathil::{colours::*, utilities::*, constants::*, rendering::*, maths_objects::*, colours::css_colours, animation::*};
 
 fn main() {
     animate(trig_animation_generator, 4.0, 60, "")
 }
 
-pub fn trig_animation_generator(timestamp : f32, frame : u32) -> Screen {
+pub fn trig_animation_generator(timestamp : f32, frame : u32, _length : f32) -> Screen {
 
     let horizontal_resolution : u16 = 3840;
     let vertical_resolution : u16 = 2160;
@@ -39,7 +39,6 @@ pub fn trig_animation_generator(timestamp : f32, frame : u32) -> Screen {
     let cos = angle.cos();
     let sin = angle.sin();
     let sec = 1.0 / cos;
-    let cosec = 1.0 / sin;
 
     Screen::new(
         horizontal_resolution, vertical_resolution,

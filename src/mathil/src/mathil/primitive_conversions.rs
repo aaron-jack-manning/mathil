@@ -52,3 +52,12 @@ pub (in crate::mathil) fn u8_to_f32(integer : u8) -> f32 {
         integer as f32
     }
 }
+
+pub (in crate::mathil) fn f32_to_u8(float : f32) -> u8 {
+    if f64::from(float) > f64::from(u8::MAX) || f64::from(float) < f64::from(u8::MIN) {
+        panic!("Could not convert due to input being out of bounds of the output type.");
+    }
+    else {
+        float as u8
+    }
+}

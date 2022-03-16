@@ -1,9 +1,21 @@
+use crate::mathil::primitive_conversions::*;
+use crate::mathil::constants::*;
+
 /// Represents a colour in RGB format.
 #[derive(Copy, Clone, PartialEq)]
 pub struct Colour {
     pub (in crate::mathil) red : u8,
     pub (in crate::mathil) green : u8,
     pub (in crate::mathil) blue : u8,
+}
+
+/// Generates a colour on the rainbow from red to purple based on an input from 0 to 1 (loops back on itself).
+pub fn rainbow(t : f32) -> Colour {
+    Colour::from_rgb(
+        f32_to_u8(127.5 * (2.0 * PI * (t + 0.17)).sin() + 127.5),
+        f32_to_u8(127.5 * (2.0 * PI * ((t + 0.17) - 1.0 / 3.0)).sin() + 127.5),
+        f32_to_u8(127.5 * (2.0 * PI * ((t + 0.17) - 2.0 / 3.0)).sin() + 127.5)
+    )
 }
 
 impl Colour {

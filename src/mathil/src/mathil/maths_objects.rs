@@ -232,7 +232,7 @@ impl Function {
     }
 
     /// Samples a function the specified number of times.
-    pub (in crate::mathil) fn sample(&self, number_of_samples : u16) -> Vec<Point> {
+    pub fn sample(&self, number_of_samples : u16) -> Vec<Point> {
 
         fn lerp_scalar(start : f32, end : f32, parameter : f32) -> f32 {
             (1.0 - parameter) * start + parameter * end
