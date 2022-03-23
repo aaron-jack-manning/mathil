@@ -54,6 +54,229 @@ While debug and release profiles are configured, due to the nature of Mathil bei
 
 Originally this library only supported writing to 24-bit uncompressed bitmaps, which is a file type I chose due to the simplicity of the standard and therefore the ease of implementation. Due to the fact that the library is now oriented towards ease of animation, outputs of a more common filetype with smaller filesizes was required, hence the ability to now write to PNG images. This is through the `png` crate which is documented [here](https://crates.io/crates/png). This crate and it's dependencies are only dependencies of this project. Eventually I plan on writing my own PNG authoring code.
 
+## Getting Started
+
+This section is designed to be an introduction into some of the basic features of Mathil, by explaining how the venn diagram example above was created. For complete documentation on all features, including those for animation, see the next section with full documentation.
+
+Before following this set of instructions, set up your project according to the getting started section above. As such, you should have a main file which looks like this:
+
+```
+#![allow(unused_imports)]
+
+mod mathil;
+use mathil::{colours::*, utilities::*, constants::*, rendering::*, maths_objects::*, colours::css_colours, animation::*};
+
+fn main() {}
+```
+
+The code I am about to write, unless otherwise specified, will appear in the `main` function.
+
+Let's start be declaring variables for the horizontal and vertical resolution. We will define the vertical resolution in terms of the horizontal resolution such that it can easily be adjusted later without effecting the aspect ratio.
+
+```
+let horizontal_resolution = 3000;
+
+let vertical_resolution =
+        horizontal_resolution / 3 * 2;
+```
+
+Now we create the image on which to render our venn diagram. To do this we create what in Mathil is called a `Screen` using the `Screen::new` function.
+
+```
+Screen::new(
+    horizontal_resolution, vertical_resolution,
+    Point::new(0.0, 0.0), Point::new(150.0, 100.0),
+    css_colours::ALMOND
+)
+```
+
+This function first takes as input the horizontal and vertical resolution which we defined earlier. The next two variables are points, which define the boundaries of our image in a coordinate system which is independent of the resolution. In this case, we have set the bottom left point as `(0, 0)` and the top right point as `(150, 100)`. This is the coordinate system that we will use when rendering everything, and Mathil will stretch the image correctly for us. This means if we change the resolution later, everything we render will still be in the same relative position.
+
+Finally, we need to specify an initial colour of the screen. The type `Colour` has member functions `from_hex` and `from_rgb` which will create an colour, but in this case we am just going to use a from the CSS standard, all of which are defined in the `css_colours` module.
+
+We then need to render the circles of our venn diagram. Since we are going to need to fill the colours of them, and Mathil uses solid colours to fill, we are going to render two circles first, then do the colour fill, and then render two circles over the top later. This lets us use an anti-aliasing effect on our top circles, whilst still having a distinct colour to fill at the start.
+
+Here are the two functions that will give us our desired left and right circle.
+
+```
+fn left_circle() -> Function {
+    Function::new_circle(
+        25.0,
+        Point::new(60.0, 50.0),
+        (0.0, TAU)
+    )
+}
+
+fn right_circle() -> Function {
+    Function::new_circle(
+        25.0,
+        Point::new(90.0, 50.0),
+        (0.0, TAU)
+    )
+}
+```
+
+Within these functions we are creating an instance of a type in Mathil called a `Function`. A `Function` is internally just a parametric function from an `f32` to a `Point` which we saw earlier, and a domain on which to sample that function. A `Function` can be created by directly giving the parametric rule and the `Function::new` function but here we are using the `Function::new_circle` abstraction which allows is to create a circle from the radius and the centre. We also specify the domain, which by default goes from `0` to `TAU` (which is defined as a constant in the library) which makes it easier to define a partial circle if we wish.
+
+Now we need to render each of these circles to the screen. In Mathil, the trait `Renderable` defines mathematical objects which can be rendered to the screen.
+
+```
+pub trait Renderable {
+    type RenderSettings;
+
+    /// Renders the renderable item on the provided screen.
+    fn render(self, settings : &Self::RenderSettings, screen : &mut Screen);
+
+    /// Renders many of the renderable item on the provided screen.
+    fn render_many(selfs : Vec<Box<Self>>, settings : &Self::RenderSettings, screen : &mut Screen);
+}
+```
+
+The screen then has a function called `render` and `render_many` which call the members on the types satisfying this trait, taking ownership of and then returning the screen. As such, when rendering to a screen it is typical to write code something like this:
+
+```
+Screen::new(
+    ...
+)
+.render(
+    ...
+)
+.render_many(
+    ...
+)
+...
+```
+
+A `Function` is one such type with implements `Renderable`. When we render any given type, there is also an associated type of which we must provide an instance for the settings that define how it is rendered. In this case we are after an instance of `FunctionRenderSettings`.
+
+Going back to our screen from before, let's add the code to render two circles:
+
+```
+Screen::new(
+    horizontal_resolution, vertical_resolution,
+    Point::new(0.0, 0.0), Point::new(150.0, 100.0),
+    css_colours::ALMOND
+)
+.render_many(
+    vec![Box::new(left_circle()), Box::new(right_circle())],
+    FunctionRenderSettings::new(
+        css_colours::BLACK,
+        Thickness::Relative(0.3),
+        900,
+        RenderingType::RoundAliased
+    )
+)
+```
+
+The function render settings that are provided define the colour we wish to render the circle, the thickness of the line, specified either relatively (depending on the bounding box we specified when creating the screen) or absolutely (as a number of pixels), the number of samples of the functions and the way it will be rendered. This final parameter of `RenderingType` determines how each sample of the function is rendered. Here, we do not want an anti-aliasing effect because of the colour fill we will do after. Let's now move on to that colour fill, continuing the code above:
+
+```
+.fill(
+    Point::new(75.0, 50.0),
+    Colour::from_hex("#9b59b6")
+)
+.fill(
+    Point::new(60.0, 50.0),
+    css_colours::BABY_BLUE
+)
+.fill(
+    Point::new(90.0, 50.0),
+    css_colours::ALIZARIN_CRIMSON
+)
+```
+
+Colour fills are done by giving a starting point and a colour. The `fill` function then fills the solid colour containing the starting point with the new colour. The first fill also gives an example of creating a colour from a hex code string.
+
+Now we just need to render the circles again over the top, with an anti-aliasing effect.
+
+```
+.render_many(
+    vec![Box::new(left_circle()), Box::new(right_circle())],
+    FunctionRenderSettings::new(
+        css_colours::BLACK,
+        Thickness::Relative(0.6),
+        900,
+        RenderingType::RoundAntiAliased(2.0)
+    )
+)
+```
+
+Notice that the rendering settings are the same except that we have made it a bit thicker compared to the original line and the `RenderingType` is not the `RoundAntiAliased` case. This case of the enum takes in a float which determines how strong the effect is. High values here give something closer to `RenderingType::RoundAliased` while smaller values give a softer look. `2.0` is generally a good place to start for relatively thin lines.
+
+Finally we need to take this screen and write it to a file to see the output. We can do this with either of the `write_to_png` or `write_to_bmp` member functions, both of which take as input a folder and filename (without the extension).
+
+This leaves our final code as:
+
+```
+#![allow(unused_imports)]
+
+mod mathil;
+use mathil::{colours::*, utilities::*, constants::*, rendering::*, maths_objects::*, colours::css_colours, animation::*};
+
+
+fn left_circle() -> Function {
+    Function::new_circle(
+        25.0,
+        Point::new(60.0, 50.0),
+        (0.0, TAU)
+    )
+}
+
+fn right_circle() -> Function {
+    Function::new_circle(
+        25.0,
+        Point::new(90.0, 50.0),
+        (0.0, TAU)
+    )
+}
+
+fn main() {
+    let horizontal_resolution = 3000;
+
+    let vertical_resolution =
+            horizontal_resolution / 3 * 2;
+
+    Screen::new(
+        horizontal_resolution, vertical_resolution,
+        Point::new(0.0, 0.0), Point::new(150.0, 100.0),
+        css_colours::ALMOND
+    )
+    .render_many(
+        // Render the two circles thinner than desired in preparation for the colour fill.
+        vec![Box::new(left_circle()), Box::new(right_circle())],
+        FunctionRenderSettings::new(
+            css_colours::BLACK,
+            Thickness::Relative(0.3),
+            900,
+            RenderingType::RoundAliased
+        )
+    )
+    .fill(
+        Point::new(75.0, 50.0),
+        Colour::from_hex("#9b59b6")
+    )
+    .fill(
+        Point::new(60.0, 50.0),
+        css_colours::BABY_BLUE
+    )
+    .fill(
+        Point::new(90.0, 50.0),
+        css_colours::ALIZARIN_CRIMSON
+    )
+    .render_many(
+        // Render the top circles after the fill.
+        vec![Box::new(left_circle()), Box::new(right_circle())],
+        FunctionRenderSettings::new(
+            css_colours::BLACK,
+            Thickness::Relative(0.6),
+            900,
+            RenderingType::RoundAntiAliased(2.0)
+        )
+    )
+    .write_to_png("/home/Pictures", "venn-diagram");
+}
+```
+
 ## Full Documentation
 
 Full documentation is available [here](documentation/main.pdf).

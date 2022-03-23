@@ -3,37 +3,28 @@
 mod mathil;
 use mathil::{colours::*, utilities::*, constants::*, rendering::*, maths_objects::*, colours::css_colours, animation::*};
 
+
+fn left_circle() -> Function {
+    Function::new_circle(
+        25.0,
+        Point::new(60.0, 50.0),
+        (0.0, TAU)
+    )
+}
+
+fn right_circle() -> Function {
+    Function::new_circle(
+        25.0,
+        Point::new(90.0, 50.0),
+        (0.0, TAU)
+    )
+}
+
 fn main() {
     let horizontal_resolution = 3000;
 
     let vertical_resolution =
             horizontal_resolution / 3 * 2;
-    
-    let left_circle_underneath =
-        Function::new_circle(
-            25.0,
-            Point::new(60.0, 50.0),
-            (0.0, TAU)
-        );
-    let left_circle_top =
-        Function::new_circle(
-            25.0,
-            Point::new(60.0, 50.0),
-            (0.0, TAU)
-        );
-
-    let right_circle_underneath =
-        Function::new_circle(
-            25.0,
-            Point::new(90.0, 50.0),
-            (0.0, TAU)
-        );
-    let right_circle_top =
-        Function::new_circle(
-            25.0,
-            Point::new(90.0, 50.0),
-            (0.0, TAU)
-        );
 
     Screen::new(
         horizontal_resolution, vertical_resolution,
@@ -41,7 +32,8 @@ fn main() {
         css_colours::ALMOND
     )
     .render_many(
-        vec![Box::new(left_circle_underneath), Box::new(right_circle_underneath)],
+        // Render the two circles thinner than desired in preparation for the colour fill.
+        vec![Box::new(left_circle()), Box::new(right_circle())],
         FunctionRenderSettings::new(
             css_colours::BLACK,
             Thickness::Relative(0.3),
@@ -62,7 +54,8 @@ fn main() {
         css_colours::ALIZARIN_CRIMSON
     )
     .render_many(
-        vec![Box::new(left_circle_top), Box::new(right_circle_top)],
+        // Render the top circles after the fill.
+        vec![Box::new(left_circle()), Box::new(right_circle())],
         FunctionRenderSettings::new(
             css_colours::BLACK,
             Thickness::Relative(0.6),
