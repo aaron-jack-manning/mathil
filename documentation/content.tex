@@ -414,112 +414,128 @@ Screen::new(
 
 Mathil also has tools to create a series of images as frames of animation more easily. This is through the \verb|animation| module.
 
-The primary function used to create an animation is called \verb|animate|. The signature of this function is as follows:
+An animation can be constructed either as a \verb|Scene| or as a series of scenes in the form of a \verb|Video|.
+
+The declarations for these types are as follows:
 
 \begin{lstlisting}
-fn animate(fn(f32, u32, f32) -> Screen, f32, u8, &'static str)
+pub struct Scene {
+    generator : fn(Screen, f32, f32) -> Screen,
+    length : f32,
+}
+
+pub struct Video {
+    scenes : Vec<Scene>
+}
 \end{lstlisting}
 
-The idea of this function is that you can provide as input a function pointer to a function which generates each frame of video based on the timestamp, and therefore the timestamp and length of the animation can be supplied as other inputs to make the video framerate independent. Notice that the function which generates each frame also takes in a `u32`, when trying create a framerate independent animation, this should simply be ignored. However, this variable will be passed in as the current zero indexed frame number in the animation, which is sometimes useful for handling special cases in animations where frame rate independence is not cruical, or for cases where rendering at a higher frame rate giving faster motion is desired. The \verb|animate| function also takes as input the length of the animation in seconds, the framerate and the output folder to write the frames of animation to. This length is then also passed as the third input to the provided function pointer.
+Both of these types have a method called \verb|animate|.
 
-The \verb|animation| module also includes a function called \verb|smooth| which is used to smooth out animations by mapping the interval from 0 to 1 onto itself with an increasing function such that the rate of increase is lowest at the endpoints and greatest in the middle. There are two functions to use in this smoothing from the \verb|Smoother| enum, parameterised on how harsh the smoothing effect is, where values closer to zero have a less significant effect. An example of this function being used can be seen in the \emph{curve intersection} example, which applies it to the domain of the curves being drawn.
+The \verb|generator| member on a \verb|Scene| takes as input an initial frame, the timestamp within the \verb|Scene| and the total length of the \verb|Scene|.
 
-The final argument to the \verb|animate| function is just a path to a folder where the frames of animation will be written.
+Therefore, the standard workflow for creating an animation is to create the \verb|generator| function which generates each frame of video in the \verb|Scene| based on the timestamp, then to create the \verb|Scene| itself, specifying the length, and then to use the \verb|animate| method, providing as input the initial frame which is passed into the \verb|generator|, the framerate, and the path to the folder to write the frames.
 
-Here is the code behind the curve intersection example from the GitHub page, incorporating many of the ideas explained above.
+The main purpose of this abstraction on the initial frame is so that when creating a \verb|Video|, the final frame of each \verb|Scene| is passed as the initial frame of the next scene, so that elements do not need to be re-rendered in each distinct section of animation.
+
+This allows the creation of a \verb|Video| by constructing many \verb|Scene|s which each add additional elements to the initial frame provided to it. As such a function called \verb|placeholder| to use as the \verb|generator| is included in this module as the identity function with respect to the initial frame, to make it easy to create a pause in animation where nothing has changed.
+
+The \verb|animation| module also includes a function called \verb|easy_ease| which is used to smooth out animations by mapping the interval from $0$ to $1$ onto itself with an increasing function such that the rate of increase is lowest at the endpoints and greatest in the middle. There are two functions to use in this smoothing from the \verb|EaseFn| enum, parameterised on how harsh the smoothing effect is, where values closer to zero have a less significant effect. An example of this function being used can be seen in the \emph{curve intersection} example, which applies it to the domain of the curves being drawn.
+
+Here is the code behind the curve intersection example from the GitHub page, incorporating many of the ideas explained above. See the \verb|main| function for an idea as to how the overall program for animation is structured, as the other functions as simply the function pointers given to the \verb|Scene|.
 
 \begin{lstlisting}
 fn main() {
-    animate(curve_intersection_generator, 4.0, 60, "")
+
+    let init =
+        Screen::new(
+        3840, 2160,
+        Point::new(-7.11, -4.0),
+        Point::new(7.22, 4.0),
+        Colour::from_hex("#2c3e50")
+    );
+    
+    let video = Video::new(vec![
+        Scene::new(scene_1, 1.0),
+        Scene::new(placeholder, 1.0),
+        Scene::new(scene_2, 1.0),
+        Scene::new(placeholder, 1.0)
+    ]);
+
+    video.animate(init, 60, "/home/aaron-manning/Pictures/mathil/");
 }
 
-pub fn curve_intersection_generator(time_stamp : f32, frame : u32, length : f32) -> Screen {
-
+fn scene_1(init : Screen, time : f32, len : f32) -> Screen {
     let line_thickness =
         Thickness::Relative(0.044);
     let cartesian_plane_thickness =
         Thickness::Relative(0.022);
 
-    let mut screen =
-        Screen::new(
-            3840, 2160,
-            Point::new(-7.11, -4.0), Point::new(7.22, 4.0),
-            Colour::from_hex("#2c3e50")
-        )
-        .render(
-            CartesianPlane::new(
-                Point::new(-6.11, -3.0),
-                Point::new(6.11, 3.0),
-                Point::new(0.0, 0.0),
-                0.3,
-                0.3
-            ),
-            CartesianPlaneRenderSettings::new(
-                Colour::from_hex("#ecf0f1"),
-                cartesian_plane_thickness,
-                500
-            )
-        )
-        .render(
-            Function::new_bezier_curve(
-                vec![
-                    Point::new(-5.0, 2.5),
-                    Point::new(-4.0, -9.0),
-                    Point::new(2.0, 9.0),
-                    Point::new(6.0, -2.0)
-                ],
-                if time_stamp < 1.0 {
-                    (0.0, smooth(time_stamp, Smoother::Arctan(2.0)))
-                }
-                else {
-                    (0.0, 1.0)
-                }
-            ),
-            FunctionRenderSettings::new(
-                Colour::from_hex("#2ecc71"),
-                line_thickness,
-                if time_stamp < 1.0 {
-                    (1000.0 * smooth(time_stamp, Smoother::Arctan(2.0))) as u16
-                }
-                else {
-                    1000
-                },
-                RenderingType::RoundAntiAliased(2.0)
-            )
-        );
+    let smoothed_time =
+        easy_ease(time / len, EaseFn::Arctan(2.0));
 
-    if time_stamp > 2.0 {
-        screen =
-            screen.render(
-                Function::new_line_segment(
-                    Point::new(-6.11, 1.0),
-                    Point::new(6.11, 1.0),
-                    if time_stamp < 3.0 {
-                        (0.0, smooth(time_stamp - 2.0, Smoother::Arctan(2.0)))
-                    }
-                    else {
-                        (0.0, 1.0)
-                    }
-                ),
-                FunctionRenderSettings::new(
-                    Colour::from_hex("#e67e22"),
-                    line_thickness,
-                    1000,
-                    RenderingType::RoundAntiAliased(2.0)
-                )
-            );
-    }
+    init
+    .render(
+        CartesianPlane::new(
+            Point::new(-6.11, -3.0),
+            Point::new(6.11, 3.0),
+            Point::new(0.0, 0.0),
+            0.3,
+            0.3
+        ),
+        CartesianPlaneRenderSettings::new(
+            Colour::from_hex("#ecf0f1"),
+            cartesian_plane_thickness,
+            500
+        )
+    )
+    .render(
+        Function::new_bezier_curve(
+            vec![
+                Point::new(-5.0, 2.5),
+                Point::new(-4.0, -9.0),
+                Point::new(2.0, 9.0),
+                Point::new(6.0, -2.0)
+            ],
+            (0.0, smoothed_time)
+        ),
+        FunctionRenderSettings::new(
+            Colour::from_hex("#2ecc71"),
+            line_thickness,
+            (1000.0 * smoothed_time) as u16,
+            RenderingType::RoundAntiAliased(2.0)
+        )
+    )   
+}
 
-    screen
+fn scene_2(init : Screen, time : f32, len : f32) -> Screen {
+    let line_thickness =
+        Thickness::Relative(0.044);
+
+    let smoothed_time = 
+        easy_ease(time / len, EaseFn::Arctan(2.0));
+        
+    init.render(
+        Function::new_line_segment(
+            Point::new(-6.11, 1.0),
+            Point::new(6.11, 1.0),
+            (0.0, smoothed_time)
+        ),
+        FunctionRenderSettings::new(
+            Colour::from_hex("#e67e22"),
+            line_thickness,
+            1000,
+            RenderingType::RoundAntiAliased(2.0)
+        )
+    )
 }
 \end{lstlisting}
 
-This will write a series of files entitled \verb|frame_00001.png|, \verb|frame_00002.png|, \verb|frame_00003.png|... to the specified output folder.
+This will write a series of files entitled \verb|frame_00000001.png|, \verb|frame_00000002.png|, \verb|frame_00000003.png|... to the specified output folder.
 
 Mathil doesn't currently have a tool for converting these frames into a video file, so for now \emph{ffmpeg} is the recommended option. The command to combine a series of frames named according to how Mathil outputs them into an \verb|.mp4| is as follows:
 
 \begin{lstlisting}
-ffmpeg -framerate 60 -i frame_%05d.png output.mp4
+ffmpeg -framerate 60 -i frame_%08d.png output.mp4
 \end{lstlisting}
 
 Here the framerate is set at 60fps, but this can obviously be changed to match whichever settings were given in the source code.

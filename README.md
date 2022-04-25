@@ -287,6 +287,10 @@ Full documentation is available [here](documentation/main.pdf).
 
 **Math**ematical **Il**lustrations. It was the best I could come up with...
 
+#### Is this library stable in terms of updates?
+
+No. As it stands, since I am the primary user of this tool and it is still in early stages, I am regularly making breaking changes to it. This is mostly for the flexibility of being able to redesign core aspects of the library where appropriate. Once Mathil is truly stable in the sense that I no longer feel the need to change crucial aspects of it, I will start versioning it and minimising breaking changes. This will likely start well in the future.
+
 #### How well supported will this tool be?
 
 This project is now at the stage where it is capable enough for me to regularly use it in my own projects, and as such I am implementing new features as I see a need for them in my own workflow. I still have plans to implement a better colour mixing tool with which you can track my progress [here](https://github.com/aaron-jack-manning/colour-mixing-experiments), and a font rendering tool. If you have ideas please create an issue and I will occasionally look to see what I can add to make it useful to others, or if you see the framework for something useful to you here but require more features, feel free to fork the repository and turn it into something catered to your needs.

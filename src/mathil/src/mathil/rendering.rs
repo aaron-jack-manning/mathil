@@ -14,6 +14,7 @@ use crate::mathil::output::generate_file_path;
 use crate::mathil::rendering::utilities::*;
 
 /// Represents an image.
+#[derive(Clone)]
 pub struct Screen {
     pub (in crate::mathil) pixels : Vec<Vec<Colour>>,
     pub (in crate::mathil) horizontal_resolution : u16,
@@ -41,14 +42,14 @@ impl Screen {
     }
 
     /// Writes the current screen to a 24-bit uncompressed BitMap at the specified location.
-    pub fn write_to_bitmap(self, output_folder : &str, filename : &str) {
+    pub fn write_to_bitmap(&self, output_folder : &str, filename : &str) {
         let file_path =
             generate_file_path(output_folder, filename, "bmp")
             .expect("Could not construct filepath.");
 
         let bitmap_bytes =
             create_bitmap_bytes(self);
-        
+
         File::create(&file_path)
         .expect("Unable to create the file at the specified path.")
         .write(&bitmap_bytes)
@@ -56,7 +57,7 @@ impl Screen {
     }
 
     /// Writes the current screen to a PNG using the PNG crate.
-    pub fn write_to_png(self, output_folder : &str, filename : &str) {
+    pub fn write_to_png(&self, output_folder : &str, filename : &str) {
         let file_path =
             generate_file_path(output_folder, filename, "png")
             .expect("Could not construct filepath.");
@@ -121,38 +122,37 @@ impl Screen {
             [usize::try_from(starting_location.x).unwrap()]
             [usize::try_from(starting_location.y).unwrap()];
 
-        if initial_colour == desired_colour {
-            panic!("The specified new colour cannot match the colour originally at the specified location.");
-        }
+        if initial_colour != desired_colour {
 
-        let mut current_checks = vec![starting_location];
+            let mut current_checks = vec![starting_location];
 
-        while current_checks.len() != 0 {
-            let current = current_checks[current_checks.len() - 1].clone();
+            while current_checks.len() != 0 {
+                let current = current_checks[current_checks.len() - 1].clone();
 
-            let is_on_screen =
-                within_screen(current, &self);
+                let is_on_screen =
+                    within_screen(current, &self);
 
-            let is_original_colour =
-                self.pixels
-                [usize::try_from(current.x).unwrap()]
-                [usize::try_from(current.y).unwrap()] == initial_colour;
+                let is_original_colour =
+                    self.pixels
+                    [usize::try_from(current.x).unwrap()]
+                    [usize::try_from(current.y).unwrap()] == initial_colour;
 
-            if is_on_screen && is_original_colour {
-                
-                self.pixels
-                [usize::try_from(current.x).unwrap()]
-                [usize::try_from(current.y).unwrap()] = desired_colour;
+                if is_on_screen && is_original_colour {
+                    
+                    self.pixels
+                    [usize::try_from(current.x).unwrap()]
+                    [usize::try_from(current.y).unwrap()] = desired_colour;
 
-                current_checks.pop();
+                    current_checks.pop();
 
-                current_checks.push(PixelCoordinate::new(current.x, current.y + 1));
-                current_checks.push(PixelCoordinate::new(current.x + 1, current.y));
-                current_checks.push(PixelCoordinate::new(current.x, current.y - 1));
-                current_checks.push(PixelCoordinate::new(current.x - 1, current.y));
-            }
-            else {
-                current_checks.pop();
+                    current_checks.push(PixelCoordinate::new(current.x, current.y + 1));
+                    current_checks.push(PixelCoordinate::new(current.x + 1, current.y));
+                    current_checks.push(PixelCoordinate::new(current.x, current.y - 1));
+                    current_checks.push(PixelCoordinate::new(current.x - 1, current.y));
+                }
+                else {
+                    current_checks.pop();
+                }
             }
         }
 

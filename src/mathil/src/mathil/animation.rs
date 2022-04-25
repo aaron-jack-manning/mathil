@@ -5,12 +5,54 @@ use std::thread::JoinHandle;
 use crate::mathil::rendering::Screen;
 use crate::mathil::primitive_conversions::*;
 
-/// Generates an animation using a function pointer which returns the frame for the given timestamp.
-/// The function pointer takes as input, the current timestamp, the frame number, and the total length of the animation.
-pub fn animate(frame_generator : fn(f32, u32, f32) -> Screen, length : f32, frame_rate : u8, output_folder : &'static str) {
+/// Represents an animatable scene by a function to generate each frame and the length in seconds.
+pub struct Scene {
+    generator : fn(Screen, f32, f32) -> Screen,
+    length : f32,
+}
+
+/// Represents a collection of scenes.
+pub struct Video {
+    scenes : Vec<Scene>
+}
+
+impl Video {
+    /// Creates a new Video from a vector of scenes.
+    pub fn new(scenes : Vec<Scene>) -> Video {
+        Video {
+            scenes
+        }
+    }
+    /// Animates the entire video as a sequence of scenes, maintaining frame number between scenes
+    /// and passing the final frame of each scene as init to the next scene.
+    pub fn animate(self, mut init : Screen, fps : u16, path : &'static str) {
+        let mut next_frame = 0;
+        for scene in self.scenes {
+            (init, next_frame) = animate_helper(init, scene, fps, next_frame, path);
+        }
+    }
+}
+
+impl Scene {
+    /// Creates a new Scene.
+    pub fn new(generator : fn(Screen, f32, f32) -> Screen, length : f32) -> Scene {
+        Scene {
+            generator,
+            length,
+        }
+    }
+    /// Animates the scene, using init as the initial frame to be passed to the generator function.
+    /// Path specifies the output folder for the frames.
+    pub fn animate(self, init : Screen, fps : u16, path : &'static str) {
+        animate_helper(init, self, fps, 0, path);
+    }
+}
+
+/// Internal function for animating a scene which passes back the final frame and frame count.
+fn animate_helper(initial_frame : Screen, scene : Scene, frame_rate : u16, initial_frame_number : u32, output_folder : &'static str) -> (Screen, u32) {
 
     // Total number of frames of video.
-    let frame_qty = f32_to_u32(f32::from(frame_rate) * length);
+    let frame_qty = f32_to_u32(f32::from(frame_rate) * scene.length);
 
     // Time spent showing each frame.
     let frame_time = 1.0 / f32::from(frame_rate);
@@ -21,38 +63,63 @@ pub fn animate(frame_generator : fn(f32, u32, f32) -> Screen, length : f32, fram
         .map(|frame_no : u32| { (frame_no, u32_to_f32(frame_no) * frame_time) })
         .collect();
 
-    let mut handles : Vec<JoinHandle<()>> = Vec::new();
+    let next_frame_number = u32::try_from(timestamps.len()).unwrap() + initial_frame_number;
+
+    let mut handles : Vec<JoinHandle<Screen>> = Vec::new();
 
     for (frame, timestamp) in timestamps {
+        let new_initial_frame = initial_frame.clone();
+
         let handle = thread::spawn(move || {
             let filename =
-                format!("frame_{:0>#5}", frame);
+                format!("frame_{:0>#8}", frame + initial_frame_number);
 
-            frame_generator(timestamp, frame, length)
-            .write_to_png(output_folder, &filename);
+            let current_frame = (scene.generator)(new_initial_frame, timestamp, scene.length);
+            current_frame.write_to_png(output_folder, &filename);
+            current_frame
         });
 
         handles.push(handle);
     }
 
+    let mut final_frame = None;
+    let length = handles.len();
+    let mut i = 0;
+
     for handle in handles {
-        handle.join().unwrap();
+        if i == length - 1 {
+            final_frame = Some(handle.join().unwrap());
+        }
+        else {
+            handle.join().unwrap();
+        }
+        i = i + 1;
     }
+
+    (final_frame.unwrap(), next_frame_number)
 }
 
-/// Types of smoothing functions for animation.
-pub enum Smoother {
+// Identity function for scene generators with respect to the initial frame.
+// To be used in a Video when the final frame of a Scene should be static for some
+// time after the Scene has finished.
+pub fn placeholder(init : Screen, _time : f32, _len : f32) -> Screen {
+    init
+}
+
+/// Types of easing functions to be used with easy_ease.
+pub enum EaseFn {
     Arctan(f32),
     Tanh(f32),
 }
 
-/// Maps the interval from 0 to 1 onto itself with an increasing function which alters the gradient at different points.
-pub fn smooth(t : f32, function : Smoother) -> f32 {
+/// Maps the interval from 0 to 1 onto itself with an increasing function which
+/// has the steapest gradient in the middle of the interval.
+pub fn easy_ease(t : f32, function : EaseFn) -> f32 {
     match function {
-        Smoother::Arctan(a) => {
+        EaseFn::Arctan(a) => {
             (2.0 * a * t - a).atan() / (2.0 * a.atan()) + 0.5
-        }
-        Smoother::Tanh(a) => {
+        },
+        EaseFn::Tanh(a) => {
             (2.0 * a * t - a).tanh() / (2.0 * a.tanh()) + 0.5
         }
     }

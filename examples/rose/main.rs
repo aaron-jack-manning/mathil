@@ -4,22 +4,18 @@ mod mathil;
 use mathil::{colours::*, utilities::*, constants::*, rendering::*, maths_objects::*, colours::css_colours, animation::*};
 
 fn main() {
-    animate(rose_animation_generator, 8.0, 60, "")
-}
-
-pub fn rose_animation_generator(time_stamp : f32, _frame : u32, _length : f32) -> Screen {
-
-    let coefficient = time_stamp;
-
-    let horizontal_resolution = 3840;
-    let vertical_resolution = 2160;
-
-    let screen =
+    let init =
         Screen::new(
-            horizontal_resolution, vertical_resolution,
+            3840, 2160,
             Point::new(-2.666, -1.5), Point::new(2.666, 1.5),
             css_colours::WHITE
         );
+
+    Scene::new(scene_1, 8.0).animate(init, 60, "/home/aaron-manning/Pictures/mathil")
+}
+
+fn scene_1(init : Screen, time : f32, _len : f32) -> Screen {
+    let coefficient = time;
 
     let rose =
         Function::new(
@@ -32,16 +28,14 @@ pub fn rose_animation_generator(time_stamp : f32, _frame : u32, _length : f32) -
             (0.0, 2.0 * PI)
         );
 
-    let circle_radius = 1.1;
-
     let circle =
         Function::new_circle(
-            circle_radius,
+            1.1,
             Point::new(0.0, 0.0),
             (0.0, TAU)
         );
 
-    screen
+    init 
     .render(
         rose,
         FunctionRenderSettings::new(

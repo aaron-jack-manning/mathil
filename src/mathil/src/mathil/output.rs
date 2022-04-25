@@ -1,19 +1,15 @@
 use std::path::Path;
+use std::path;
 
 /// Generates and validates a filepath based on the output folder, filename and extension.
-pub (in crate::mathil) fn generate_file_path<'a>(output_folder : &'a str, filename : &'a str, extension : &'a str) -> Option<String> {
+pub (in crate::mathil) fn generate_file_path<'a>(output_folder : &'a str, filename : &'a str, extension : &'a str) -> Option<path::PathBuf> {
     if Path::new(output_folder).is_dir() {
-        let path_string =
-            format!(
-                "{}{}{}.{}",
-                output_folder,
-                if output_folder.chars().last().unwrap() == '\\' {""} else {"\\"},
-                filename,
-                extension
-            );
+        let filename = format!("{}.{}", filename, extension);
+
+        let path = Path::new(output_folder).join(&filename);
 
         Some(
-           path_string
+           path
         )
     }
     else {
@@ -89,7 +85,7 @@ pub (in crate::mathil) mod bitmap {
     }
 
     /// Creates a Bitmap file from the screen and outputs it as a Vec<u8>, to later be written to a file.
-    pub (in crate::mathil) fn create_bitmap_bytes(screen : Screen) -> Vec<u8> {
+    pub (in crate::mathil) fn create_bitmap_bytes(screen : &Screen) -> Vec<u8> {
         let file_size =
             54 + (u32::from(screen.vertical_resolution) * round_up_to_value(3 * u32::from(screen.horizontal_resolution), 4));
 

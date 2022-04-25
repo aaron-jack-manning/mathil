@@ -4,15 +4,19 @@ mod mathil;
 use mathil::{colours::*, utilities::*, constants::*, rendering::*, maths_objects::*, colours::css_colours, animation::*};
 
 fn main() {
-    animate(trig_animation_generator, 4.0, 60, "")
+    let init = Screen::new(
+        3840, 2160,
+        Point::new(-3.555, -2.0), Point::new(3.555, 2.0),
+        Colour::from_hex("#2f3640")
+    );
+
+    Scene::new(scene_1, 4.0)
+    .animate(init, 60, "/home/aaron-manning/Pictures/mathil/")
 }
 
-pub fn trig_animation_generator(timestamp : f32, frame : u32, _length : f32) -> Screen {
+fn scene_1(init : Screen, time : f32, _len : f32) -> Screen {
 
-    let horizontal_resolution : u16 = 3840;
-    let vertical_resolution : u16 = 2160;
-    
-    let angle = PI / 2.0 * timestamp;
+    let angle = PI / 2.0 * time;
 
     // Anti Aliasing Factors
     let line_anti_aliasing_factor = 2.0;
@@ -33,18 +37,13 @@ pub fn trig_animation_generator(timestamp : f32, frame : u32, _length : f32) -> 
         css_colours::ORANGE_PEEL;
     let off_white = 
         Colour::from_hex("#f5f6fa");
-    let background_colour =
-        Colour::from_hex("#2f3640");
+
 
     let cos = angle.cos();
     let sin = angle.sin();
     let sec = 1.0 / cos;
 
-    Screen::new(
-        horizontal_resolution, vertical_resolution,
-        Point::new(-3.555, -2.0), Point::new(3.555, 2.0),
-        background_colour
-    )
+    init
     .render(
         // Sine Line
         Function::new_line_segment(
@@ -83,7 +82,7 @@ pub fn trig_animation_generator(timestamp : f32, frame : u32, _length : f32) -> 
         FunctionRenderSettings::new(
             tangent_colour,
             line_thickness,
-            if frame == 180 {1000} else {(100.0 * angle.tan()).abs() as u16},
+            if angle.tan() == f32::NAN {1000} else {(100.0 * angle.tan()).abs() as u16},
             RenderingType::RoundAntiAliased(line_anti_aliasing_factor)
         )
     )

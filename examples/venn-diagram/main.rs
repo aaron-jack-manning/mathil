@@ -3,7 +3,6 @@
 mod mathil;
 use mathil::{colours::*, utilities::*, constants::*, rendering::*, maths_objects::*, colours::css_colours, animation::*};
 
-
 fn left_circle() -> Function {
     Function::new_circle(
         25.0,
@@ -63,5 +62,5 @@ fn main() {
             RenderingType::RoundAntiAliased(2.0)
         )
     )
-    .write_to_png("", "venn-diagram");
+    .write_to_png("/home/aaron-manning/Pictures/mathil/", "venn-diagram");
 }
