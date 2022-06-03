@@ -1,7 +1,12 @@
-#![allow(unused_imports)]
+use mathil::{
+    colours::*,
+    rendering::*,
+    maths_objects::*,
+    colours::css_colours,
+    animation::*
+};
 
-mod mathil;
-use mathil::{colours::*, utilities::*, constants::*, rendering::*, maths_objects::*, colours::css_colours, animation::*};
+use std::f32::consts::{PI, TAU};
 
 fn main() {
     let init = Screen::new(
@@ -11,7 +16,7 @@ fn main() {
     );
 
     Scene::new(scene_1, 4.0)
-    .animate(init, 60, "/home/aaron-manning/Pictures/mathil/")
+    .animate(init, 60, "/home/aaron-manning/Pictures/mathil/").unwrap()
 }
 
 fn scene_1(init : Screen, time : f32, _len : f32) -> Screen {

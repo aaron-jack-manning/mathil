@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Mathil is a Rust library for drawing and animating illustrations that are intrinsically mathematical, in a programmatic way with a relatively minimal amount of code, and still a fair amount of low level control.
+Mathil is a Rust library for drawing and animating illustrations that are intrinsically mathematical, in a programmatic way with a relatively minimal amount of code, and still a fair amount of low level control. This library is primarily designed around use by educators.
 
 ## Examples
 
@@ -40,7 +40,7 @@ The following images and videos were all created using Mathil, with source code 
 
 ## Setup
 
-The easiest way to get up and running using Mathil is to clone this repository, open `src/mathil/src/main.rs` and begin writing your code in there. The source code for the examples above are provided in the form of the main file to use in this project.
+The easiest way to get up and running using Mathil is to clone this repository, open `library/mathil/src/main.rs` and begin writing your code in there. The source code for the examples above are provided in the form of the main file to use in this project.
 
 Then, with cargo installed, run your code with the following command:
 
@@ -61,10 +61,14 @@ This section is designed to be an introduction into some of the basic features o
 Before following this set of instructions, set up your project according to the getting started section above. As such, you should have a main file which looks like this:
 
 ```
-#![allow(unused_imports)]
-
-mod mathil;
-use mathil::{colours::*, utilities::*, constants::*, rendering::*, maths_objects::*, colours::css_colours, animation::*};
+use mathil::{
+    colours::*,
+    maths_objects::*,
+    rendering::*,
+    utilities::*,
+    animation::*,
+    errors::Error,
+};
 
 fn main() {}
 ```
@@ -116,7 +120,11 @@ fn right_circle() -> Function {
 }
 ```
 
-Within these functions we are creating an instance of a type in Mathil called a `Function`. A `Function` is internally just a parametric function from an `f32` to a `Point` which we saw earlier, and a domain on which to sample that function. A `Function` can be created by directly giving the parametric rule and the `Function::new` function but here we are using the `Function::new_circle` abstraction which allows is to create a circle from the radius and the centre. We also specify the domain, which by default goes from `0` to `TAU` (which is defined as a constant in the library) which makes it easier to define a partial circle if we wish.
+Within these functions we are creating an instance of a type in Mathil called a `Function`. A `Function` is internally just a parametric function from an `f32` to a `Point` which we saw earlier, and a domain on which to sample that function. A `Function` can be created by directly giving the parametric rule and the `Function::new` function but here we are using the `Function::new_circle` abstraction which allows is to create a circle from the radius and the centre. We also specify the domain, which by default goes from `0` to `TAU` which makes it easier to define a partial circle if we wish. Also note that to make use of `TAU` we need to include the following declaration at the top of the file:
+
+```
+use std::f32::consts::TAU;
+```
 
 Now we need to render each of these circles to the screen. In Mathil, the trait `Renderable` defines mathematical objects which can be rendered to the screen.
 
@@ -208,11 +216,16 @@ Finally we need to take this screen and write it to a file to see the output. We
 This leaves our final code as:
 
 ```
-#![allow(unused_imports)]
+use mathil::{
+    colours::*,
+    maths_objects::*,
+    rendering::*,
+    utilities::*,
+    animation::*,
+    errors::Error,
+};
 
-mod mathil;
-use mathil::{colours::*, utilities::*, constants::*, rendering::*, maths_objects::*, colours::css_colours, animation::*};
-
+use std::f32::consts::TAU;
 
 fn left_circle() -> Function {
     Function::new_circle(
@@ -273,7 +286,7 @@ fn main() {
             RenderingType::RoundAntiAliased(2.0)
         )
     )
-    .write_to_png("/home/Pictures", "venn-diagram");
+    .write_to_png("/home/Pictures", "venn-diagram").unwrap();
 }
 ```
 
@@ -289,7 +302,7 @@ Full documentation is available [here](documentation/main.pdf).
 
 #### Is this library stable in terms of updates?
 
-No. As it stands, since I am the primary user of this tool and it is still in early stages, I am regularly making breaking changes to it. This is mostly for the flexibility of being able to redesign core aspects of the library where appropriate. Once Mathil is truly stable in the sense that I no longer feel the need to change crucial aspects of it, I will start versioning it and minimising breaking changes. This will likely start well in the future.
+No. As it stands, since I am the primary user of this tool and it is still in early stages, I am regularly making breaking changes to it. This is mostly for the flexibility of being able to redesign core aspects of the library where appropriate. Once Mathil is truly stable in the sense that I no longer feel the need to change crucial aspects of it, I will start versioning it and minimising breaking changes. At that point I will also guarantee greater correctness of documentation, since, as it stands, although I try and update the documentation at each release inevitable some things will slip through.
 
 #### How well supported will this tool be?
 

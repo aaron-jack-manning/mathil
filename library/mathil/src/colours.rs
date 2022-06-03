@@ -1,12 +1,13 @@
-use crate::mathil::primitive_conversions::*;
-use crate::mathil::constants::*;
+use std::f32::consts::PI;
+
+use crate::primitive_conversions::*;
 
 /// Represents a colour in RGB format.
 #[derive(Copy, Clone, PartialEq)]
 pub struct Colour {
-    pub (in crate::mathil) red : u8,
-    pub (in crate::mathil) green : u8,
-    pub (in crate::mathil) blue : u8,
+    pub (in crate) red : u8,
+    pub (in crate) green : u8,
+    pub (in crate) blue : u8,
 }
 
 /// Generates a colour on the rainbow from red to purple based on an input from 0 to 1 (loops back on itself).
@@ -36,7 +37,7 @@ impl Colour {
             .expect("Invalid hexadecimal value.")
         }
 
-        if hex_code.len() == 7 && hex_code.chars().nth(0).unwrap() == '#' {
+        if hex_code.len() == 7 && hex_code.starts_with('#') {
             Colour {
                 red : to_dec(&hex_code[1..3]),
                 green : to_dec(&hex_code[3..5]),
@@ -60,7 +61,7 @@ impl Colour {
 
 /// Includes all colours from the CSS standard.
 pub mod css_colours {
-    use crate::mathil::colours::Colour;
+    use crate::colours::Colour;
 
     pub static AIR_FORCE_BLUE_RAF : Colour = Colour { red : 93, green : 138, blue : 168 }; 
     pub static AIR_FORCE_BLUE_USAF : Colour = Colour { red : 0, green : 48, blue : 143 }; 

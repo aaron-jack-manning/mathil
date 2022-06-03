@@ -444,8 +444,14 @@ The \verb|animation| module also includes a function called \verb|easy_ease| whi
 Here is the code behind the curve intersection example from the GitHub page, incorporating many of the ideas explained above. See the \verb|main| function for an idea as to how the overall program for animation is structured, as the other functions as simply the function pointers given to the \verb|Scene|.
 
 \begin{lstlisting}
-fn main() {
+use mathil::{
+    colours::*,
+    rendering::*,
+    maths_objects::*,
+    animation::*
+};
 
+fn main() {
     let init =
         Screen::new(
         3840, 2160,
@@ -461,7 +467,7 @@ fn main() {
         Scene::new(placeholder, 1.0)
     ]);
 
-    video.animate(init, 60, "/home/aaron-manning/Pictures/mathil/");
+    video.animate(init, 60, "/home/aaron-manning/Pictures/mathil/").unwrap();
 }
 
 fn scene_1(init : Screen, time : f32, len : f32) -> Screen {

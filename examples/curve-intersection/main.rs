@@ -1,8 +1,9 @@
-#![allow(unused_imports)]
-
-mod mathil;
-
-use mathil::{colours::*, utilities::*, constants::*, rendering::*, maths_objects::*, colours::css_colours, animation::*};
+use mathil::{
+    colours::*,
+    rendering::*,
+    maths_objects::*,
+    animation::*
+};
 
 fn main() {
 
@@ -21,7 +22,7 @@ fn main() {
         Scene::new(placeholder, 1.0)
     ]);
 
-    video.animate(init, 60, "/home/aaron-manning/Pictures/mathil/");
+    video.animate(init, 60, "/home/aaron-manning/Pictures/mathil/").unwrap();
 }
 
 fn scene_1(init : Screen, time : f32, len : f32) -> Screen {

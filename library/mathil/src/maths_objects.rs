@@ -1,5 +1,4 @@
-use crate::mathil::constants::*;
-use crate::mathil::primitive_conversions::*;
+use crate::primitive_conversions::*;
 
 /// Represents a point.
 #[derive(Copy, Clone, Debug)]
@@ -12,8 +11,8 @@ impl Point {
     /// Creates a Point from a pair of floats.
     pub fn new(x : f32, y : f32) -> Point {
         Point {
-            x : x,
-            y : y,
+            x,
+            y,
         }
     }
 
@@ -129,31 +128,29 @@ impl Point {
 
 /// Represents a mathematical function as a parametric rule and domain.
 pub struct Function {
-    pub (in crate::mathil) rule : Box<dyn Fn(f32) -> Point>,
-    pub (in crate::mathil) domain : (f32, f32),
+    pub (in crate) rule : Box<dyn Fn(f32) -> Point>,
+    pub (in crate) domain : (f32, f32),
 }
 
 impl Function {
     /// Creates a Function from a rule and domain.
     pub fn new(rule : Box<dyn Fn(f32) -> Point>, domain : (f32, f32)) -> Function {
         Function {
-            rule : rule,
-            domain : domain,
+            rule,
+            domain,
         }
     }
 
     // Creates line segment from the endpoints.
     pub fn new_line_segment(start : Point, end : Point, domain : (f32, f32)) -> Function {
-        let result = Function {
+        Function {
             rule : Box::new(
                 move |t| {
                     Point::lerp(start, end, t)
                 }
             ),
-            domain : domain,
-        };
-
-        result
+            domain,
+        }
     }
 
     // Creates an ellipse from its dimensions.
@@ -193,11 +190,11 @@ impl Function {
             }
 
             pairs
-            .iter()
+            .into_iter()
             .map(
                 |(p1, p2)| -> Box<dyn Fn(f32) -> Point> {
-                    let p1_new = p1.clone();
-                    let p2_new = p2.clone();
+                    let p1_new = p1;
+                    let p2_new = p2;
                     Box::new(
                         move |t| Point::lerp(p1_new, p2_new, t)
                     )
@@ -257,7 +254,7 @@ impl Function {
 
 /// Represents a dashed line as a vector of line segments.
 pub struct DashedLine {
-    pub (in crate::mathil)  dashes : Vec<Function>
+    pub (in crate)  dashes : Vec<Function>
 }
 
 impl DashedLine {
@@ -286,8 +283,8 @@ impl DashedLine {
 
 /// Represents a polygon as a series of points.
 pub struct Polygon {
-    pub (in crate::mathil) vertices : Vec<Point>,
-    pub (in crate::mathil) edges : Vec<Function>,
+    pub (in crate) vertices : Vec<Point>,
+    pub (in crate) edges : Vec<Function>,
 }
 
 impl Polygon {
@@ -307,16 +304,16 @@ impl Polygon {
         }
 
         Polygon {
-            vertices : vertices,
-            edges : edges
+            vertices,
+            edges,
         }
     }
 }
 
 // /// Represents a vector as a line segment and polygon.
 pub struct Vector {
-    pub (in crate::mathil) line : Function,
-    pub (in crate::mathil) arrow_head : Polygon,
+    pub (in crate) line : Function,
+    pub (in crate) arrow_head : Polygon,
 }
 
 impl Vector {
@@ -366,14 +363,14 @@ impl Vector {
 
         Vector {
             line : Function::new_line_segment(adjusted_head, tail, (0.0, 1.0)),
-            arrow_head : arrow_head,
+            arrow_head,
         }
     }
 }
 
 /// Represents a coordinate plane parallel to the bounds of the image.
 pub struct CartesianPlane {
-    pub (in crate::mathil) axis : Vec<Vector>,
+    pub (in crate) axis : Vec<Vector>,
 }
 
 impl CartesianPlane {

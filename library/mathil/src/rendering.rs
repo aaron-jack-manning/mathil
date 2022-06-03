@@ -1,26 +1,30 @@
 use std::io::Write;
 use std::fs::File;
-use std::path::Path;
 use std::io::BufWriter;
 
 use png;
 
-use crate::mathil::primitive_conversions::*;
-use crate::mathil::colours::Colour;
-use crate::mathil::maths_objects::*;
-use crate::mathil::output::bitmap::*;
-use crate::mathil::output::png::*;
-use crate::mathil::output::generate_file_path;
-use crate::mathil::rendering::utilities::*;
+use crate::{
+    primitive_conversions::*,
+    colours::Colour,
+    maths_objects::*,
+    output::{
+        bitmap::*,
+        png::*,
+        generate_file_path
+    },
+    errors,
+    rendering::utilities::*
+};
 
 /// Represents an image.
 #[derive(Clone)]
 pub struct Screen {
-    pub (in crate::mathil) pixels : Vec<Vec<Colour>>,
-    pub (in crate::mathil) horizontal_resolution : u16,
-    pub (in crate::mathil) vertical_resolution : u16,
-    pub (in crate::mathil) bottom_left_bound : Point,
-    pub (in crate::mathil) top_right_bound : Point
+    pub (in crate) pixels : Vec<Vec<Colour>>,
+    pub (in crate) horizontal_resolution : u16,
+    pub (in crate) vertical_resolution : u16,
+    pub (in crate) bottom_left_bound : Point,
+    pub (in crate) top_right_bound : Point
 }
 
 impl Screen {
@@ -33,41 +37,59 @@ impl Screen {
         ];
 
         Screen {
-            pixels : pixels,
-            horizontal_resolution : horizontal_resolution,
-            vertical_resolution : vertical_resolution,
-            bottom_left_bound : bottom_left_bound,
-            top_right_bound : top_right_bound,
+            pixels,
+            horizontal_resolution,
+            vertical_resolution,
+            bottom_left_bound,
+            top_right_bound,
         }
     }
 
     /// Writes the current screen to a 24-bit uncompressed BitMap at the specified location.
-    pub fn write_to_bitmap(&self, output_folder : &str, filename : &str) {
+    pub fn write_to_bitmap(&self, output_folder : &str, filename : &str) -> Result<(), errors::Error> {
         let file_path =
-            generate_file_path(output_folder, filename, "bmp")
-            .expect("Could not construct filepath.");
+            generate_file_path(output_folder, filename, "bmp")?;
 
         let bitmap_bytes =
             create_bitmap_bytes(self);
 
-        File::create(&file_path)
-        .expect("Unable to create the file at the specified path.")
-        .write(&bitmap_bytes)
-        .expect("Unable to write to the created file.");
+        match File::create(&file_path) {
+            Ok(mut file) => {
+                match file.write_all(&bitmap_bytes) {
+                    Ok(()) => (), 
+                    Err(e) => return Err(errors::Error::FileWrite(file_path, e)),
+                }
+            }
+            Err(e) => {
+                return Err(errors::Error::FileCreation(file_path, e))
+            }
+        }
+
+        //File::create(&file_path)
+        //.map_err(|e| errors::Error::FileCreation(file_path, e))?
+        //.write_all(&bitmap_bytes)
+        //.map_err(|e| errors::Error::FileWrite(file_path, e))?;
+
+        Ok(())
     }
 
     /// Writes the current screen to a PNG using the PNG crate.
-    pub fn write_to_png(&self, output_folder : &str, filename : &str) {
+    pub fn write_to_png(&self, output_folder : &str, filename : &str) -> Result<(), errors::Error> {
         let file_path =
-            generate_file_path(output_folder, filename, "png")
-            .expect("Could not construct filepath.");
+            generate_file_path(output_folder, filename, "png")?;
+
+        //let png_file =
+        //    File::create(&file_path)
+        //    .map_err(|e| errors::Error::FileCreation(file_path, e))?;
 
         let png_file =
-            File::create(file_path)
-            .expect("Unable to create the file at the specified path.");
+            match File::create(&file_path) {
+                Ok(file) => file,
+                Err(e) => return Err(errors::Error::FileCreation(file_path, e)),
+            };
         
-        let ref mut buf_writer =
-            BufWriter::new(png_file);
+        let buf_writer =
+            &mut BufWriter::new(png_file);
 
         let mut encoder =
             png::Encoder::new(
@@ -82,15 +104,23 @@ impl Screen {
         encoder.set_compression(png::Compression::Fast);
         
         let mut writer =
-            encoder
-            .write_header()
-            .expect("Unable to write header to the PNG file.");
+            match encoder.write_header() {
+                Ok(writer) => writer,
+                Err(e) => return Err(errors::Error::PngError(file_path, e)),
+            };
 
-        let data = create_rgb_byte_array(&self);
+        //let mut writer =
+        //    encoder
+        //    .write_header()
+        //    .map_err(|e| errors::Error::PngError(file_path, e))?;
+
+        let data = create_rgb_byte_array(self);
 
         writer
         .write_image_data(&data)
-        .expect("Unable to write image data to the file.");
+        .map_err(|e| errors::Error::PngError(file_path, e))?;
+
+        Ok(())
     }
 
 
@@ -126,8 +156,8 @@ impl Screen {
 
             let mut current_checks = vec![starting_location];
 
-            while current_checks.len() != 0 {
-                let current = current_checks[current_checks.len() - 1].clone();
+            while !current_checks.is_empty() {
+                let current = current_checks[current_checks.len() - 1];
 
                 let is_on_screen =
                     within_screen(current, &self);
@@ -161,11 +191,10 @@ impl Screen {
 }
 
 mod utilities {
-    use crate::mathil::maths_objects::*;
-    use crate::mathil::rendering::*;
+    use crate::rendering::*;
 
     /// Gets the least upper bounding rectangle from a series of points.
-    pub (in crate::mathil) fn get_bounds(vertices : &Vec<Point>) -> (Point, Point) {
+    pub (in crate) fn get_bounds(vertices : &Vec<Point>) -> (Point, Point) {
 
         let mut min_x = vertices[0].x;
         let mut min_y = vertices[0].y;
@@ -191,7 +220,7 @@ mod utilities {
     }
 
     /// Determines if the provided point lies within the provided polygon.
-    pub (in crate::mathil) fn is_inside_polygon(point : Point, vertices : &Vec<Point>) -> bool {
+    pub (in crate) fn is_inside_polygon(point : Point, vertices : &Vec<Point>) -> bool {
 
         let mut sides =
             Vec::with_capacity(vertices.len());
@@ -223,12 +252,12 @@ mod utilities {
     }
 
     /// Linear interpolation of floats.
-    pub (in crate::mathil) fn lerp_scalar(start : f32, end : f32, parameter : f32) -> f32 {
+    pub (in crate) fn lerp_scalar(start : f32, end : f32, parameter : f32) -> f32 {
         (1.0 - parameter) * start + parameter * end
     }
 
     /// Converts a Point to a PixelCoordinate depending on the screen.
-    pub (in crate::mathil) fn point_to_pixel_coordinates(screen : &Screen, point : Point) -> PixelCoordinate {
+    pub (in crate) fn point_to_pixel_coordinates(screen : &Screen, point : Point) -> PixelCoordinate {
         let horizontal_parameter = (point.x - screen.bottom_left_bound.x) / (screen.top_right_bound.x - screen.bottom_left_bound.x);
 
         let vertical_parameter = (point.y - screen.bottom_left_bound.y) / (screen.top_right_bound.y - screen.bottom_left_bound.y);
@@ -240,7 +269,7 @@ mod utilities {
     }
 
     /// Converts a PixelCoordinate to a Point depending on the screen.
-    pub (in crate::mathil) fn pixel_coordinates_to_point(screen : &Screen, coordinates : PixelCoordinate) -> Point {
+    pub (in crate) fn pixel_coordinates_to_point(screen : &Screen, coordinates : PixelCoordinate) -> Point {
         let horizontal_parameter =
             i32_to_f32(coordinates.x) / f32::from(screen.horizontal_resolution);
         let vertical_parameter =
@@ -253,7 +282,7 @@ mod utilities {
     }
 
     /// Determines if the provided PixelCoordinate lies on the screen.
-    pub (in crate::mathil) fn within_screen (coordinates : PixelCoordinate, screen : &Screen) -> bool {
+    pub (in crate) fn within_screen (coordinates : PixelCoordinate, screen : &Screen) -> bool {
         coordinates.x >= 0
         && coordinates.y >= 0
         && coordinates.x < i32::from(screen.horizontal_resolution) 
@@ -263,17 +292,17 @@ mod utilities {
 
 /// Represents a point on the screen.
 #[derive(Copy, Clone, Debug)]
-pub (in crate::mathil) struct PixelCoordinate {
-    pub (in crate::mathil) x : i32,
-    pub (in crate::mathil) y : i32,
+pub (in crate) struct PixelCoordinate {
+    pub (in crate) x : i32,
+    pub (in crate) y : i32,
 }
 
 impl PixelCoordinate {    
     /// Creates a new PixelCoordinate.
     fn new(x : i32, y : i32) -> PixelCoordinate {
         PixelCoordinate {
-            x : x,
-            y : y,
+            x,
+            y,
         }
     }
 }
@@ -297,7 +326,7 @@ impl Thickness {
     pub fn to_pixels(&self, screen : &Screen) -> u16 { // only temporarily public
         match self {
             Thickness::Absolute(length) => {
-                length.clone()
+                *length
             },
             Thickness::Relative(length) => {
                 let horizontal = (length / (screen.top_right_bound.x - screen.bottom_left_bound.x)) * f32::try_from(screen.horizontal_resolution).unwrap();
@@ -330,9 +359,9 @@ impl PointRenderSettings {
     /// Creates a new PointRenderSettings.
     pub fn new(colour : Colour, radius : Thickness, rendering_type : RenderingType) -> PointRenderSettings {
         PointRenderSettings {
-            colour : colour,
-            radius : radius,
-            rendering_type : rendering_type,
+            colour,
+            radius,
+            rendering_type,
         }
     }
 }
@@ -343,18 +372,18 @@ impl Renderable for Point {
 
     /// Renders a Point.
     fn render(self, settings : &Self::RenderSettings, screen : &mut Screen) {
-        let coordinate = point_to_pixel_coordinates(&screen, self);
+        let coordinate = point_to_pixel_coordinates(screen, self);
 
         // this radius should be in terms of the coordinate system, and therefore needs to be converted properly using similar method to point to pixel coordinates
         let radius = i32::from(
-                settings.radius.to_pixels(&screen)
+                settings.radius.to_pixels(screen)
             );
 
         for i in (coordinate.x - radius)..(coordinate.x + radius) {
             for j in (coordinate.y - radius)..(coordinate.y + radius) {
 
                 let is_on_screen =
-                    within_screen(PixelCoordinate::new(i, j), &screen);
+                    within_screen(PixelCoordinate::new(i, j), screen);
 
                 let squared_distance =
                     (i - coordinate.x) * (i - coordinate.x) + (j - coordinate.y) * (j - coordinate.y);
@@ -417,10 +446,10 @@ impl FunctionRenderSettings {
     /// Creates a new FunctionRenderSettings.
     pub fn new(colour : Colour, thickness : Thickness, samples : u16, rendering_type : RenderingType) -> FunctionRenderSettings {
         FunctionRenderSettings {
-            colour : colour,
-            thickness : thickness,
-            samples : samples,
-            rendering_type : rendering_type,
+            colour,
+            thickness,
+            samples,
+            rendering_type,
         }
     }
 }
@@ -466,10 +495,10 @@ impl PolygonSidesRenderSettings {
     /// Creates a new PolygonSidesRenderSettings.
     pub fn new(colour : Colour, thickness : Thickness, samples_per_side : u16, rendering_type : RenderingType) -> PolygonSidesRenderSettings {
         PolygonSidesRenderSettings {
-            colour: colour,
-            thickness : thickness,
-            samples_per_side  : samples_per_side,
-            rendering_type : rendering_type,
+            colour,
+            thickness,
+            samples_per_side,
+            rendering_type,
         }
     }
 }
@@ -483,7 +512,7 @@ impl PolygonFillRenderSettings {
     /// Creates a new PolygonFillRenderSettings.
     pub fn new(colour : Colour) -> PolygonFillRenderSettings {
         PolygonFillRenderSettings {
-            colour : colour,
+            colour,
         }
     }
 }
@@ -498,8 +527,8 @@ impl PolygonRenderSettings {
     /// Creates a new PolygonRenderSettings.
     pub fn new(sides : Option<PolygonSidesRenderSettings>, fill : Option<PolygonFillRenderSettings>) -> PolygonRenderSettings {
         PolygonRenderSettings {
-            sides : sides,
-            fill : fill,
+            sides,
+            fill,
         }
     }
 }
@@ -594,10 +623,10 @@ impl VectorRenderSettings {
     /// Creates a new VectorRenderSettings.
     pub fn new(colour : Colour, thickness : Thickness, samples : u16, rendering_type : RenderingType) -> VectorRenderSettings {
         VectorRenderSettings {
-            colour : colour,
-            thickness : thickness,
-            samples : samples,
-            rendering_type : rendering_type,
+            colour,
+            thickness,
+            samples,
+            rendering_type,
         }
     }
 }
@@ -648,10 +677,10 @@ impl DashedLineRenderSettings {
     /// Creates a new DashedLineRenderSettings.
     pub fn new(colour : Colour, thickness : Thickness, samples_per_dash : u16, rendering_type : RenderingType) -> DashedLineRenderSettings {
         DashedLineRenderSettings {
-            colour : colour,
-            thickness : thickness,
-            samples_per_dash : samples_per_dash,
-            rendering_type : rendering_type,
+            colour,
+            thickness,
+            samples_per_dash,
+            rendering_type,
         }
     }
 }
@@ -699,9 +728,9 @@ impl CartesianPlaneRenderSettings {
     /// Creates a new CartesianPlaneRenderSettings.
     pub fn new(colour : Colour, thickness : Thickness, samples_per_axis : u16) -> CartesianPlaneRenderSettings {
         CartesianPlaneRenderSettings {
-            colour : colour,
-            thickness : thickness,
-            samples_per_axis : samples_per_axis
+            colour,
+            thickness,
+            samples_per_axis,
         }
     }
 }

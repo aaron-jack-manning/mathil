@@ -1,7 +1,11 @@
-#![allow(unused_imports)]
+use mathil::{
+    colours::*,
+    rendering::*,
+    maths_objects::*,
+    colours::css_colours
+};
 
-mod mathil;
-use mathil::{colours::*, utilities::*, constants::*, rendering::*, maths_objects::*, colours::css_colours, animation::*};
+use std::f32::consts::TAU;
 
 fn left_circle() -> Function {
     Function::new_circle(
@@ -62,5 +66,6 @@ fn main() {
             RenderingType::RoundAntiAliased(2.0)
         )
     )
-    .write_to_png("/home/aaron-manning/Pictures/mathil/", "venn-diagram");
+    .write_to_png("/home/aaron-manning/Pictures/mathil/", "venn-diagram")
+    .unwrap();
 }

@@ -1,0 +1,7 @@
+[package]
+name = "mathil-usage"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+mathil = { path = "mathil" }

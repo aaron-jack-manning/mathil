@@ -1,6 +1,4 @@
-use crate::mathil::rendering::Screen;
-
-use std::convert::TryFrom;
+use crate::rendering::Screen;
 
 /// Represents the aspect ratios within the resolution and the bounds as 1:output.
 #[derive(Debug)]
