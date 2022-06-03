@@ -735,13 +735,52 @@ impl CartesianPlaneRenderSettings {
     }
 }
 
+/*
+vec![
+    ,
+    Vector::new(
+    ),
+    Vector::new(
+    ),
+    Vector::new(
+    )
+]
+*/
+
 impl Renderable for CartesianPlane {
     type RenderSettings =
         CartesianPlaneRenderSettings;
 
     /// Renders a CartesianPlane.
     fn render(self, settings : &Self::RenderSettings, screen : &mut Screen) {
-        for vector in self.axis {
+
+        let mut axis = Vec::with_capacity(4);
+
+        if self.origin.y < self.top_right_bound.y {
+            axis.push(Vector::new(
+                Point::new(self.origin.x, self.top_right_bound.y), self.origin, self.arrow_width, self.arrow_height
+            ));
+        }
+
+        if self.origin.y > self.bottom_left_bound.y {
+            axis.push(Vector::new(
+                Point::new(self.origin.x, self.bottom_left_bound.y), self.origin, self.arrow_width, self.arrow_height
+            ));
+        }
+
+        if self.origin.x < self.top_right_bound.x {
+            axis.push(Vector::new(
+                Point::new(self.top_right_bound.x, self.origin.y), self.origin, self.arrow_width, self.arrow_height
+            ));
+        }
+
+        if self.origin.x > self.bottom_left_bound.x {
+            axis.push(Vector::new(
+                Point::new(self.bottom_left_bound.x, self.origin.y), self.origin, self.arrow_width, self.arrow_height
+            ));
+        }
+
+        for vector in axis {
             vector.render(
                 &VectorRenderSettings::new(
                     settings.colour,

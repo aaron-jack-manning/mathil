@@ -370,27 +370,23 @@ impl Vector {
 
 /// Represents a coordinate plane parallel to the bounds of the image.
 pub struct CartesianPlane {
-    pub (in crate) axis : Vec<Vector>,
+    pub (in crate) bottom_left_bound : Point,
+    pub (in crate) top_right_bound : Point,
+    pub (in crate) origin : Point,
+    pub (in crate) arrow_width : f32,
+    pub (in crate) arrow_height : f32,
+    //pub (in crate) axis : Vec<Vector>,
 }
 
 impl CartesianPlane {
     /// Creates a CartesianPlane.
     pub fn new(bottom_left_bound : Point, top_right_bound : Point, origin : Point, arrow_width : f32, arrow_height : f32) -> CartesianPlane {
         CartesianPlane {
-            axis : vec![
-                Vector::new(
-                    Point::new(origin.x, top_right_bound.y), origin, arrow_width, arrow_height
-                ),
-                Vector::new(
-                    Point::new(origin.x, bottom_left_bound.y), origin, arrow_width, arrow_height
-                ),
-                Vector::new(
-                    Point::new(bottom_left_bound.x, origin.y), origin, arrow_width, arrow_height
-                ),
-                Vector::new(
-                    Point::new(top_right_bound.x, origin.y), origin, arrow_width, arrow_height
-                )
-            ]
+            bottom_left_bound,
+            top_right_bound,
+            origin,
+            arrow_width,
+            arrow_height,
         }
     }
 }
