@@ -45,7 +45,7 @@ The following examples show how a few different kinds of images can be created u
 <a name="venn-diagram"></a>
 ### Venn Diagram
 
-![VennDiagram](f-sharp/examples/VennDiagram_Compressed.bmp)
+![VennDiagram](examples/VennDiagram_Compressed.bmp)
 
 ```
 let resolution = (3000, 2000)
@@ -71,7 +71,7 @@ blankScreen
 <a name="trig-geometry"></a>
 ### Geometric Representations of Trigonometric Functions
 
-![TrigGeometricRepresentations](f-sharp/examples/TrigGeometricRepresentation_Compressed.bmp)
+![TrigGeometricRepresentations](examples/TrigGeometricRepresentation_Compressed.bmp)
 
 ```
 open System
@@ -128,7 +128,7 @@ blankScreen
 <a name="rose"></a>
 ### Rose
 
-![Rose](f-sharp/examples/Rose_Compressed.bmp)
+![Rose](examples/Rose_Compressed.bmp)
 
 ```
 open System
@@ -167,7 +167,7 @@ blankScreen
 <a name="fundamental-theorem-of-calculus"></a>
 ### Fundamental Theorem of Calculus Illustration
 
-![FundamentalTheoremOfCalculus](f-sharp/examples/FundamentalTheoremOfCalculus_Compressed.bmp)
+![FundamentalTheoremOfCalculus](examples/FundamentalTheoremOfCalculus_Compressed.bmp)
 
 ```
 let resolution = (4200, 3000)
@@ -254,7 +254,7 @@ blankScreen
 <a name="riemann-sum"></a>
 ### Riemann Sum
 
-![RiemannSum](f-sharp/examples/RiemannSum_Compressed.bmp)
+![RiemannSum](examples/RiemannSum_Compressed.bmp)
 
 ```
 let resolution = (5000, 2000)
