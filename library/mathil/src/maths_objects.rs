@@ -124,6 +124,11 @@ impl Point {
             Point::multiply_scalar(finish, t)
         )
     }
+
+    /// The origin.
+    pub fn origin() -> Point {
+        Point::new(0.0, 0.0)
+    }
 }
 
 /// Represents a mathematical function as a parametric rule and domain.

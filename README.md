@@ -12,7 +12,7 @@ The following images and videos were all created using Mathil, with source code 
 
 ![Venn Diagram](examples/venn-diagram/output.png)
 
-[Source Code](examples/geometric-representations-of-trig-functions/main.rs)
+[Source Code](examples/venn-diagram/main.rs)
 
 ### Geometric Representations of Trigonometric Functions
 
@@ -293,6 +293,16 @@ fn main() {
 ## Full Documentation
 
 Full documentation is available [here](documentation/main.pdf).
+
+## Add on Crates
+
+I am currently experimenting with creating additional crates with abstractions on top of Mathil to make illustrations for specific common use cases easier to create. Currently one such crate exists for vector fields but I plan on adding in additional crates for drawing graphs of one variable functions, networks, etc. Below is one example from each existing add on crate.
+
+### Example: Vector Field
+
+![Vector Field](examples/vector-field/output.png)
+
+[Source Code](examples/vector-field/main.rs)
 
 ## Q and A
 
