@@ -1,3 +1,5 @@
+use std::ops;
+
 use crate::primitive_conversions::*;
 
 /// Represents a point.
@@ -27,14 +29,6 @@ impl Point {
         points
     }
 
-    /// Negates both coordinates of a point.
-    pub fn negate(&self) -> Point {
-        Point {
-            x : - self.x,
-            y : - self.y,
-        }
-    }
-
     /// Negates the x coordinate of a point.
     pub fn negate_x(&self) -> Point {
         Point {
@@ -48,38 +42,6 @@ impl Point {
         Point {
             x : self.x,
             y : - self.y,
-        }
-    }
-
-    /// Adds the two provided points element wise.
-    pub fn add(p1 : Point, p2 : Point) -> Point {
-        Point {
-            x : p1.x + p2.x,
-            y : p1.y + p2.y,
-        }
-    }
-
-    /// Multiplies the two points element wise.
-    pub fn multiply(p1 : Point, p2 : Point) -> Point {
-        Point {
-            x : p1.y * p2.y,
-            y : p1.y * p2.y,
-        }
-    }
-
-    /// Multiplies the point by the provided scalar.
-    pub fn multiply_scalar(p : Point, scalar : f32) -> Point {
-        Point {
-            x : scalar * p.x,
-            y : scalar * p.y,
-        }
-    }
-
-    /// Subtracts the two points element wise.
-    pub fn subtract(p1 : Point, p2 : Point) -> Point {
-        Point {
-            x : p1.x - p2.x,
-            y : p1.y - p2.y,
         }
     }
 
@@ -107,7 +69,6 @@ impl Point {
             y : self.x,
         }
     }
-        
 
     /// Rotates the point 90 degrees about the origin counterclockwise.
     pub fn rotate_counter_clockwise(&self) -> Point {
@@ -119,15 +80,72 @@ impl Point {
         
     /// Linearly interpolates the two specified points.
     pub fn lerp(start : Point, finish : Point, t : f32) -> Point {
-        Point::add(
-            Point::multiply_scalar(start, 1.0 - t),
-            Point::multiply_scalar(finish, t)
-        )
+        (1.0 - t) * start + t * finish
     }
 
     /// The origin.
     pub fn origin() -> Point {
         Point::new(0.0, 0.0)
+    }
+}
+
+/// Adds the two provided points element wise.
+impl ops::Add for Point {
+    type Output = Self;
+
+    fn add(self, other : Self) -> Self {
+        Point {
+            x : self.x + other.x,
+            y : self.y + other.y,
+        }
+    }
+}
+
+/// Subtracts the two points element wise.
+impl ops::Sub for Point {
+    type Output = Self;
+
+    fn sub(self, other : Self) -> Self {
+        Point {
+            x : self.x - other.x,
+            y : self.y - other.y,
+        }
+    }
+}
+
+/// Negates both coordinates of a point.
+impl ops::Neg for Point {
+    type Output = Self;
+
+    fn neg(self) -> Self {
+        Point {
+            x : -self.x,
+            y : -self.y,
+        }
+    }
+}
+
+/// Multiplies the point by the provided scalar.
+impl ops::Mul<Point> for f32 {
+    type Output = Point;
+
+    fn mul(self, other : Point) -> Self::Output {
+        Point {
+            x : other.x * self,
+            y : other.y * self,
+        }
+    }
+}
+
+/// Multiplies the two points element wise.
+impl ops::Mul for Point {
+    type Output = Self;
+
+    fn mul(self, other : Self) -> Self {
+        Point {
+            x : self.x * other.x,
+            y : self.y * other.y,
+        }
     }
 }
 
@@ -325,7 +343,7 @@ impl Vector {
     /// Creates a new Vector.
     pub fn new(head : Point, tail : Point, arrow_width : f32, arrow_height : f32) -> Vector {
         let desired_vector =
-            Point::subtract(head, tail);
+            head - tail;
         let vector_length =
             Point::distance(&desired_vector);
 
@@ -351,18 +369,9 @@ impl Vector {
         let arrow_head =
             Polygon::new(
                 vec![
-                    Point::add(
-                        adjusted_head,
-                        Point::multiply_scalar(desired_vector, extension_factor_length)
-                    ),
-                    Point::add(
-                        adjusted_head,
-                        Point::multiply_scalar(Point::rotate_counter_clockwise(&desired_vector), extension_factor_width)
-                    ),
-                    Point::add(
-                        adjusted_head,
-                        Point::multiply_scalar(Point::rotate_clockwise(&desired_vector), extension_factor_width)
-                    ),
+                    adjusted_head + extension_factor_length * desired_vector,
+                    adjusted_head + extension_factor_width * Point::rotate_counter_clockwise(&desired_vector),
+                    adjusted_head + extension_factor_width * Point::rotate_clockwise(&desired_vector),
                 ]
             );
 

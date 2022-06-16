@@ -16,7 +16,7 @@ pub fn draw(background_colour : Colour, axis_colour : Colour, horizontal_resolut
         top_right.y = if point.y > top_right.y { point.y } else { top_right.y };
     }
 
-    let bounding_box = (Point::subtract(bottom_left, Point::new(margin, margin)), Point::add(top_right, Point::new(margin, margin)));
+    let bounding_box = (bottom_left - Point::new(margin, margin), top_right + Point::new(margin, margin));
 
     let vertical_resolution : u16 =
         ((bounding_box.1.y - bounding_box.0.y) * f32::from(horizontal_resolution) / (bounding_box.1.x - bounding_box.0.x)) as u16;
@@ -43,13 +43,11 @@ pub fn draw(background_colour : Colour, axis_colour : Colour, horizontal_resolut
         );
     
     let shrink_geometric_vector = |(tail, head)| {
-        let difference = Point::subtract(head, tail);
+        let difference : Point = head - tail;
         let magnitude = difference.distance();
 
         let new_head =
-            Point::add(
-                tail, Point::multiply_scalar(difference, vector_length / magnitude)
-            );
+            tail + (vector_length / magnitude) * difference;
 
         (tail, new_head, magnitude)
     };
@@ -58,7 +56,7 @@ pub fn draw(background_colour : Colour, axis_colour : Colour, horizontal_resolut
         points
         .clone()
         .into_iter()
-        .zip(points.into_iter().map(|p| Point::add(p, field(p))))
+        .zip(points.into_iter().map(|p| p + field(p)))
         .map(shrink_geometric_vector)
         .map(|(t, h, m)| (Vector::new(h, t, arrow_width, arrow_height), m))
         .collect();
