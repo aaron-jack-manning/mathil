@@ -335,7 +335,7 @@ impl Polygon {
 
 // /// Represents a vector as a line segment and polygon.
 pub struct Vector {
-    pub (in crate) line : Function,
+    pub (in crate) line : Option<Function>,
     pub (in crate) arrow_head : Polygon,
 }
 
@@ -355,10 +355,6 @@ impl Vector {
         let head_adjustment_factor =
             arrow_height / vector_length;
 
-        if head_adjustment_factor > 1.0 {
-            panic!("Arrow height must be less than the length of the overall vector.");
-        }
-
         let adjusted_head =
             Point::lerp(
                 head,
@@ -375,9 +371,17 @@ impl Vector {
                 ]
             );
 
-        Vector {
-            line : Function::new_line_segment(adjusted_head, tail, (0.0, 1.0)),
-            arrow_head,
+        if head_adjustment_factor > 1.0 {
+            Vector {
+                line : None,
+                arrow_head
+            }
+        }
+        else {
+            Vector {
+                line : Some(Function::new_line_segment(adjusted_head, tail, (0.0, 1.0))),
+                arrow_head,
+            }
         }
     }
 }

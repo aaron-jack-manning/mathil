@@ -646,15 +646,17 @@ impl Renderable for Vector {
             ),
             screen
         );
-        self.line.render(
-            &FunctionRenderSettings::new(
-                settings.colour,
-                settings.thickness,
-                settings.samples,
-                settings.rendering_type
-            ),
-            screen
-        );
+        if let Some(line) = self.line {
+            line.render(
+                &FunctionRenderSettings::new(
+                    settings.colour,
+                    settings.thickness,
+                    settings.samples,
+                    settings.rendering_type
+                ),
+                screen
+            );
+        }
     }
 
     /// Renders many Vectors.
